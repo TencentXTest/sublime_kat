@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+initWebView()
+]]></content>
+	<tabTrigger>initWebView</tabTrigger>
+	<scope>source.lua</scope>
+	<description>webview初始化</description>
+</snippet>

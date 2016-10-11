@@ -1,0 +1,11 @@
+<snippet>
+	<content><![CDATA[
+notifyMessage(${1:info})
+sleep(2000)
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>notifyMessage</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.lua</scope>
+	<description>弹出toast提示</description>
+</snippet>

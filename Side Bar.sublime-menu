@@ -1,0 +1,62 @@
+[{
+		"caption": "打开图片",
+		"command": "open_pic",
+		"args": {}
+	}, 
+	// {
+	// 	"caption": "新建文件夹",
+	// 	"command": "new_folder",
+	// 	"args": {}
+	// },
+	{
+		"caption": "-",
+		"id": "end"
+	}, {
+		"caption": "运行Kat		Ctrl+F11",
+		"command": "run",
+		"args": {}
+	}, {
+		"caption": "停止Kat		Ctrl+F12",
+		"command": "stop",
+		"args": {}
+	},
+
+	// {
+	// 	"caption": "拉取Kat目录下的error.txt",
+	// 	"command": "error",
+	// 	"args": {}
+	// }, 
+	// {
+	// 	"caption": "拉取Kat目录下的Log.txt",
+	// 	"command": "log",
+	// 	"args": {}
+	// }, 
+	// {
+	// 	"caption": "拉取Kat目录下的Result.txt",
+	// 	"command": "result",
+	// 	"args": {}
+	// },
+	// {
+	// 	"caption": "拉取Kat目录下的crashlog.txt",
+	// 	"command": "crash",
+	// 	"args": {}
+	// },
+	// {
+	// 	"caption": "拉取TestTool目录下的指定脚本文件",
+	// 	"command": "get_test_tool_script",
+	// 	"args": {}
+	// },
+	// {
+	// 	"caption": "查看/data/local/tmp/kat/文件结构",
+	// 	"command": "cat_kat_info",
+	// 	"args": {}
+	// }, {
+	// 	"caption": "拉取/data/local/tmp/kat/目录下文件",
+	// 	"command": "get_kat_data",
+	// 	"args": {}
+	// },
+	{
+		"caption": "-",
+		"id": "end"
+	}
+]

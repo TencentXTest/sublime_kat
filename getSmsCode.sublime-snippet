@@ -1,0 +1,11 @@
+<snippet>
+	<content><![CDATA[
+local result, sms = getSmsCode('${1:num}', ${2:timeout})
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<!-- <tabTrigger>upMove</tabTrigger> -->
+	<tabTrigger>getSmsCode</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.lua</scope>
+	<description>获取短信信息</description>
+</snippet>

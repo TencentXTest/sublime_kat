@@ -1,0 +1,11 @@
+<snippet>
+	<content><![CDATA[
+--重启APP
+restartApp('${1:pkgname}')
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>restartApp</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.lua</scope>
+	<description>重启APP</description>
+</snippet>

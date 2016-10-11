@@ -1,0 +1,10 @@
+<snippet>
+	<content><![CDATA[
+click_XYByEvent(${1:x}, ${2:y}, ${3:event}, ${4:path})
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>click_XYByEvent</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.lua</scope>
+	<description>按坐标点击</description>
+</snippet>

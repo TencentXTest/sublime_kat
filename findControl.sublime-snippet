@@ -1,0 +1,10 @@
+<snippet>
+	<content><![CDATA[
+findControl(-1, '${1:}', '${2:}', '${3:}')
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>findControl</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.lua</scope>
+	<description>控件是否存在</description>
+</snippet>

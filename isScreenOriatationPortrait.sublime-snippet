@@ -1,0 +1,9 @@
+<snippet>
+	<content><![CDATA[
+-- 检查屏幕方向,竖屏是0,横屏是1
+local screen_direction = isScreenOriatationPortrait()
+]]></content>
+	<tabTrigger>screenIsOriatationPortrait</tabTrigger>
+	<scope>source.lua</scope>
+	<description>方向</description>
+</snippet>

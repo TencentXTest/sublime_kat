@@ -1,0 +1,9 @@
+<snippet>
+	<content><![CDATA[
+startApp(${1:PackageName})
+sleep(10000)
+]]></content>
+	<tabTrigger>startApp</tabTrigger>
+	<scope>source.lua</scope>
+	<description>启动应用</description>
+</snippet>

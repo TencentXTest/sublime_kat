@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+check_point_pic()
+]]></content>
+	<tabTrigger>check_point_pic</tabTrigger>
+	<scope>source.lua</scope>
+	<description>插入图片check点</description>
+</snippet>

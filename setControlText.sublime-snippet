@@ -1,0 +1,12 @@
+<snippet>
+	<content><![CDATA[
+-- 向控件输入文本信息
+setControlerText(${1:id},'${2:key}','${3:ctext}','${4:classpath}','${5:content}')
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>setControlerText</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.lua</scope>
+	<description>输入文本</description>
+</snippet>
+

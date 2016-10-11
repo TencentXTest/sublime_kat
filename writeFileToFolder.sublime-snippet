@@ -1,0 +1,12 @@
+<snippet>
+	<content><![CDATA[
+ -- 创建文件并保存 
+ -- @string folder_path 目标文件夹全路径
+ -- @string file_name 目标文件名字
+ -- @string content 要保存的数据记录
+writeFileToFolder('${1:folder_path}', '${2:file_name}', '${3:content}')
+]]></content>
+	<tabTrigger>writeFileToFolder</tabTrigger>
+	<scope>source.lua</scope>
+	<description>创建文件并保存</description>
+</snippet>

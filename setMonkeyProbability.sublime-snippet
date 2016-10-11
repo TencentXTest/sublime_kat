@@ -1,0 +1,9 @@
+<snippet>
+	<content><![CDATA[
+--设置monkey的各种操作权重, 如setMonkeyProbability(5, 4, 2, 2, 1, 1, 1)
+setMonkeyProbability(${1:click}, ${2:doubleclick}, ${3:input}, ${4:scroll}, ${5:longtouch}, ${6:fingertouch}, ${7:randomclick})
+]]></content>
+	<tabTrigger>monkeyProbability</tabTrigger>
+	<scope>source.lua</scope>
+	<description>Monkey操作权重</description>
+</snippet>

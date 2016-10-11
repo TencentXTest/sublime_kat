@@ -1,0 +1,10 @@
+<snippet>
+	<content><![CDATA[
+local file_is_exist = fileIsExist('${1:file_path}')
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>fileIsExist</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.lua</scope>
+	<description>文件是否存在</description>
+</snippet>

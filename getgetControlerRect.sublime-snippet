@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+local result_temp, x_temp, y_temp, dx_temp, dy_temp = getControlerRect(-1, '${1:}', '${2:}', '${3:}')
+]]></content>
+	<tabTrigger>getControlerRect</tabTrigger>
+	<scope>source.lua</scope>
+	<description>获取控件位置</description>
+</snippet>

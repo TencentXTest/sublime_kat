@@ -1,0 +1,11 @@
+<snippet>
+	<content><![CDATA[
+local info = netRequest('${1:host}', ${2:port}, '${3:request}')
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<!-- <tabTrigger>upMove</tabTrigger> -->
+	<tabTrigger>netRequest</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.lua</scope>
+	<description>发送网络请求</description>
+</snippet>

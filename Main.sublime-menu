@@ -1,0 +1,13 @@
+[
+    {
+        "caption": "帮助(H)",
+        "mnemonic": "H",
+        "id": "help",
+        "children":
+        [
+            { "caption": "-" },
+            { "command": "update_kat_plugin", "caption": "更新辅助插件", "mnemonic": "A" }
+            // { "command": "install", "caption": "安装apk", "mnemonic": "A" }
+        ]
+    }
+]

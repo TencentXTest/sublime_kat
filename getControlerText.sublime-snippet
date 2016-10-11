@@ -1,0 +1,9 @@
+<snippet>
+	<content><![CDATA[
+getControlerText(-1, '${1:}', '${2:}', '${3:}')
+]]></content>
+	<tabTrigger>getControlerText</tabTrigger>
+	<scope>source.lua</scope>
+	<description>获取控件文本</description>
+</snippet>
+

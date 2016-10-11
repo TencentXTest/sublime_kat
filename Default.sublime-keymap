@@ -1,0 +1,11 @@
+[{
+	"keys": [
+		"ctrl+f11"
+	],
+	"command": "run_lab_kat"
+}, {
+	"keys": [
+		"ctrl+f12"
+	],
+	"command": "stop"
+}]

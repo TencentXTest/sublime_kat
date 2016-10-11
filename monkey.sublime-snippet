@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+monkey(PackageName, ${1:runTime}, CasePath..getFileName(debug.getinfo(caseFactory).source)..'/')
+]]></content>
+	<tabTrigger>monkey</tabTrigger>
+	<scope>source.lua</scope>
+	<description>KAT版MonkeyTest</description>
+</snippet>

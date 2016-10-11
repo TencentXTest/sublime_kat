@@ -1,0 +1,10 @@
+<snippet>
+	<content><![CDATA[
+moveFindControler(${1:id}, '${2:key}', '${3:ctext}', '${4:classpath}', ${5:move_times})
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>moveFindControler</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.lua</scope>
+	<description>边滑动边找控件</description>
+</snippet>

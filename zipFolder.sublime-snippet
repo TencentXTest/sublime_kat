@@ -1,0 +1,11 @@
+<snippet>
+	<content><![CDATA[
+-- 将指定文件夹打包成zip文件，打包完成后放到指定路径,方法中有30秒延时
+zipFolder('${1:srcFilePath}', '${2:zipFilePath}')
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>zipFolder</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.lua</scope>
+	<description>压缩文件</description>
+</snippet>

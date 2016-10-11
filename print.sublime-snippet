@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+print(${1:info})
+]]></content>
+	<tabTrigger>print</tabTrigger>
+	<scope>source.lua</scope>
+	<description>打印log到控制台</description>
+</snippet>

@@ -1,0 +1,11 @@
+<snippet>
+	<content><![CDATA[
+rightMove(${1:sleepTime}, ${2:moveTimes}, ${3:path})
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<!-- <tabTrigger>upMove</tabTrigger> -->
+	<tabTrigger>move_right</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.lua</scope>
+	<description>向右滑动</description>
+</snippet>

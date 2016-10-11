@@ -1,0 +1,19 @@
+<snippet>
+	<content><![CDATA[
+-- 深度遍历说明
+-- @string pkgname 应用程序包名
+-- @int depth 遍历执行最小层级, 一般默认值:3
+-- @int scanTime 设置强制结束时间(s)
+-- @boolean isScreenshot 遍历是否截图,默认为:true
+-- 例子: startAutoTest(PackageName, 3, 60*10, true)
+startAutoTest(PackageName, ${1:depth}, ${2:scanTime}, ${3:isScreenshot})
+local rstCount = getSimpleValidResultCount()
+local testTime = getSimpleExectime()
+if (rstCount < 5 and testTime < 300000) then
+	monkey(PackageName, 1, CasePath..getFileName(debug.getinfo(caseFactory).source)..'/')
+end
+]]></content>
+	<tabTrigger>startAutoTest</tabTrigger>
+	<scope>source.lua</scope>
+	<description>启动深度遍历</description>
+</snippet>

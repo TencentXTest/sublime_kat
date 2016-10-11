@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+local top_pkg_name = getTopProcessPkgName()
+]]></content>
+	<tabTrigger>getTopProcessPkgName</tabTrigger>
+	<scope>source.lua</scope>
+	<description>取top进程名</description>
+</snippet>

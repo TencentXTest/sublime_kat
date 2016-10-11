@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+sleep(${1:3000})
+]]></content>
+	<tabTrigger>sleep</tabTrigger>
+	<scope>source.lua</scope>
+	<description>插入延时(ms)</description>
+</snippet>

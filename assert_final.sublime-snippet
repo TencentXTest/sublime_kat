@@ -1,0 +1,11 @@
+<snippet>
+	<content><![CDATA[
+-- 断言结果若为false，则结束所有用例执行，并保存在"/sdcard/kat/Result/checkpoint/"目录下
+assert_final(${1:isTrue},'${2:content}')
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>assert_final</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.lua</scope>
+	<description>断言</description>
+</snippet>

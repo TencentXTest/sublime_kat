@@ -1,0 +1,11 @@
+<snippet>
+	<content><![CDATA[
+--字符串分割函数，szFullString：被分割字符串，szSeparator：分隔符
+_split(${1:szFullString}, ${2:szSeparator})
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>split</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.lua</scope>
+	<description>分割字符串</description>
+</snippet>

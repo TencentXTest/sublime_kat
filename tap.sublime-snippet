@@ -1,0 +1,8 @@
+<snippet>
+	<content><![CDATA[
+tap(${1:id}, ${2:key}, ${3:ctext}, ${4:classpath}, ${5:wPercent}, ${6:hPercent}, ${7:Timeout}, ${8:path})
+]]></content>
+	<tabTrigger>tap</tabTrigger>
+	<scope>source.lua</scope>
+	<description>精确点击-带超时判定</description>
+</snippet>

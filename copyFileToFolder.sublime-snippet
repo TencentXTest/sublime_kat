@@ -1,0 +1,12 @@
+<snippet>
+	<content><![CDATA[
+-- 复制一份文件到指定文件夹,目标文件夹需要已存在
+copyFileToFolder('${1:FilePath}', '${2:FolderPath}')
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>copyFileToFolder</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<scope>source.lua</scope>
+	<description>复制_文件</description>
+</snippet>
+

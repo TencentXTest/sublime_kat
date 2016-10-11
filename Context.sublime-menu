@@ -1,0 +1,55 @@
+[{
+		"caption": "-"
+	}, {
+		"command": "run_lab_kat",
+		"caption": "运行KAT"
+	}, {
+		"command": "stop",
+		"caption": "停止KAT"
+	},
+	//  {
+	// 	"command": "run_record_kat",
+	// 	"caption": "录制脚本"
+	// },
+	// {
+	// 	"command": "run_lab_kat",
+	// 	"caption": "Instrument启动KAT"
+	// },
+	{
+		"command": "run_xtest",
+		"caption": "运行XTEST"
+	},
+	//  {
+	// 	"command": "get_test_tool_script",
+	// 	"caption": "拉取TestTool中的测试脚本"
+	// }, 
+	{
+		"command": "input_app_pkg_name",
+		"caption": "强关APP"
+	}, {
+		"command": "ps",
+		"caption": "PS命令"
+	}, {
+		"command": "logcat",
+		"caption": "导出Logcat"
+	},
+	// {
+	// 	"command": "get_ls",
+	// 	"caption": "ls指定文件目录"
+	// },
+	{
+		"command": "record",
+		"caption": "插入录制代码"
+	}, {
+		"command": "get_pkg_name",
+		"caption": "插入包名"
+	}, {
+		"command": "get_kat_run_file",
+		"caption": "拉取测试结果--kat目录文件"
+	}
+	,
+	{
+		"command": "open_shell",
+		"caption": "启动shell代理"
+	}
+]
