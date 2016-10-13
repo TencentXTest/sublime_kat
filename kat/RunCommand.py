@@ -192,7 +192,6 @@ class StopCommand(sublime_plugin.TextCommand):
 
 	def run(self, edit):
 		print "================================kill kat!!================================"
-		print sublime.installed_packages_path()
 		# run adb Command
 		os.popen(adbpath + " shell service call activity 79 s16 com.kunpeng.kapalai.kat")
 		os.popen(adbpath + " shell service call activity 79 s16 com.tencent.utest.recorder")
