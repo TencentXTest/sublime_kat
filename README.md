@@ -1,62 +1,62 @@
 
-sublime_kat½éÉÜ
+sublime_katä»‹ç»
 --------------------
-ÕâÊÇÒ»¿îxtest×Ô¶¯»¯½Å±¾±à¼­¹¤¾ß£¬ÀûÓÃ¸Ã²å¼ş¿ÉÒÔ¿ìËÙ±à¼­xtest ×Ô¶¯»¯²âÊÔ½Å±¾£¬Ö§³ÖÔËĞĞ¡¢À­È¡²âÊÔ½á¹ûµÈ¹¦ÄÜ¡£
-Ä¿Ç°Ö»ÄÜÔËĞĞÔÚsublime text 2»·¾³ÏÂ¡£
+è¿™æ˜¯ä¸€æ¬¾xtestè‡ªåŠ¨åŒ–è„šæœ¬ç¼–è¾‘å·¥å…·ï¼Œåˆ©ç”¨è¯¥æ’ä»¶å¯ä»¥å¿«é€Ÿç¼–è¾‘xtest è‡ªåŠ¨åŒ–æµ‹è¯•è„šæœ¬ï¼Œæ”¯æŒè¿è¡Œã€æ‹‰å–æµ‹è¯•ç»“æœç­‰åŠŸèƒ½ã€‚
+ç›®å‰åªèƒ½è¿è¡Œåœ¨sublime text 2ç¯å¢ƒä¸‹ã€‚
 
-Ê¹ÓÃÌõ¼ş
+ä½¿ç”¨æ¡ä»¶
 ------------------
-1.ÄúµÄ»úÆ÷±ØĞëÅäÖÃÁËANDROID»·¾³£¬Èç¹ûÃ»ÓĞÅäÖÃ£¬xtestserverÀïÒ²×Ô´øÁËÒ»Ì×adb»·¾³£¬ÇëÔÚÏµÍ³path»·¾³±äÁ¿Àï¼ÓÈëxtestserverµÄplatform-toolsÂ·¾¶£¨±ÈÈç£ºD:\xserverpublic\sdk\platform-tools£©
-2.±à¼­Æ÷ÓëÊÖ»úÊÇÍ¨¹ıusb½»»¥£¬ËùÒÔÊ¹ÓÃÊ±Çë±£³ÖÒ»Ì¨ÊÖ»úÁ¬½Ópc(ÊÖ»úĞèÌáÇ°°²×°xtest²¢ÊÚÈ¨)
+1.æ‚¨çš„æœºå™¨å¿…é¡»é…ç½®äº†ANDROIDç¯å¢ƒï¼Œå¦‚æœæ²¡æœ‰é…ç½®ï¼Œxtestserveré‡Œä¹Ÿè‡ªå¸¦äº†ä¸€å¥—adbç¯å¢ƒï¼Œè¯·åœ¨ç³»ç»Ÿpathç¯å¢ƒå˜é‡é‡ŒåŠ å…¥xtestserverçš„platform-toolsè·¯å¾„ï¼ˆæ¯”å¦‚ï¼šD:\xserverpublic\sdk\platform-toolsï¼‰
+2.ç¼–è¾‘å™¨ä¸æ‰‹æœºæ˜¯é€šè¿‡usbäº¤äº’ï¼Œæ‰€ä»¥ä½¿ç”¨æ—¶è¯·ä¿æŒä¸€å°æ‰‹æœºè¿æ¥pc(æ‰‹æœºéœ€æå‰å®‰è£…xtestå¹¶æˆæƒ)
 
 
-°²×°
+å®‰è£…
 ------------------
-1.ÏÈÏÂÔØ°²×°sublime text 2 [https://www.sublimetext.com/2/](https://www.sublimetext.com/2/)
-2.µã»÷ "peferences" >"browser packages",½øÈëµ½°²×°packageµÄÄ¿Â¼ÏÂ£¬½«±¾²å¼şµÄkatÎÄ¼ş¼Ğcopyµ½¸ÃÄ¿Â¼
+1.å…ˆä¸‹è½½å®‰è£…sublime text 2 [https://www.sublimetext.com/2/](https://www.sublimetext.com/2/)
+2.ç‚¹å‡» "peferences" >"browser packages",è¿›å…¥åˆ°å®‰è£…packageçš„ç›®å½•ä¸‹ï¼Œå°†æœ¬æ’ä»¶çš„katæ–‡ä»¶å¤¹copyåˆ°è¯¥ç›®å½•
 
 ![image](https://github.com/TencentXtest/sublime_kat/raw/master/images/1.png)
 
 ![image](https://github.com/TencentXtest/sublime_kat/raw/master/images/2.png)
 
-3.ÖØÆôsublime£¬ÓÒ¼üÈç¹û³öÏÖÈçÏÂ²Ëµ¥,ËµÃ÷°²×°³É¹¦¡£
+3.é‡å¯sublimeï¼Œå³é”®å¦‚æœå‡ºç°å¦‚ä¸‹èœå•,è¯´æ˜å®‰è£…æˆåŠŸã€‚
 
 ![image](https://github.com/TencentXtest/sublime_kat/raw/master/images/3.png)
 
 
-²åÈëÂ¼ÖÆµÄ½Å±¾
+æ’å…¥å½•åˆ¶çš„è„šæœ¬
 ------------------------------
-### 1.µ¼Èëdemo¹¤³Ì£¬xtestserver2.2°æ±¾Ôö¼ÓÁËluaÎÄ¼ş¼Ğ£¬Ñ¡Ôñdemo¹¤³Ì
+### 1.å¯¼å…¥demoå·¥ç¨‹ï¼Œxtestserver2.2ç‰ˆæœ¬å¢åŠ äº†luaæ–‡ä»¶å¤¹ï¼Œé€‰æ‹©demoå·¥ç¨‹
 
 ![image](https://github.com/TencentXtest/sublime_kat/raw/master/images/4.png)
 
 ![image](https://github.com/TencentXtest/sublime_kat/raw/master/images/5.png)
 
-### 2.²åÈëÊÖ»ú¶ËÂ¼ÖÆµÄ½Å±¾:ÊÖ»úÁ¬½Ópc,ÓÃxtestÂ¼ÖÆcaseºó£¬Ë«»÷¹¤³ÌÖĞµÄ"1.lua"£¬µã»÷µ¼³ö½Å±¾£¬È»ºóÔÚsublimeÀïÓÒ¼üÑ¡Ôñ"²åÈëÂ¼ÖÆ´úÂë",
-ÊÖ»ú¶ËÂ¼ÖÆµÄ½Å±¾»á×Ô¶¯²åÈëµ½±à¼­Æ÷Àï
+### 2.æ’å…¥æ‰‹æœºç«¯å½•åˆ¶çš„è„šæœ¬:æ‰‹æœºè¿æ¥pc,æ‰‹æœºç«¯æ“ä½œï¼šå½•åˆ¶caseåï¼Œç‚¹å‡»å¯¼å‡ºè„šæœ¬ï¼Œsublimeç«¯æ“ä½œï¼šåŒå‡»å·¥ç¨‹ä¸­çš„"1.lua"ï¼ˆè¿è¡Œæ—¶å€™ä¼šè‡ªåŠ¨è¿è¡Œè¯¥è„šæœ¬ï¼‰ï¼Œå°†å…‰æ ‡å®šä½åœ¨æƒ³è¦æ’å…¥ä»£ç çš„ä½ç½®ï¼Œå³é”®é€‰æ‹©"æ’å…¥å½•åˆ¶ä»£ç ",æ‰‹æœºç«¯å½•åˆ¶çš„è„šæœ¬ä¼šè‡ªåŠ¨æ’å…¥åˆ°ç¼–è¾‘å™¨çš„æŒ‡å®šä½ç½®ã€‚
 
+![image](https://github.com/TencentXtest/sublime_kat/raw/master/images/10.png)
 ![image](https://github.com/TencentXtest/sublime_kat/raw/master/images/6.png)
 
 
 
-±à¼­ºÍÔËĞĞ½Å±¾
+ç¼–è¾‘å’Œè¿è¡Œè„šæœ¬
 ------------------------------
-### 1.±à¼­½Å±¾£ºkat±à¼­Æ÷Ìá¹©´úÂëÌáÊ¾¹¦ÄÜ£¬Ö»ĞèÒªÊäÈë·½·¨Ê××ÖÄ¸¾Í¿ÉÒÔµ¯³öÌáÊ¾£¨api·½·¨Çë²Î¿¼xtestserverÏÂÃæµÄlua/docÎÄ¼ş¼Ğ£©
+### 1.ç¼–è¾‘è„šæœ¬ï¼škatç¼–è¾‘å™¨æä¾›ä»£ç æç¤ºåŠŸèƒ½ï¼Œåªéœ€è¦è¾“å…¥æ–¹æ³•é¦–å­—æ¯å°±å¯ä»¥å¼¹å‡ºæç¤ºï¼ˆapiæ–¹æ³•è¯·å‚è€ƒxtestserverä¸‹é¢çš„lua/docæ–‡ä»¶å¤¹ï¼‰
 ![image](https://github.com/TencentXtest/sublime_kat/raw/master/images/7.png)
 
-### 2.ÔËĞĞ½Å±¾£ºÇëÏÈ½«parameter.luaÀïpackageNameµÄÖµĞŞ¸ÄÎª±»²âÓ¦ÓÃµÄ°üÃû£¬²Ù×÷·½·¨:ÓÒ»÷Ö±½Ó²åÈë°üÃû¡£È»ºóÓÒ»÷ÔËĞĞXtest£¬¼´¿ÉÆô¶¯xtest²âÊÔ¡£
+### 2.è¿è¡Œè„šæœ¬ï¼šè¯·å…ˆå°†parameter.luaé‡ŒpackageNameçš„å€¼ä¿®æ”¹ä¸ºè¢«æµ‹åº”ç”¨çš„åŒ…åï¼Œæ“ä½œæ–¹æ³•:å³å‡»ç›´æ¥â€œæ’å…¥åŒ…åâ€ï¼ˆå½“ç„¶ä¹Ÿå¯ä»¥è‡ªå·±æ‰‹åŠ¨å†™å…¥ï¼‰ã€‚ç„¶åå³å‡»è¿è¡ŒXtestï¼Œå³å¯å¯åŠ¨xtestæµ‹è¯•ã€‚
 ![image](https://github.com/TencentXtest/sublime_kat/raw/master/images/8.png)
 
 
-²é¿´²âÊÔ½á¹û
+æŸ¥çœ‹æµ‹è¯•ç»“æœ
 ------------------------------
 
-²âÊÔ½áÊøºó£¬ÓÒ»÷"À­È¡²âÊÔ½á¹û",±à¼­Æ÷¾Í»á½«±¾´Î²âÊÔ½á¹ûÀ­È¡»ØÀ´¡£
+æµ‹è¯•ç»“æŸåï¼Œå³å‡»"æ‹‰å–æµ‹è¯•ç»“æœ",ç¼–è¾‘å™¨å°±ä¼šå°†æœ¬æ¬¡æµ‹è¯•ç»“æœæ‹‰å–å›æ¥ã€‚
 ![image](https://github.com/TencentXtest/sublime_kat/raw/master/images/9.png)
 
-ÆäËû
+å…¶ä»–
 -----------------
-Èç¹ûÄú»¹ÓĞÆäËûÎÊÌâ£¬Çë¼ÓÈëÁªÏµÎÒÃÇµÄqq£¬¼¼ÊõÎÊÌâÒ²¿ÉÒÔÖ±½ÓÔÚgithubÉÏ½¨Á¢issues
+å¦‚æœæ‚¨è¿˜æœ‰å…¶ä»–é—®é¢˜ï¼Œè¯·åŠ å…¥è”ç³»æˆ‘ä»¬çš„qqï¼ŒæŠ€æœ¯é—®é¢˜ä¹Ÿå¯ä»¥ç›´æ¥åœ¨githubä¸Šå»ºç«‹issues
 https://github.com/TencentXtest/Xtest/issues
 
 
