@@ -4,91 +4,6 @@ adbpath = "adb"
 delimiter = '\\'
 tmpFolder = 'KatTmpFolder'
 
-class RunCommand(sublime_plugin.TextCommand):
-	# main
-	def run(self, edit):
-		print '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
-		print "================================run kat !! (run main.lua)================================"
-		# get target folder path
-		filePath = self.view.file_name().split(delimiter)
-		folderPath = ""
-		for i in range(0, len(filePath) - 1):
-			folderPath = folderPath + filePath[i] + delimiter
-		# traversal of the suffix ".Lua" file name
-		fileList = []
-		for i in os.listdir(folderPath):
-			resultFilePath = folderPath + i
-			if i.endswith('.lua') or i.endswith('.so') or i.endswith('.txt') or i.endswith('.xls') or i.endswith('.jar') or i.endswith('.jpg') or i.endswith('.png') or i.endswith('.apk'):
-				fileList.append(resultFilePath)
-		# run adb Command
-		try:
-			self.pushFileToDevice(fileList)
-		except Exception, e:
-			print e
-			sublime.error_message(e)
-		t = threading.Thread(target=self.showlog)
-		t.setDaemon(True)
-		t.start()
-		# t.join()
-		
-	def pushFileToDevice(self, pathlist):
-		# check adb is connection, if 'device not found', pop up error!
-		self.view.run_command('stop_stop')
-		for i in range(0, len(pathlist)):
-			result = subprocess.Popen(adbpath + " push " + pathlist[i] + " /sdcard/kat/", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-			# print result.communicate()
-		isKatInstall = subprocess.Popen(adbpath + " shell am start -n com.kunpeng.kapalai.kat/com.kunpeng.kapalai.kat.core.TesttoolActivity --es luapath  /sdcard/kat/Main.lua", shell = True, stdout = subprocess.PIPE)
-		infooutput_kat, erroutput_kat = isKatInstall.communicate()
-		# print infooutput_kat
-		if infooutput_kat.find("does not exist") != -1:
-			sublime.error_message("kat not found OR kat version is older!!")
-		else:
-			pass
-
-	def showlog(self):
-		time.sleep(8)
-		lastTimeLogRow = 0 
-		error_lastTimeLogRow = 0
-		begin_time = time.time()
-		end_time = begin_time + 3600
-		while time.time() < end_time:
-			temp_Log = subprocess.Popen(adbpath + ' shell cat /sdcard/kat/Result/Log.txt', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-			data_Log = temp_Log.communicate()
-			temp_switch = subprocess.Popen(adbpath + ' shell cat /sdcard/kat/Result/show_log_stop.txt', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-			is_close_switch = temp_switch.communicate()
-			error_Log = subprocess.Popen(adbpath + ' shell cat /sdcard/kat/Result/error.txt', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-			error_data = error_Log.communicate()
-
-			if is_close_switch[0].find('No such file') == -1:
-				# print "---------Log thread is over---------"
-				break
-			if not data_Log[1]:
-				count =  data_Log[0].count('\r\r\n')
-				# print data_Log
-				if lastTimeLogRow != count :
-					if lastTimeLogRow > count :
-						break
-					else:
-						for i in range(lastTimeLogRow, count):
-							if data_Log[0].find('No such file') == -1:
-								print '',data_Log[0].split('\r\r\n')[i]
-						lastTimeLogRow = count
-				time.sleep(0.3)
-			else:
-				print "--------------------------------------"
-				print data_Log[1]
-				break
-			# error.txt解析
-			error_count = error_data[0].count('\r\r\n')
-			if error_lastTimeLogRow != error_count:
-				if error_lastTimeLogRow > error_count:
-					break
-				else:
-					for i in range(error_lastTimeLogRow, error_count):
-						if error_data[0].find('No such file') == -1:
-							print '---Error---',error_data[0].split('\r\r\n')[i]
-					error_lastTimeLogRow = error_count
-
 class RunLabKatCommand(sublime_plugin.TextCommand):
 	# main
 	def run(self, edit):
@@ -124,8 +39,12 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 		for i in range(0, len(pathlist)):
 			# print adbpath + " push " + pathlist[i] + " /sdcard/kat/"
 			result = subprocess.Popen(adbpath + " push " + pathlist[i] + " /sdcard/kat/", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-		print "<<< " + adbpath + " shell am instrument -w com.kunpeng.kapalai.kat/com.kunpeng.kat.base.KatInstrumentationTestRunner >>>"
-		isKatInstall = subprocess.Popen(adbpath + " shell am instrument -w com.kunpeng.kapalai.kat/com.kunpeng.kat.base.KatInstrumentationTestRunner", shell = True, stdout = subprocess.PIPE)
+			erroutput = result.communicate()
+			if erroutput[1].split(':')[0] == 'error':
+				sublime.error_message(erroutput[1])
+				exit()
+		print "<<< " + adbpath + " shell am instrument -e class com.kunpeng.kat.base.TestMainInstrumentation -w com.kunpeng.kapalai.kat/com.kunpeng.kat.base.KatInstrumentationTestRunner >>>"
+		isKatInstall = subprocess.Popen(adbpath + " shell am instrument -e class com.kunpeng.kat.base.TestMainInstrumentation -w com.kunpeng.kapalai.kat/com.kunpeng.kat.base.KatInstrumentationTestRunner", shell = True, stdout = subprocess.PIPE)
 		infooutput_kat, erroutput_kat = isKatInstall.communicate()
 		# print infooutput_kat
 		if infooutput_kat.find("does not exist") != -1:
@@ -134,7 +53,7 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 			pass
 
 	def showlog(self):
-		time.sleep(8)
+		time.sleep(10)
 		lastTimeLogRow = 0 
 		error_lastTimeLogRow = 0
 		begin_time = time.time()
@@ -212,6 +131,10 @@ class RunXtestCommand(sublime_plugin.TextCommand):
 		for i in range(0, len(pathlist)):
 			# print adbpath + " push " + pathlist[i] + " /sdcard/kat/"
 			result = subprocess.Popen(adbpath + " push " + pathlist[i] + " /sdcard/kat/", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+			erroutput = result.communicate()
+			if erroutput[1].split(':')[0] == 'error':
+				sublime.error_message(erroutput[1])
+				exit()
 		print "<<< " + adbpath + " shell am instrument -e class com.kunpeng.kat.base.TestMainInstrumentation -w com.tencent.utest.recorder/com.kunpeng.kat.base.KatInstrumentationTestRunner >>>"
 		isKatInstall = subprocess.Popen(adbpath + " shell am instrument -e class com.kunpeng.kat.base.TestMainInstrumentation -w com.tencent.utest.recorder/com.kunpeng.kat.base.KatInstrumentationTestRunner", shell = True, stdout = subprocess.PIPE)
 		infooutput_kat, erroutput_kat = isKatInstall.communicate()
@@ -269,6 +192,7 @@ class StopCommand(sublime_plugin.TextCommand):
 
 	def run(self, edit):
 		print "================================kill kat!!================================"
+		print sublime.installed_packages_path()
 		# run adb Command
 		os.popen(adbpath + " shell service call activity 79 s16 com.kunpeng.kapalai.kat")
 		os.popen(adbpath + " shell service call activity 79 s16 com.tencent.utest.recorder")
@@ -954,68 +878,14 @@ class NewFolderCommand(sublime_plugin.TextCommand):
 
 class UpdateKatPluginCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
-		self.urls = ["https://raw.githubusercontent.com/harryhappy/demo/master/leo/Context.sublime-menu",
-                     "https://raw.githubusercontent.com/harryhappy/demo/master/leo/Default.sublime-keymap",
-                     "https://raw.githubusercontent.com/harryhappy/demo/master/leo/RunCommand.py",
-                     "https://raw.githubusercontent.com/harryhappy/demo/master/leo/Side Bar.sublime-menu",
-                     "https://raw.githubusercontent.com/harryhappy/demo/master/leo/utest_shell"
+		self.urls = ["https://github.com/TencentXTest/sublime_kat/blob/master/kat/Context.sublime-menu",
+                     "https://github.com/TencentXTest/sublime_kat/blob/master/kat/Default.sublime-keymap",
+                     "https://github.com/TencentXTest/sublime_kat/blob/master/kat/RunCommand.py",
+                     "https://github.com/TencentXTest/sublime_kat/blob/master/kat/Side Bar.sublime-menu",
+                     "https://github.com/TencentXTest/sublime_kat/blob/master/kat/utest_shell"
                      ]
 		for url in self.urls:
 			filename = url.split("/")[-1]
-			urllib.urlretrieve(url,os.path.join(r"C:\XTestScriptTools\Data\Packages\kat",filename))
+			urllib.urlretrieve(url,os.path.join(sublime.packages_path() + r"\kat", filename))
 
-class InstallCommand(sublime_plugin.TextCommand):
-	def run(self, edit):
-		t = threading.Thread(target=self.install)
-		t.setDaemon(True)
-		t.start()
-			
-	def install(self):
-		p = subprocess.Popen("D:\\xadb\\xadb.exe" + " devices -l", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-		devicesListInfo = p.communicate()
-		devicesList = devicesListInfo[0].split('\r\n')
-		j = 1
-		# isLock = False
-		devices = ''
-		for dl in devicesList:
-			if 'attached' not in dl and 'device' in dl:
-				dev = dl.split('	device')[0]
-				print str(j) + ' ' + 'D:\\xadb\\xadb.exe' + u' -s ' + dev + u' install -r C:\\Users\\SJKP\\Desktop\\xtest.apk'
-				# print 'D:\\xadb\\xadb.exe' + u' -s ' + dev + u' shell cat /system/build.prop'
-				temp = subprocess.Popen('D:\\xadb\\xadb.exe' + u' -s ' + dev + u' shell cat /system/build.prop', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-				infooutput_temp = temp.communicate()
-				if not infooutput_temp[1]:
-					tempinfo = infooutput_temp[0].split("\r\r\n")
-					for i in range(0,len(tempinfo)):
-						#            print tempinfo[i]
-						if "ro.product.brand" in tempinfo[i]:
-							brand = tempinfo[i].split("=")[1]
-							brand = brand.split("\r")[0]
-						elif "ro.product.model" in tempinfo[i]:
-							devices = tempinfo[i].split("=")[1]
-							devices = devices.split("\r")[0]
-							if "SM" in devices:
-								devices = devices.split("-")[1]
-							break	
-						elif "ZTE" in devices:
-							devices = devices.split(" ")[1]
-						elif "MI" in devices:
-							devices = devices.split(" ")[1]
-						elif "ro.build.version.ota" in tempinfo[i]:
-							devices = tempinfo[i].split("=")[1].split("ROM")[0]    
-						elif "ro.build.version.incremental" in tempinfo[i]:
-							mi_version = tempinfo[i].split("=")[1]
-							if mi_version == "V6.1.2.0.KXDCNBJ":
-								devices = "4C" 
-							elif mi_version == "V6.4.1.0.KXGCNCB":
-								devices = "4LTE-CT" 
-							elif mi_version == "V6.3.11.0.KXECNBL":
-								devices = "NOTE-LTE"
-							elif mi_version == "V6.2.1.0.KXDCNBK":
-								devices = "4LTE-CMCC"
-					j+=1
-					print devices
-				else:
-					print infooutput_temp[1]
-				os.system('D:\\xadb\\xadb.exe' + u" -s " + dev + u" install -r C:\\Users\\SJKP\\Desktop\\xtest.apk")
-		print "install end!"
+
