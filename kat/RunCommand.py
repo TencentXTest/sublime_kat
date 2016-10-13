@@ -878,11 +878,11 @@ class NewFolderCommand(sublime_plugin.TextCommand):
 
 class UpdateKatPluginCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
-		self.urls = ["https://github.com/TencentXTest/sublime_kat/blob/master/kat/Context.sublime-menu",
-                     "https://github.com/TencentXTest/sublime_kat/blob/master/kat/Default.sublime-keymap",
-                     "https://github.com/TencentXTest/sublime_kat/blob/master/kat/RunCommand.py",
-                     "https://github.com/TencentXTest/sublime_kat/blob/master/kat/Side Bar.sublime-menu",
-                     "https://github.com/TencentXTest/sublime_kat/blob/master/kat/utest_shell"
+		self.urls = ["https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/Context.sublime-menu",
+                     "https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/Default.sublime-keymap",
+                     "https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/RunCommand.py",
+                     "https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/Side Bar.sublime-menu",
+                     "https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/utest_shell"
                      ]
 		for url in self.urls:
 			filename = url.split("/")[-1]
