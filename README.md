@@ -26,7 +26,7 @@ sublime_kat介绍
 
 插入录制的脚本
 ------------------------------
-### 1.导入demo工程，xtestserver2.2版本增加了lua文件夹，选择demo工程
+### 1.导入demo工程:demo工程在xtestserver安装目录下lua/demo里，选择demo工程，kk即可导入到编辑器
 
 ![image](https://github.com/TencentXtest/sublime_kat/raw/master/images/4.png)
 
