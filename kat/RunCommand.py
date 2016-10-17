@@ -2,10 +2,12 @@
 import sublime, sublime_plugin, os, subprocess, sys, time, threading, re, urllib
 delimiter = os.sep
 platsys = sublime.platform()
+if platsys != 'windows':
+	platsys = 'mac'
 startindex = 0
 rootpack = sublime.packages_path()
-targetPath = (rootpack + delimiter + 'kat' + delimiter + platsys + delimiter).replace(" ", "\ ")
-if not os.path.exists(targetPath):
+targetPath = rootpack.replace(" ", "\ ") + delimiter + 'kat' + delimiter + platsys + delimiter
+if platsys == 'windows' and not os.path.exists(targetPath):
 	os.mkdir(targetPath)
 if(platsys == "windows"):
 	adbpath = targetPath + "adb.exe"
