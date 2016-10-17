@@ -6,10 +6,10 @@ startindex=0
 rootpack=sublime.packages_path()
 # print "111111111111111111"+os.path.abspath(rootpack)
 if(platsys =="windows"):
-	os.mkdir('"' + rootpack+delimiter + "kat" + delimiter + "windows")
+	os.mkdir('"' + rootpack+delimiter + "kat" + delimiter + "windows" + '"')
 	adbpath = '"' + rootpack+delimiter + "kat" + delimiter + "windows" + delimiter+"adb.exe" + '"'
 else:
-	os.mkdir('"' + rootpack+delimiter + "kat" + delimiter + "mac")
+	os.mkdir('"' + rootpack+delimiter + "kat" + delimiter + "mac" + '"')
 	adbpath = '"' + rootpack+delimiter + "kat" + delimiter + "mac" + delimiter + "adb" + '"'
 	startindex=1
 tmpFolder = 'KatTmpFolder'
