@@ -1883,7 +1883,6 @@ class UpdateKatPluginCommand(sublime_plugin.TextCommand):
 					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/AdbWinUsbApi.dll",
 					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/adb.exe",
 					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/zipalign.exe"
-					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/adb",
                      ]
 		for url in self.urls:
 			filename = url.split("/")[-1]
