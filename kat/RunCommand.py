@@ -13,7 +13,6 @@ else:
 
 tmpFolder = 'KatTmpFolder'
 
-repr
 class RunCommand(sublime_plugin.TextCommand):
 	# main
 	def run(self, edit):
