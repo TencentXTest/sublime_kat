@@ -976,6 +976,8 @@ class UpdateKatPluginCommand(sublime_plugin.TextCommand):
                      ]
 		for url in self.urls:
 			filename = url.split("/")[-1]
-			print "--------" + filename
-			urllib.urlretrieve(url,os.path.join(sublime.packages_path() + r"\kat", filename))
+			if filename == 'AdbWinApi.dll' or filename == 'AdbWinUsbApi.dll' or filename == 'adb.exe' or filename == 'zipalign.exe':
+				urllib.urlretrieve(url,os.path.join(sublime.packages_path() + delimiter + 'kat' + delimiter + platsys, filename))
+			else:
+				urllib.urlretrieve(url,os.path.join(sublime.packages_path() + r"\kat", filename))
 
