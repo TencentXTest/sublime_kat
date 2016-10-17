@@ -134,8 +134,8 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 		for i in range(0, len(pathlist)):
 			# print adbpath + " push " + pathlist[i] + " /sdcard/kat/"
 			result = subprocess.Popen(adbpath + " push " + pathlist[i] + " /sdcard/kat/", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-		print "<<< " + adbpath + " shell am instrument -w com.kunpeng.kapalai.kat/com.kunpeng.kat.base.KatInstrumentationTestRunner >>>"
-		isKatInstall = subprocess.Popen(adbpath + " shell am instrument -w com.kunpeng.kapalai.kat/com.kunpeng.kat.base.KatInstrumentationTestRunner", shell = True, stdout = subprocess.PIPE)
+		print "<<< " + adbpath + " shell am instrument -e class com.kunpeng.kat.base.TestMainInstrumentation -w com.kunpeng.kapalai.kat/com.kunpeng.kat.base.KatInstrumentationTestRunner >>>"
+		isKatInstall = subprocess.Popen(adbpath + " shell am instrument -e class com.kunpeng.kat.base.TestMainInstrumentation -w com.kunpeng.kapalai.kat/com.kunpeng.kat.base.KatInstrumentationTestRunner", shell = True, stdout = subprocess.PIPE)
 		infooutput_kat, erroutput_kat = isKatInstall.communicate()
 		# print infooutput_kat
 		if infooutput_kat.find("does not exist") != -1:
@@ -964,68 +964,14 @@ class NewFolderCommand(sublime_plugin.TextCommand):
 
 class UpdateKatPluginCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
-		self.urls = ["https://raw.githubusercontent.com/harryhappy/demo/master/leo/Context.sublime-menu",
-                     "https://raw.githubusercontent.com/harryhappy/demo/master/leo/Default.sublime-keymap",
-                     "https://raw.githubusercontent.com/harryhappy/demo/master/leo/RunCommand.py",
-                     "https://raw.githubusercontent.com/harryhappy/demo/master/leo/Side Bar.sublime-menu",
-                     "https://raw.githubusercontent.com/harryhappy/demo/master/leo/utest_shell"
+		self.urls = [
+                     	"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/RunCommand.py",
+                     	"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/AdbWinApi.dll",
+			"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/AdbWinUsbApi.dll",
+                     	"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/adb.exe",
+			"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/zipalign.exe"
                      ]
 		for url in self.urls:
 			filename = url.split("/")[-1]
-			urllib.urlretrieve(url,os.path.join(r"C:\XTestScriptTools\Data\Packages\kat",filename))
+			urllib.urlretrieve(url,os.path.join(sublime.packages_path() + r"\kat", filename))
 
-class InstallCommand(sublime_plugin.TextCommand):
-	def run(self, edit):
-		t = threading.Thread(target=self.install)
-		t.setDaemon(True)
-		t.start()
-			
-	def install(self):
-		p = subprocess.Popen("D:\\xadb\\xadb.exe" + " devices -l", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-		devicesListInfo = p.communicate()
-		devicesList = devicesListInfo[0].split('\r\n')
-		j = 1
-		# isLock = False
-		devices = ''
-		for dl in devicesList:
-			if 'attached' not in dl and 'device' in dl:
-				dev = dl.split('	device')[0]
-				print str(j) + ' ' + 'D:\\xadb\\xadb.exe' + u' -s ' + dev + u' install -r C:\\Users\\SJKP\\Desktop\\xtest.apk'
-				# print 'D:\\xadb\\xadb.exe' + u' -s ' + dev + u' shell cat /system/build.prop'
-				temp = subprocess.Popen('D:\\xadb\\xadb.exe' + u' -s ' + dev + u' shell cat /system/build.prop', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-				infooutput_temp = temp.communicate()
-				if not infooutput_temp[1]:
-					tempinfo = infooutput_temp[0].split("\r\r\n")
-					for i in range(0,len(tempinfo)):
-						#            print tempinfo[i]
-						if "ro.product.brand" in tempinfo[i]:
-							brand = tempinfo[i].split("=")[1]
-							brand = brand.split("\r")[0]
-						elif "ro.product.model" in tempinfo[i]:
-							devices = tempinfo[i].split("=")[1]
-							devices = devices.split("\r")[0]
-							if "SM" in devices:
-								devices = devices.split("-")[1]
-							break	
-						elif "ZTE" in devices:
-							devices = devices.split(" ")[1]
-						elif "MI" in devices:
-							devices = devices.split(" ")[1]
-						elif "ro.build.version.ota" in tempinfo[i]:
-							devices = tempinfo[i].split("=")[1].split("ROM")[0]    
-						elif "ro.build.version.incremental" in tempinfo[i]:
-							mi_version = tempinfo[i].split("=")[1]
-							if mi_version == "V6.1.2.0.KXDCNBJ":
-								devices = "4C" 
-							elif mi_version == "V6.4.1.0.KXGCNCB":
-								devices = "4LTE-CT" 
-							elif mi_version == "V6.3.11.0.KXECNBL":
-								devices = "NOTE-LTE"
-							elif mi_version == "V6.2.1.0.KXDCNBK":
-								devices = "4LTE-CMCC"
-					j+=1
-					print devices
-				else:
-					print infooutput_temp[1]
-				os.system('D:\\xadb\\xadb.exe' + u" -s " + dev + u" install -r C:\\Users\\SJKP\\Desktop\\xtest.apk")
-		print "install end!"
