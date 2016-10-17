@@ -968,13 +968,14 @@ class NewFolderCommand(sublime_plugin.TextCommand):
 class UpdateKatPluginCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
 		self.urls = [
-                     	"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/RunCommand.py",
-                     	"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/AdbWinApi.dll",
-			"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/AdbWinUsbApi.dll",
-                     	"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/adb.exe",
-			"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/zipalign.exe"
+					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/RunCommand.py",
+					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/AdbWinApi.dll",
+					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/AdbWinUsbApi.dll",
+					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/adb.exe",
+					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/zipalign.exe"
                      ]
 		for url in self.urls:
 			filename = url.split("/")[-1]
+			print "--------" + filename
 			urllib.urlretrieve(url,os.path.join(sublime.packages_path() + r"\kat", filename))
 
