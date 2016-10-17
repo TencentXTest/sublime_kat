@@ -103,7 +103,6 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 	# main
 	def run(self, edit):
 		print '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
-		print platform.system()
 		print "================================run kat !! (run main.lua)================================"
 		# get target folder path
 		filePath = self.view.file_name().split(delimiter)
