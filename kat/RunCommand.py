@@ -2,16 +2,19 @@
 import sublime, sublime_plugin, os, subprocess, sys, time, threading, re, urllib
 delimiter = os.sep
 platsys = sublime.platform()
-startindex=0
-rootpack=sublime.packages_path()
-# print "111111111111111111"+os.path.abspath(rootpack)
-if(platsys =="windows"):
-	os.mkdir('"' + rootpack+delimiter + "kat" + delimiter + "windows" + '"')
-	adbpath = '"' + rootpack+delimiter + "kat" + delimiter + "windows" + delimiter+"adb.exe" + '"'
+startindex = 0
+rootpack = sublime.packages_path()
+if(platsys == "windows"):
+	targetPath = (rootpack + delimiter + 'kat' + delimiter + 'windows' + delimiter).replace(" ", "\ ")
+	if not os.path.exists(targetPath):
+		os.mkdir(targetPath)
+	adbpath = targetPath + "adb.exe"
 else:
-	os.mkdir('"' + rootpack+delimiter + "kat" + delimiter + "mac" + '"')
-	adbpath = '"' + rootpack+delimiter + "kat" + delimiter + "mac" + delimiter + "adb" + '"'
-	startindex=1
+	targetPath = (rootpack + delimiter + 'kat' + delimiter + 'mac' + delimiter).replace(" ", "\ ")
+	if not os.path.exists(targetPath):
+		os.mkdir(targetPath)
+	adbpath = targetPath + "adb"
+	startindex = 1
 tmpFolder = 'KatTmpFolder'
 
 class RunCommand(sublime_plugin.TextCommand):
