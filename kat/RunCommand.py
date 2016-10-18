@@ -13,7 +13,6 @@ if(platsys == "windows"):
 	adbpath = targetPath + "adb.exe"
 else:
 	adbpath = targetPath + "adb"
-	startindex = 1
 tmpFolder = 'KatTmpFolder'
 
 class RunCommand(sublime_plugin.TextCommand):
