@@ -12,11 +12,11 @@
 		"caption": "-",
 		"id": "end"
 	}, {
-		"caption": "运行Kat		Ctrl+F11",
+		"caption": "运行KAT		Ctrl+F11",
 		"command": "run",
 		"args": {}
 	}, {
-		"caption": "停止Kat		Ctrl+F12",
+		"caption": "停止测试		Ctrl+F12",
 		"command": "stop",
 		"args": {}
 	},
