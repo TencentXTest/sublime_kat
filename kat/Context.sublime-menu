@@ -5,7 +5,7 @@
 		"caption": "运行KAT"
 	}, {
 		"command": "stop",
-		"caption": "停止KAT"
+		"caption": "停止测试"
 	},
 	//  {
 	// 	"command": "run_record_kat",
