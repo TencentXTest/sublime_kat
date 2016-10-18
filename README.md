@@ -10,9 +10,7 @@ http://v.qq.com/x/page/l0337y41tvt.html
 
 使用条件
 ------------------
-1.您的机器必须配置了ANDROID环境，如果没有配置，xtestserver里也自带了一套adb环境，请在系统path环境变量里加入xtestserver的platform-tools路径（比如：D:\xserverpublic\sdk\platform-tools）
-2.编辑器与手机是通过usb交互，所以使用时请保持一台手机连接pc(手机需提前安装xtest并授权)
-
+您需要一台安装xtest并成功授权的手机，并保持与pc的usb的连接
 
 安装
 ------------------
