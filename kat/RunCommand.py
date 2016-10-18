@@ -768,7 +768,7 @@ class RecordCommand(sublime_plugin.TextCommand):
 				e = x
 		for x in xrange(0, len(data_Log[0].split('\n'))):
 			if s<x<e :
-				self.insert_contents(edit, data_Log[0].split('\r\r\n')[x].decode("utf-8"))
+				self.insert_contents(edit, data_Log[0].split('\r\n')[x].decode("utf-8"))
 				# print data_Log[0].split('\r\r\n')[x]
 		# t = threading.Thread(target=self.isChanged, args=(edit,))
 		# t.setDaemon(True)
