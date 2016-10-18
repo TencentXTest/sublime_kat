@@ -4,6 +4,10 @@ sublime_kat介绍
 这是一款xtest自动化脚本编辑工具，利用该插件可以快速编辑xtest 自动化测试脚本，支持运行、拉取测试结果等功能。
 目前只能运行在sublime text 2环境下。
 
+视频教程
+------------------
+http://v.qq.com/x/page/l0337y41tvt.html
+
 使用条件
 ------------------
 1.您的机器必须配置了ANDROID环境，如果没有配置，xtestserver里也自带了一套adb环境，请在系统path环境变量里加入xtestserver的platform-tools路径（比如：D:\xserverpublic\sdk\platform-tools）
