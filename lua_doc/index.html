@@ -1,0 +1,5436 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>kat core 文档</title>
+    <link rel="stylesheet" href="ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>kat_core_doc</h1>
+
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><strong>Core</strong></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>Core</code></h1>
+<p>Kapalai黑盒自动化核心类库
+
+ Core模块中的API与业务无关,只作为核心类库扩展使用 (Version:3.3.8)</p>
+<p></p>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>Copyright</strong>: ---</li>
+        <li><strong>License</strong>: ---</li>
+        <li><strong>Author</strong>: Creeper</li>
+    </ul>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#handler">handler (tag, detail)</a></td>
+	<td class="summary">HANDLER for Exception responding to ANR or Crash.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getControl_XY">getControl_XY (id, key, ctext, classpath)</a></td>
+	<td class="summary">得到控件的X,Y坐标值</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#click">click (id, key, ctext, classpath, clicktime, path)</a></td>
+	<td class="summary">点击操作</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#clickByEvent">clickByEvent (id, key, ctext, classpath, event, path)</a></td>
+	<td class="summary">可选事件类型的点击操作</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#basic_click">basic_click (id, key, ctext, classpath, path)</a></td>
+	<td class="summary">基础性质的点击操作,常用在对性能要求高的场景中</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tap_original">tap_original (id, key, ctext, classpath, Timeout, path, activity)</a></td>
+	<td class="summary">等待控件并点击</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tap_fuzzy">tap_fuzzy (id, key, ctext, classpath, record_resolution_x, Timeout, path)</a></td>
+	<td class="summary">等待控件并点击</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#longTouch_original">longTouch_original (id, key, ctext, classpath, TouchTime, path)</a></td>
+	<td class="summary">长按操作</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#scroll_original">scroll_original (x1, record_resolution_x, path)</a></td>
+	<td class="summary">按坐标滑动</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#doubleClick_original">doubleClick_original (id, key, ctext, classpath, path)</a></td>
+	<td class="summary">双击操作</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#isCurrentPage">isCurrentPage (id, key, ctext, classpath)</a></td>
+	<td class="summary">判断控件是否在当前页面</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getControlerText">getControlerText (id, key, ctext, classpath)</a></td>
+	<td class="summary">获取控件文本属性值</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#findTextFromControler">findTextFromControler (id, key, ctext, classpath, text)</a></td>
+	<td class="summary">在指定的控件下查找字符串</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#findControl">findControl (id, key, ctext, classpath)</a></td>
+	<td class="summary">判断是否找到控件</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getControlerRect">getControlerRect (id, key, ctext, classpath)</a></td>
+	<td class="summary">得到控件的坐标值</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setControlerText_original">setControlerText_original (id, key, ctext, classpath, content)</a></td>
+	<td class="summary">向控件输入文本信息</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#moveFindControler">moveFindControler (id, key, ctext, classpath, moveTimes)</a></td>
+	<td class="summary">滑动寻找控件</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#findControlerAndMove">findControlerAndMove (id_1, key_1, ctext_1, classpath_1, id_2, key_2, ctext_2, classpath_2, path)</a></td>
+	<td class="summary">匹配控件并滑动</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#findTextAndClick">findTextAndClick (ctext, path)</a></td>
+	<td class="summary">通过文本属性点击控件</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#hideSoftInputFromWindow">hideSoftInputFromWindow (id, key, ctext, classpath)</a></td>
+	<td class="summary">隐藏与控件绑定的软键盘</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getClassFieldValue">getClassFieldValue (id, key, ctext, classpath, fieldname, superindex, type)</a></td>
+	<td class="summary">得到类似CompoundButton的控件当前状态</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#monkey">monkey (pkgName, runTime, logPath)</a></td>
+	<td class="summary">monkey测试专用</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#simpleMonkey">simpleMonkey (pkgName, runTime, logPath)</a></td>
+	<td class="summary">monkey测试专用</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setMonkeyProbability">setMonkeyProbability (click, doubleclick, input, scroll, longtouch, fingertouch, randomclick)</a></td>
+	<td class="summary">加强型monkey测试</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#startSimpleTest">startSimpleTest (pkgname)</a></td>
+	<td class="summary">局部全路径覆盖</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#clearIgnoreControl">clearIgnoreControl ()</a></td>
+	<td class="summary">清除局部全路径中忽略点击的控件</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cacheClear">cacheClear ()</a></td>
+	<td class="summary">清除所有cache的路径</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ignoreControl">ignoreControl (key, text, activity)</a></td>
+	<td class="summary">局部全路径忽略点击的控件信息,可叠加</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ignoreBack">ignoreBack ()</a></td>
+	<td class="summary">局部全路径忽略BACK键</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setMarkControl">setMarkControl (id, key, text, activity)</a></td>
+	<td class="summary">标示唯一页面</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setScanTime">setScanTime (time)</a></td>
+	<td class="summary">全路径执行时间</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setActionClip">setActionClip (time)</a></td>
+	<td class="summary">全路径是否截图,1为截图,0为不截图</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#startAutoTest">startAutoTest (pkgname, depth, scanTime)</a></td>
+	<td class="summary">新版本全路径遍历</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_findControl">cocos2dx_findControl (id, key, ctext, classpath)</a></td>
+	<td class="summary">判断是否找到控件</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_getControlerRect">cocos2dx_getControlerRect (id, key, ctext, classpath)</a></td>
+	<td class="summary">得到控件元素坐标</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_setControlerText">cocos2dx_setControlerText (id, key, ctext, classpath, content)</a></td>
+	<td class="summary">向控件输入文本,建议不要键入中文</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_click">cocos2dx_click (id, key, ctext, classpath, clicktime, path)</a></td>
+	<td class="summary">点击操作</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_clickByEvent">cocos2dx_clickByEvent (id, key, ctext, classpath, event, path)</a></td>
+	<td class="summary">可选事件类型的点击操作</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_waitAndClick">cocos2dx_waitAndClick (id, key, ctext, classpath, Timeout, path)</a></td>
+	<td class="summary">等待控件并点击</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_getControlerRect_AllChild">cocos2dx_getControlerRect_AllChild (id, key, ctext, classpath)</a></td>
+	<td class="summary">得到控件元素的容器对象</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_getListOfContainer">cocos2dx_getListOfContainer (Cocos2dxContainer)</a></td>
+	<td class="summary">得到容器对象的对应列表</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_sizeOfContainerList">cocos2dx_sizeOfContainerList (ListOfCocos2dxContainer)</a></td>
+	<td class="summary">获取容器列表长度</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_getChildOfContainerList">cocos2dx_getChildOfContainerList (ListOfCocos2dxContainer, i)</a></td>
+	<td class="summary">通过索引得到列表某一项</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_getTextOfChild">cocos2dx_getTextOfChild (Cocos2dxElement)</a></td>
+	<td class="summary">得到列表子元素的文本值</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_getXOfChild">cocos2dx_getXOfChild (Cocos2dxElement)</a></td>
+	<td class="summary">得到列表子元素的左上角x坐标值</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_getYOfChild">cocos2dx_getYOfChild (Cocos2dxElement)</a></td>
+	<td class="summary">得到列表子元素的左上角y坐标值</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_getDxOfChild">cocos2dx_getDxOfChild (Cocos2dxElement)</a></td>
+	<td class="summary">得到容器列表子元素的坐标宽度</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_getDyOfChild">cocos2dx_getDyOfChild (Cocos2dxElement)</a></td>
+	<td class="summary">得到容器列表子元素的坐标高度</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_getPathOfChild">cocos2dx_getPathOfChild (Cocos2dxElement)</a></td>
+	<td class="summary">得到列表子元素的layout层级值</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_getControl_XY">cocos2dx_getControl_XY (id, key, ctext, classpath)</a></td>
+	<td class="summary">得到x,y坐标值</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_longTouch">cocos2dx_longTouch (id, key, ctext, classpath, TouchTime, path)</a></td>
+	<td class="summary">长按操作</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_getControlContext">cocos2dx_getControlContext (ctext)</a></td>
+	<td class="summary">通过文本属性得到相同文本控件的列表容器对象</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#cocos2dx_getAllControl">cocos2dx_getAllControl ()</a></td>
+	<td class="summary">获取当前界面所有控件元素</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TimeMarker">TimeMarker (CaseN)</a></td>
+	<td class="summary">生成截屏后的图片路径</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#click_XYByEvent">click_XYByEvent (x, y, event, path)</a></td>
+	<td class="summary">可选事件类型的点击操作</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#clickpx">clickpx (px, py, clicktime, path)</a></td>
+	<td class="summary">按屏幕相对位置进行点击</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getScreenResolution">getScreenResolution ()</a></td>
+	<td class="summary">获取当前屏幕分辨率</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#isInstall">isInstall (PackageName)</a></td>
+	<td class="summary">检查被测包是否已安装成功</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#sleep_original">sleep_original (n)</a></td>
+	<td class="summary">让程序睡眠 N毫秒</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#snapshotScreen">snapshotScreen (x, y, dx, dy, path)</a></td>
+	<td class="summary">截屏并做区域标记</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#snapshotWholeScreen">snapshotWholeScreen (path, tag)</a></td>
+	<td class="summary">截屏整个屏幕并自定义显示标签</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setClipboardText">setClipboardText (content)</a></td>
+	<td class="summary">将信息复制进剪切板中,执行后必须预留时间</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getClipboardText">getClipboardText ()</a></td>
+	<td class="summary">得到剪切板内容</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#menu">menu (touchTime)</a></td>
+	<td class="summary">菜单Hard Key:menu(少部分手机不适用,慎用)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#home">home (touchTime)</a></td>
+	<td class="summary">主界面Hard Key:home(少部分手机不适用,慎用)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#back">back (touchTime)</a></td>
+	<td class="summary">返回Hard Key:back</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#addLuaPlan">addLuaPlan (luaPath)</a></td>
+	<td class="summary">向main.lua中添加lua执行模块</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#notifyMessage">notifyMessage (data, time)</a></td>
+	<td class="summary">弹出toast消息</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#notifyVoice">notifyVoice (path)</a></td>
+	<td class="summary">播放通知铃声</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#restartApp">restartApp (PackageName)</a></td>
+	<td class="summary">启动应用程序,如果已启动,则kill掉后再重新启动,如果没有启动,则直接启动</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#startApp">startApp (pkgName)</a></td>
+	<td class="summary">启动应用程序</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#endApp">endApp (pkgName)</a></td>
+	<td class="summary">关闭应用程序</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#backgroundApp">backgroundApp (pkgName)</a></td>
+	<td class="summary">将应用切换至后台</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#resumeApp">resumeApp (pkgName)</a></td>
+	<td class="summary">将处在后台的应用切换至前台</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#installApp">installApp (path)</a></td>
+	<td class="summary">安装应用程序</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#clearAppData">clearAppData (pkgname)</a></td>
+	<td class="summary">清除软件应用数据</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#uninstallApp">uninstallApp (pkgName)</a></td>
+	<td class="summary">卸载应用程序</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getAndroidSDK">getAndroidSDK ()</a></td>
+	<td class="summary">得到设备的SDK的APIlevel</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getAndroidVersion">getAndroidVersion ()</a></td>
+	<td class="summary">得到设备的SDK版本号</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getDeviceName">getDeviceName ()</a></td>
+	<td class="summary">得到设备的名字</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getAppName">getAppName (pkgName)</a></td>
+	<td class="summary">得到应用程序的名字</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getMainActivity">getMainActivity (pkgName)</a></td>
+	<td class="summary">获得应用程序主activity名</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getApkPath">getApkPath (pkgName)</a></td>
+	<td class="summary">获得应用程序安装完成的app所在的具体位置</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getUidRxBytes">getUidRxBytes (pkgName)</a></td>
+	<td class="summary">获得应用当前时刻接受到的流量字节</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getUidTxBytes">getUidTxBytes (pkgName)</a></td>
+	<td class="summary">获得应用当前时刻发送出的流量字节</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getTopProcessPkgName">getTopProcessPkgName ()</a></td>
+	<td class="summary">得到top进程包名</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#isForeground">isForeground (pkgname)</a></td>
+	<td class="summary">判断指定包是否前台可见</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#initWebView">initWebView ()</a></td>
+	<td class="summary">初始化WebView页面,常用在页面中存在webview元素时</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getVersionNumber">getVersionNumber (pkgName)</a></td>
+	<td class="summary">获取app的版本号</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#shell">shell (command)</a></td>
+	<td class="summary">adb shell 命令通道</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getBRAND">getBRAND ()</a></td>
+	<td class="summary">获取手机品牌信息</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setDefaultlauncher">setDefaultlauncher (pkgName)</a></td>
+	<td class="summary">拉起指定的桌面应用,出现多个桌面时,如何选择默认</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#logcat">logcat (level, tag, msg)</a></td>
+	<td class="summary">输出logcat信息</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#isMobileConnect">isMobileConnect ()</a></td>
+	<td class="summary">检查当前是否连接到移动网络</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#isScreenOriatationPortrait">isScreenOriatationPortrait ()</a></td>
+	<td class="summary">检查屏幕方向</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#split">split (szFullString, szSeparator)</a></td>
+	<td class="summary">分割字符串</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#sendSensorEvent">sendSensorEvent (type, action)</a></td>
+	<td class="summary">模拟传感器事件</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#startGpu">startGpu ()</a></td>
+	<td class="summary">4.2以上手机,打开设置中的GPU开关</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#stopGpu">stopGpu ()</a></td>
+	<td class="summary">4.2以上手机,关闭设置中的GPU开关</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#startMsaa">startMsaa ()</a></td>
+	<td class="summary">4.2以上手机,打开设置中的Msaa开关</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#stopMsaa">stopMsaa ()</a></td>
+	<td class="summary">4.2以上手机,关闭设置中的Msaa开关</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getWindowhash">getWindowhash ()</a></td>
+	<td class="summary">捕获当前窗口并转化为bitmapcode</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#compareSimilar">compareSimilar (bitmapcode)</a></td>
+	<td class="summary">比较页面相似度方法</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#startKatAccessbility">startKatAccessbility ()</a></td>
+	<td class="summary">打开辅助功能</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#disableKeyguard">disableKeyguard ()</a></td>
+	<td class="summary">解锁</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#reenableKeyguard">reenableKeyguard ()</a></td>
+	<td class="summary">锁屏</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#print">print (info)</a></td>
+	<td class="summary">输出自定义日志到log.txt</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#writeFileToFolder">writeFileToFolder (FolderPath, FileName, content)</a></td>
+	<td class="summary">创建文件并保存</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#updateCaseFolder">updateCaseFolder (CaseN)</a></td>
+	<td class="summary">创建用例文件夹,如果文件夹已存在,则删除再创建,否则直接创建</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#newFolder">newFolder (path)</a></td>
+	<td class="summary">创建目录</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#newFile">newFile (path)</a></td>
+	<td class="summary">创建文件</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#copyFileToFolder">copyFileToFolder (FilePath, FolderPath)</a></td>
+	<td class="summary">复制一份文件到指定文件夹,目标文件夹需要已存在</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#scanFolder">scanFolder (FolderPath)</a></td>
+	<td class="summary">调用媒体扫描扫描指定文件夹</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#copyFolderToFolder">copyFolderToFolder (SourcePath, DestinationPath)</a></td>
+	<td class="summary">复制源文件夹内的资源到目标文件夹</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#zipFolder">zipFolder (srcFilePath, zipFilePath)</a></td>
+	<td class="summary">将指定文件夹打包成zip文件,打包完成后放到指定路径,方法中有30秒延时</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#delete">delete (Path)</a></td>
+	<td class="summary">删除文件或者文件夹</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#fileIsExist">fileIsExist (filePath)</a></td>
+	<td class="summary">判断文件是否存在</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#leftMove">leftMove (sleepTime, moveTimes, path)</a></td>
+	<td class="summary">向左滑动,自定义滑动次数</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#rightMove">rightMove (sleepTime, moveTimes, path)</a></td>
+	<td class="summary">向右滑动,自定义滑动次数</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#upMove">upMove (sleepTime, moveTimes, path)</a></td>
+	<td class="summary">向上滑动,自定义滑动次数</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#downMove">downMove (sleepTime, moveTimes, path)</a></td>
+	<td class="summary">向下滑动,自定义滑动次数</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#move">move (x1, y1, x2, y2, path)</a></td>
+	<td class="summary">获取起始与终止坐标并滑动</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#multipleMove">multipleMove (info, path)</a></td>
+	<td class="summary">多点滑动，比如手势密码类滑动操作</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#longTouchAndMove">longTouchAndMove (x1, y1, x2, y2, BeginTouchTime, path)</a></td>
+	<td class="summary">长按(x1,y1)一段时间,然后滑动到(x2,y2)</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#moveByMode">moveByMode (x1, y1, x2, y2, mode)</a></td>
+	<td class="summary">自定义模式滑动</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#fingerTouchMove">fingerTouchMove (xOneStart, yOneStart, xTwoStart, yTwoStart, xOneEnd, yOneEnd, xTwoEnd, yTwoEnd, record_resolution_x, record_resolution_y, path)</a></td>
+	<td class="summary">双指滑动</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setWifiEnable">setWifiEnable (isEnable)</a></td>
+	<td class="summary">设置wifi开启或者关闭,5秒钟后返回boolean结果</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#forgetWifi">forgetWifi (wifiAP)</a></td>
+	<td class="summary">忘记指定的wifiAP</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#connectWifi">connectWifi (wifiAP, PassWord)</a></td>
+	<td class="summary">连接指定的wifiAP</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#isWifiConnect">isWifiConnect ()</a></td>
+	<td class="summary">检查当前是否连接到wifi</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#openBluetooth">openBluetooth ()</a></td>
+	<td class="summary">打开蓝牙开关</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#closeBluetooth">closeBluetooth ()</a></td>
+	<td class="summary">关闭蓝牙开关</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#collapseStatusBar">collapseStatusBar ()</a></td>
+	<td class="summary">收起通知栏</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#isNetworkEnable">isNetworkEnable (ip_adr)</a></td>
+	<td class="summary">检查当前ip地址是否畅通</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setPickPicture">setPickPicture (path)</a></td>
+	<td class="summary">当被测应用需要启动系统图库读取图片之前,设置指定路径的图片作为返回值,需要在操作之前调用,配合com.kapalai.picture使用</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getSmsCode">getSmsCode (num, timeout)</a></td>
+	<td class="summary">短信验证码</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#checkPoint">checkPoint (isTrue, content)</a></td>
+	<td class="summary">检查点语句</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#assert">assert (isTrue, content)</a></td>
+	<td class="summary">断言语句</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#assert_final">assert_final (isTrue, content)</a></td>
+	<td class="summary">断言语句</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#check_point_pic">check_point_pic (describe)</a></td>
+	<td class="summary">图片断言,在检查点加入这条语句,实现图片断言</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setPerformance">setPerformance (isOpen)</a></td>
+	<td class="summary">是否开启加载速度测试，注意随时开启关闭</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#delPicForNotFindCrash">delPicForNotFindCrash ()</a></td>
+	<td class="summary">在没有发现crash的前提下,删除测试当前case的图片文件,适用于monkey测试时产生大量图片文件的情况</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getSystemTime">getSystemTime (format)</a></td>
+	<td class="summary">根据格式获取系统时间</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#tooManyfail">tooManyfail ()</a></td>
+	<td class="summary">是否出现连续回放失败超过最大次数</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getSimpleValidResultCount">getSimpleValidResultCount ()</a></td>
+	<td class="summary">深度遍历用,获取测试结果 遍历数量</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getSimpleExectime">getSimpleExectime ()</a></td>
+	<td class="summary">深度遍历用,获取测试结果 耗时 ms</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#getAutoTestVersion">getAutoTestVersion ()</a></td>
+	<td class="summary">深度遍历用,获取全路径遍历版本号</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setNormalLogin">setNormalLogin (id, sn, login_key_text, activity)</a></td>
+	<td class="summary">深度遍历用,设置自定义登陆</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setQQLogin">setQQLogin (id, sn, login_key_text)</a></td>
+	<td class="summary">深度遍历用,设置 QQ 登陆</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setWXLogin">setWXLogin (id, sn, login_key_text)</a></td>
+	<td class="summary">深度遍历用,设置 微信 登陆</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#setWBLogin">setWBLogin (id, sn, login_key_text)</a></td>
+	<td class="summary">深度遍历用,设置 微博 登陆</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#netRequest">netRequest (host, port, request)</a></td>
+	<td class="summary">发送网络请求，返回对应信息字符串</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#appTimeTest">appTimeTest (pkgName)</a></td>
+	<td class="summary">app的安装时间,启动时间,卸载时间</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#findTagFromFile">findTagFromFile (path, tag)</a></td>
+	<td class="summary">从文件中获取对应Tag整行的文件信息</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2 class="section-header "><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "handler"></a>
+    <strong>handler (tag, detail)</strong>
+    </dt>
+    <dd>
+    HANDLER for Exception responding to ANR or Crash.
+
+MONKEY needs override it.
+
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">tag</span>
+
+        </li>
+        <li><span class="parameter">detail</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getControl_XY"></a>
+    <strong>getControl_XY (id, key, ctext, classpath)</strong>
+    </dt>
+    <dd>
+    得到控件的X,Y坐标值
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">{boolean,number,number}</span></span>
+        如果成功得到坐标则返回true,以及元素的x,y坐标值；否则返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> result,x,y = getControl_XY(-<span class="number">1</span>,<span class="string">''</span>,<span class="string">'qqchat'</span>,<span class="string">'%com.tencent.mobileqq.widget.QQTabHost#0'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "click"></a>
+    <strong>click (id, key, ctext, classpath, clicktime, path)</strong>
+    </dt>
+    <dd>
+    点击操作
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+        <li><span class="parameter">clicktime</span>
+            <span class="types"><span class="type">number</span></span>
+         点击后的预留时间,单位为ms
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不做截屏
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        点击成功返回true,失败返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">click(-<span class="number">1</span>,<span class="string">''</span>,<span class="string">'qqchat'</span>,<span class="string">'%com.tencent.mobileqq.widget.QQTabHost#0'</span>,<span class="number">2000</span>,TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "clickByEvent"></a>
+    <strong>clickByEvent (id, key, ctext, classpath, event, path)</strong>
+    </dt>
+    <dd>
+    可选事件类型的点击操作
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+        <li><span class="parameter">event</span>
+            <span class="types"><span class="type">number</span></span>
+         点击类型 0-click 1-down 2-up
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不做截屏
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">clickByEvent(-<span class="number">1</span>, <span class="string">''</span>, <span class="string">'qchat'</span>, <span class="string">''</span>, <span class="number">0</span>, TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "basic_click"></a>
+    <strong>basic_click (id, key, ctext, classpath, path)</strong>
+    </dt>
+    <dd>
+    基础性质的点击操作,常用在对性能要求高的场景中
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不做截屏
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        点击成功返回true,失败返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">basic_click(-<span class="number">1</span>,<span class="string">''</span>,<span class="string">'qqchat'</span>,<span class="string">'%com.tencent.mobileqq.widget.QQTabHost#0'</span>,TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "tap_original"></a>
+    <strong>tap_original (id, key, ctext, classpath, Timeout, path, activity)</strong>
+    </dt>
+    <dd>
+    等待控件并点击
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+        <li><span class="parameter">Timeout</span>
+            <span class="types"><span class="type">number</span></span>
+         超时时间,单位s
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不做截屏
+        </li>
+        <li><span class="parameter">activity</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         录制现场的activity名
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        点击成功返回true,失败返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">tap(-<span class="number">1</span>, <span class="string">''</span>, <span class="string">'登录'</span>, <span class="string">''</span>, <span class="number">0.5</span>, <span class="number">0.5</span>, <span class="number">20</span>, TimeMarker(CaseN), <span class="string">'com.jm.android.jumei.SpecialTimeSaleActivity'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "tap_fuzzy"></a>
+    <strong>tap_fuzzy (id, key, ctext, classpath, record_resolution_x, Timeout, path)</strong>
+    </dt>
+    <dd>
+    等待控件并点击
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+        <li><span class="parameter">record_resolution_x</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+        , record_resolution_y 录制时候的坐标在屏幕中的比例
+        </li>
+        <li><span class="parameter">Timeout</span>
+            <span class="types"><span class="type">number</span></span>
+         超时时间,单位s
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不做截屏
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        点击成功返回true,失败返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">tap_fuzzy(-<span class="number">1</span>, <span class="string">''</span>, <span class="string">'登录'</span>, <span class="string">''</span>, <span class="number">0.5</span>, <span class="number">0.5</span>, <span class="number">0.2323</span>, <span class="number">0.8852</span>, <span class="number">20</span>, TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "longTouch_original"></a>
+    <strong>longTouch_original (id, key, ctext, classpath, TouchTime, path)</strong>
+    </dt>
+    <dd>
+    长按操作
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+        <li><span class="parameter">TouchTime</span>
+            <span class="types"><span class="type">number</span></span>
+         长按时间,单位ms
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不做截屏
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        长按成功返回true,失败返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">longTouch(-<span class="number">1</span>, <span class="string">''</span>, <span class="string">'qqchat'</span>, <span class="string">''</span>, <span class="number">0.5</span>, <span class="number">0.5</span>, <span class="number">4000</span>, TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "scroll_original"></a>
+    <strong>scroll_original (x1, record_resolution_x, path)</strong>
+    </dt>
+    <dd>
+    按坐标滑动
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x1</span>
+            <span class="types"><span class="type">int</span></span>
+        , y1, x2, y2  滑动的开始结束坐标
+        </li>
+        <li><span class="parameter">record_resolution_x</span>
+            <span class="types"><span class="type">int</span></span>
+        , record_resolution_y  录制滑动时录制设备的分辨率信息
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+          截图路径
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">scroll(<span class="number">100</span>, <span class="number">200</span>, <span class="number">150</span>, <span class="number">300</span>, <span class="number">1080</span>, <span class="number">1920</span>, TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "doubleClick_original"></a>
+    <strong>doubleClick_original (id, key, ctext, classpath, path)</strong>
+    </dt>
+    <dd>
+    双击操作
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不做截屏
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        长按成功返回true,失败返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">doubleClick(-<span class="number">1</span>, <span class="string">''</span>, <span class="string">'qqchat'</span>, <span class="string">''</span>, <span class="number">0.5</span>, <span class="number">0.5</span>, clicktime, TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "isCurrentPage"></a>
+    <strong>isCurrentPage (id, key, ctext, classpath)</strong>
+    </dt>
+    <dd>
+    判断控件是否在当前页面
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        如果在当前页面返回true,否则返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> isIn = isCurrentPage(-<span class="number">1</span>, <span class="string">'icon'</span>, <span class="string">'qqchat'</span>, <span class="string">''</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "getControlerText"></a>
+    <strong>getControlerText (id, key, ctext, classpath)</strong>
+    </dt>
+    <dd>
+    获取控件文本属性值
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><span class="type">{boolean,string}</span></span>
+        成功返回true,获取的控件文本属性值</li>
+        <li>
+           <span class="types"><span class="type">{boolean,string}</span></span>
+        失败返回false,字符串'nil in getControlerText'</li>
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> result,content = getControlerText(-<span class="number">1</span>,<span class="string">'title'</span>,<span class="string">''</span>,<span class="string">'%com.tencent.mobileqq.widget.QQTabHost#0'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "findTextFromControler"></a>
+    <strong>findTextFromControler (id, key, ctext, classpath, text)</strong>
+    </dt>
+    <dd>
+    在指定的控件下查找字符串
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+        <li><span class="parameter">text</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         将要查找的字符串
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">{boolean,x,y,dx,dy}</span></span>
+        找到返回true,并追加控件坐标值,否则返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> isFound,x,y,dx,dy = findTextFromControler(-<span class="number">1</span>,<span class="string">''</span>,<span class="string">'qchat'</span>,<span class="string">''</span>,<span class="string">'text'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "findControl"></a>
+    <strong>findControl (id, key, ctext, classpath)</strong>
+    </dt>
+    <dd>
+    判断是否找到控件
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        找到控件返回true,否则返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> isFound = findControl(-<span class="number">1</span>,<span class="string">''</span>,<span class="string">'qqchat'</span>,<span class="string">'%com.tencent.mobileqq.widget.QQTabHost#0'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "getControlerRect"></a>
+    <strong>getControlerRect (id, key, ctext, classpath)</strong>
+    </dt>
+    <dd>
+    得到控件的坐标值
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">{boolean,number,number,number,number}</span></span>
+        成功得到返回true,并追加控件的边界坐标值;否则返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> result,x,y,dx,dy = getControlerRect(-<span class="number">1</span>,<span class="string">''</span>,<span class="string">'qqchat'</span>,<span class="string">'%com.tencent.mobileqq.widget.QQTabHost#0'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "setControlerText_original"></a>
+    <strong>setControlerText_original (id, key, ctext, classpath, content)</strong>
+    </dt>
+    <dd>
+    向控件输入文本信息
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+        <li><span class="parameter">content</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         文本信息
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">setControlerText(-<span class="number">1</span>,<span class="string">''</span>,<span class="string">'qchat'</span>,<span class="string">''</span>,<span class="string">'hello!kat'</span>, <span class="string">'com.test.activity'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "moveFindControler"></a>
+    <strong>moveFindControler (id, key, ctext, classpath, moveTimes)</strong>
+    </dt>
+    <dd>
+    滑动寻找控件
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+        <li><span class="parameter">moveTimes</span>
+            <span class="types"><span class="type">number</span></span>
+         滑动次数
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        找到控件返回true,否则返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> isFound = moveFindControler(-<span class="number">1</span>, <span class="string">''</span>, <span class="string">'qchat'</span>, <span class="string">''</span>, <span class="number">4</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "findControlerAndMove"></a>
+    <strong>findControlerAndMove (id_1, key_1, ctext_1, classpath_1, id_2, key_2, ctext_2, classpath_2, path)</strong>
+    </dt>
+    <dd>
+    匹配控件并滑动
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id_1</span>
+            <span class="types"><span class="type">number</span></span>
+         元素1 id
+        </li>
+        <li><span class="parameter">key_1</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素1 key值
+        </li>
+        <li><span class="parameter">ctext_1</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素1 文本
+        </li>
+        <li><span class="parameter">classpath_1</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素1 页面布局
+        </li>
+        <li><span class="parameter">id_2</span>
+            <span class="types"><span class="type">number</span></span>
+         元素2 id
+        </li>
+        <li><span class="parameter">key_2</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素2 key值
+        </li>
+        <li><span class="parameter">ctext_2</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素2 文本
+        </li>
+        <li><span class="parameter">classpath_2</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素2 页面布局
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不做截屏
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">findControlerAndMove(-<span class="number">1</span>,<span class="string">''</span>,<span class="string">'button_1'</span>,<span class="string">''</span>,-<span class="number">1</span>,<span class="string">''</span>,<span class="string">'button_2'</span>,<span class="string">''</span>,TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "findTextAndClick"></a>
+    <strong>findTextAndClick (ctext, path)</strong>
+    </dt>
+    <dd>
+    通过文本属性点击控件
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏的图片保存路径
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        点击成功返回true,否则返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">findTextAndClick(<span class="string">'qchat'</span>,TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "hideSoftInputFromWindow"></a>
+    <strong>hideSoftInputFromWindow (id, key, ctext, classpath)</strong>
+    </dt>
+    <dd>
+    隐藏与控件绑定的软键盘
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">hideSoftInputFromWindow(-<span class="number">1</span>, <span class="string">''</span>, <span class="string">'qchat'</span>, <span class="string">''</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "getClassFieldValue"></a>
+    <strong>getClassFieldValue (id, key, ctext, classpath, fieldname, superindex, type)</strong>
+    </dt>
+    <dd>
+    得到类似CompoundButton的控件当前状态
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+        <li><span class="parameter">fieldname</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         控件状态字的名称
+        </li>
+        <li><span class="parameter">superindex</span>
+            <span class="types"><span class="type">number</span></span>
+         索引值
+        </li>
+        <li><span class="parameter">type</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         控件状态字类型
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> status = getClassFieldValue(-<span class="number">1</span>,<span class="string">''</span>,<span class="string">'button1'</span>,<span class="string">''</span>,<span class="string">'fieldname'</span>,<span class="number">1</span>,<span class="string">'boolean'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "monkey"></a>
+    <strong>monkey (pkgName, runTime, logPath)</strong>
+    </dt>
+    <dd>
+    monkey测试专用
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pkgName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         包名字
+        </li>
+        <li><span class="parameter">runTime</span>
+            <span class="types"><span class="type">number</span></span>
+         测试时长,单位分钟
+        </li>
+        <li><span class="parameter">logPath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         日志存储位置
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">monkey(<span class="string">'com.tencent.mobileqq'</span>, <span class="number">60</span>, <span class="string">'/sdcard/KapalaiAutoTest/QQlite/'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "simpleMonkey"></a>
+    <strong>simpleMonkey (pkgName, runTime, logPath)</strong>
+    </dt>
+    <dd>
+    monkey测试专用
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pkgName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         包名字
+        </li>
+        <li><span class="parameter">runTime</span>
+            <span class="types"><span class="type">number</span></span>
+         测试时长,单位分钟
+        </li>
+        <li><span class="parameter">logPath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         日志存储位置
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">simpleMonkey(<span class="string">'com.tencent.mobileqq'</span>, <span class="number">60</span>, <span class="string">'/sdcard/KapalaiAutoTest/QQlite/'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "setMonkeyProbability"></a>
+    <strong>setMonkeyProbability (click, doubleclick, input, scroll, longtouch, fingertouch, randomclick)</strong>
+    </dt>
+    <dd>
+    加强型monkey测试
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">click</span>
+            <span class="types"><span class="type">number</span></span>
+         单击动作权重
+        </li>
+        <li><span class="parameter">doubleclick</span>
+            <span class="types"><span class="type">number</span></span>
+         双击动作权重
+        </li>
+        <li><span class="parameter">input</span>
+            <span class="types"><span class="type">number</span></span>
+         文本输入动作权重
+        </li>
+        <li><span class="parameter">scroll</span>
+            <span class="types"><span class="type">number</span></span>
+         滚动动作权重
+        </li>
+        <li><span class="parameter">longtouch</span>
+            <span class="types"><span class="type">number</span></span>
+         长按动作权重
+        </li>
+        <li><span class="parameter">fingertouch</span>
+            <span class="types"><span class="type">number</span></span>
+         双指滑动动作权重
+        </li>
+        <li><span class="parameter">randomclick</span>
+            <span class="types"><span class="type">number</span></span>
+         随机点击动作权重
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">setMonkeyProbability(<span class="number">5</span>, <span class="number">4</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "startSimpleTest"></a>
+    <strong>startSimpleTest (pkgname)</strong>
+    </dt>
+    <dd>
+    局部全路径覆盖
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pkgname</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         应用程序包名
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+        用:分割的字符串,前面代表是否在开始执行的界面(1为在初始页面,否则为不在初始页面),后面代表还剩多少控件没有遍历,1:23
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">startSimpleTest(<span class="string">'com.tencent.qqmobile'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "clearIgnoreControl"></a>
+    <strong>clearIgnoreControl ()</strong>
+    </dt>
+    <dd>
+    清除局部全路径中忽略点击的控件
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "cacheClear"></a>
+    <strong>cacheClear ()</strong>
+    </dt>
+    <dd>
+    清除所有cache的路径
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ignoreControl"></a>
+    <strong>ignoreControl (key, text, activity)</strong>
+    </dt>
+    <dd>
+    局部全路径忽略点击的控件信息,可叠加
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">key</span>
+
+        </li>
+        <li><span class="parameter">text</span>
+
+        </li>
+        <li><span class="parameter">activity</span>
+
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">ignoreControl(<span class="string">'btn_left'</span>, <span class="string">'返回'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "ignoreBack"></a>
+    <strong>ignoreBack ()</strong>
+    </dt>
+    <dd>
+    局部全路径忽略BACK键
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setMarkControl"></a>
+    <strong>setMarkControl (id, key, text, activity)</strong>
+    </dt>
+    <dd>
+    标示唯一页面
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+
+        </li>
+        <li><span class="parameter">key</span>
+
+        </li>
+        <li><span class="parameter">text</span>
+
+        </li>
+        <li><span class="parameter">activity</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setScanTime"></a>
+    <strong>setScanTime (time)</strong>
+    </dt>
+    <dd>
+    全路径执行时间
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">time</span>
+
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">setScanTime(<span class="number">60</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "setActionClip"></a>
+    <strong>setActionClip (time)</strong>
+    </dt>
+    <dd>
+    全路径是否截图,1为截图,0为不截图
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">time</span>
+
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">setActionClip(<span class="number">1</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "startAutoTest"></a>
+    <strong>startAutoTest (pkgname, depth, scanTime)</strong>
+    </dt>
+    <dd>
+    新版本全路径遍历
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pkgname</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         应用程序包名
+        </li>
+        <li><span class="parameter">depth</span>
+            <span class="types"><span class="type">int</span></span>
+         遍历执行最小层级
+        </li>
+        <li><span class="parameter">scanTime</span>
+            <span class="types"><span class="type">int</span></span>
+         设置强制结束时间(s)
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">startAutoTest(<span class="string">'com.tencent.mm'</span>, <span class="number">3</span>, <span class="number">60</span>*<span class="number">30</span>, <span class="keyword">true</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_findControl"></a>
+    <strong>cocos2dx_findControl (id, key, ctext, classpath)</strong>
+    </dt>
+    <dd>
+    判断是否找到控件
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        找到控件返回true,否则返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> isFound = cocos2dx_findControl(-<span class="number">3</span>,<span class="string">''</span>,<span class="string">'game.png'</span>,<span class="string">''</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_getControlerRect"></a>
+    <strong>cocos2dx_getControlerRect (id, key, ctext, classpath)</strong>
+    </dt>
+    <dd>
+    得到控件元素坐标
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">{boolean,number,number,number,number}</span></span>
+        找到返回true,并追加控件元素的坐标值,否则返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> result,x,y,dx,dy = cocos2dx_getControlerRect(-<span class="number">3</span>,<span class="string">''</span>,<span class="string">'cocos2d-game'</span>,<span class="string">''</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_setControlerText"></a>
+    <strong>cocos2dx_setControlerText (id, key, ctext, classpath, content)</strong>
+    </dt>
+    <dd>
+    向控件输入文本,建议不要键入中文
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+        <li><span class="parameter">content</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         文本信息,不能使用中文
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">cocos2dx_setControlerText(-<span class="number">3</span>,<span class="string">''</span>,<span class="string">'cocos2d-game'</span>,<span class="string">''</span>,<span class="string">'hello!cocos2dx-game'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_click"></a>
+    <strong>cocos2dx_click (id, key, ctext, classpath, clicktime, path)</strong>
+    </dt>
+    <dd>
+    点击操作
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+        <li><span class="parameter">clicktime</span>
+            <span class="types"><span class="type">number</span></span>
+         点击后的预留时间,单位ms
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不做截屏
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        点击成功返回true,失败返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">cocos2dx_click(-<span class="number">3</span>,<span class="string">''</span>,<span class="string">'qqgame'</span>,<span class="string">''</span>,<span class="number">2000</span>,TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_clickByEvent"></a>
+    <strong>cocos2dx_clickByEvent (id, key, ctext, classpath, event, path)</strong>
+    </dt>
+    <dd>
+    可选事件类型的点击操作
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+        <li><span class="parameter">event</span>
+            <span class="types"><span class="type">number</span></span>
+         点击类型 0-click 1-down 2-up
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不做截屏
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        点击成功返回true,失败返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">cocos2dx_clickByEvent(-<span class="number">3</span>,<span class="string">''</span>,<span class="string">'qqgame'</span>,<span class="string">''</span>,<span class="number">1</span>,TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_waitAndClick"></a>
+    <strong>cocos2dx_waitAndClick (id, key, ctext, classpath, Timeout, path)</strong>
+    </dt>
+    <dd>
+    等待控件并点击
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+        <li><span class="parameter">Timeout</span>
+            <span class="types"><span class="type">number</span></span>
+         超时时间,单位为ms
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不做截屏
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        点击成功返回true,失败返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">cocos2dx_waitAndClick(-<span class="number">3</span>,<span class="string">''</span>,<span class="string">'qqgame'</span>,<span class="string">''</span>,<span class="number">1000</span>*<span class="number">60</span>,TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_getControlerRect_AllChild"></a>
+    <strong>cocos2dx_getControlerRect_AllChild (id, key, ctext, classpath)</strong>
+    </dt>
+    <dd>
+    得到控件元素的容器对象
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><span class="type">boolean</span></span>
+        成功得到返回true,否则返回false</li>
+        <li>
+           <span class="types"><span class="type">userdata</span></span>
+        控件元素的容器对象</li>
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> isFound,Cocos2dxContainer = cocos2dx_getControlerRect_AllChild(-<span class="number">3</span>, <span class="string">''</span>, <span class="string">'kaishi.png'</span>, <span class="string">'27_0_0_0'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_getListOfContainer"></a>
+    <strong>cocos2dx_getListOfContainer (Cocos2dxContainer)</strong>
+    </dt>
+    <dd>
+    得到容器对象的对应列表
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">Cocos2dxContainer</span>
+         控件元素的容器对象
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">userdata</span></span>
+        容器对象的对应列表
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> ListOfContainer = cocos2dx_getListOfContainer(Cocos2dxContainer)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_sizeOfContainerList"></a>
+    <strong>cocos2dx_sizeOfContainerList (ListOfCocos2dxContainer)</strong>
+    </dt>
+    <dd>
+    获取容器列表长度
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ListOfCocos2dxContainer</span>
+         容器列表
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        容器列表的长度
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> size = cocos2dx_sizeOfContainerList(ListOfCocos2dxContainer)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_getChildOfContainerList"></a>
+    <strong>cocos2dx_getChildOfContainerList (ListOfCocos2dxContainer, i)</strong>
+    </dt>
+    <dd>
+    通过索引得到列表某一项
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ListOfCocos2dxContainer</span>
+         容器列表
+        </li>
+        <li><span class="parameter">i</span>
+            <span class="types"><span class="type">number</span></span>
+         列表索引值
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">userdata</span></span>
+        容器列表子元素
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> Cocos2dxElement = cocos2dx_getChildOfContainerList(ListOfCocos2dxContainer,<span class="number">4</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_getTextOfChild"></a>
+    <strong>cocos2dx_getTextOfChild (Cocos2dxElement)</strong>
+    </dt>
+    <dd>
+    得到列表子元素的文本值
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">Cocos2dxElement</span>
+         容器列表子元素
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+        容器列表子元素的文本值
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> textOfChild = cocos2dx_getTextOfChild(Cocos2dxElement)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_getXOfChild"></a>
+    <strong>cocos2dx_getXOfChild (Cocos2dxElement)</strong>
+    </dt>
+    <dd>
+    得到列表子元素的左上角x坐标值
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">Cocos2dxElement</span>
+         容器列表子元素
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        容器列表子元素的左上角x坐标值
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> x = cocos2dx_getXOfChild(Cocos2dxElement)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_getYOfChild"></a>
+    <strong>cocos2dx_getYOfChild (Cocos2dxElement)</strong>
+    </dt>
+    <dd>
+    得到列表子元素的左上角y坐标值
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">Cocos2dxElement</span>
+         容器列表子元素
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        容器列表子元素的左上角y坐标值
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> y = cocos2dx_getYOfChild(Cocos2dxElement)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_getDxOfChild"></a>
+    <strong>cocos2dx_getDxOfChild (Cocos2dxElement)</strong>
+    </dt>
+    <dd>
+    得到容器列表子元素的坐标宽度
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">Cocos2dxElement</span>
+         容器列表子元素
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        容器列表子元素的坐标宽度
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> dx = cocos2dx_getDxOfChild(Cocos2dxElement)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_getDyOfChild"></a>
+    <strong>cocos2dx_getDyOfChild (Cocos2dxElement)</strong>
+    </dt>
+    <dd>
+    得到容器列表子元素的坐标高度
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">Cocos2dxElement</span>
+         容器列表子元素
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        容器列表子元素的坐标高度
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> dy = cocos2dx_getDyOfChild(Cocos2dxElement)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_getPathOfChild"></a>
+    <strong>cocos2dx_getPathOfChild (Cocos2dxElement)</strong>
+    </dt>
+    <dd>
+    得到列表子元素的layout层级值
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">Cocos2dxElement</span>
+         容器列表子元素
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+        容器列表子元素的layout层级值
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> path = cocos2dx_getPathOfChild(Cocos2dxElement)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_getControl_XY"></a>
+    <strong>cocos2dx_getControl_XY (id, key, ctext, classpath)</strong>
+    </dt>
+    <dd>
+    得到x,y坐标值
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">{result,number,number}</span></span>
+        成功返回true,并追加控件元素x,y坐标值,否则返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> result,x,y = cocos2dx_getControl_XY(-<span class="number">3</span>, <span class="string">''</span>, <span class="string">'kaishi.png'</span>, <span class="string">'27_0_0_0'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_longTouch"></a>
+    <strong>cocos2dx_longTouch (id, key, ctext, classpath, TouchTime, path)</strong>
+    </dt>
+    <dd>
+    长按操作
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+            <span class="types"><span class="type">number</span></span>
+         元素id
+        </li>
+        <li><span class="parameter">key</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素key值
+        </li>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素文本
+        </li>
+        <li><span class="parameter">classpath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         元素页面布局
+        </li>
+        <li><span class="parameter">TouchTime</span>
+            <span class="types"><span class="type">number</span></span>
+         长按时间,单位ms
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不做截屏
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        长按成功返回true,失败返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">cocos2dx_longTouch(-<span class="number">3</span>, <span class="string">''</span>, <span class="string">'kaishi.png'</span>, <span class="string">'27_0_0_0'</span>,<span class="number">5000</span>,TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_getControlContext"></a>
+    <strong>cocos2dx_getControlContext (ctext)</strong>
+    </dt>
+    <dd>
+    通过文本属性得到相同文本控件的列表容器对象
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ctext</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         控件的文本属性值
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><span class="type">boolean</span></span>
+        成功得到返回true,否则返回false</li>
+        <li>
+           <span class="types"><span class="type">userdata</span></span>
+        容器对象</li>
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> isFind,Cocos2dxContainer = cocos2dx_getControlContext(<span class="string">'game_button_text_content'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "cocos2dx_getAllControl"></a>
+    <strong>cocos2dx_getAllControl ()</strong>
+    </dt>
+    <dd>
+    获取当前界面所有控件元素
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+           <span class="types"><span class="type">boolean</span></span>
+        成功得到返回true,否则返回false</li>
+        <li>
+           <span class="types"><span class="type">userdata</span></span>
+        容器对象</li>
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> isFind,Cocos2dxContainer = cocos2dx_getAllControl()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "TimeMarker"></a>
+    <strong>TimeMarker (CaseN)</strong>
+    </dt>
+    <dd>
+    生成截屏后的图片路径
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">CaseN</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         用例名字,如果名字不带数字,则不会在平台产生图片对比
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+        返回图片全路径
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> path = TimeMarker(<span class="string">'1'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "click_XYByEvent"></a>
+    <strong>click_XYByEvent (x, y, event, path)</strong>
+    </dt>
+    <dd>
+    可选事件类型的点击操作
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         元素x坐标值
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         元素y坐标值
+        </li>
+        <li><span class="parameter">event</span>
+            <span class="types"><span class="type">number</span></span>
+         点击类型 0-click 1-down 2-up
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不做截屏
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">click_XYByEvent(<span class="number">100</span>,<span class="number">200</span>,<span class="number">0</span>,TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "clickpx"></a>
+    <strong>clickpx (px, py, clicktime, path)</strong>
+    </dt>
+    <dd>
+    按屏幕相对位置进行点击
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">px</span>
+            <span class="types"><span class="type">number</span></span>
+         元素x坐标值所占屏幕位置的百分比
+        </li>
+        <li><span class="parameter">py</span>
+            <span class="types"><span class="type">number</span></span>
+         元素y坐标值所占屏幕位置的百分比
+        </li>
+        <li><span class="parameter">clicktime</span>
+            <span class="types"><span class="type">number</span></span>
+         点击后的预留时间,单位ms
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不做截屏
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">clickpx(<span class="number">0.2</span>, <span class="number">0.3</span>, clicktime, TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "getScreenResolution"></a>
+    <strong>getScreenResolution ()</strong>
+    </dt>
+    <dd>
+    获取当前屏幕分辨率
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">{number,number}</span></span>
+        屏幕的x,y分辨率
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> x,y = getScreenResolution()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "isInstall"></a>
+    <strong>isInstall (PackageName)</strong>
+    </dt>
+    <dd>
+    检查被测包是否已安装成功
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">PackageName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         测试包的名字
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        安装成功返回true,否则返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> isInstalled = isInstall(<span class="string">'com.tencent.qqmusic'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "sleep_original"></a>
+    <strong>sleep_original (n)</strong>
+    </dt>
+    <dd>
+    让程序睡眠 N毫秒
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">n</span>
+            <span class="types"><span class="type">number</span></span>
+         单位ms
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">sleep(<span class="number">4000</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "snapshotScreen"></a>
+    <strong>snapshotScreen (x, y, dx, dy, path)</strong>
+    </dt>
+    <dd>
+    截屏并做区域标记
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x</span>
+            <span class="types"><span class="type">number</span></span>
+         区域边框左上角x坐标值
+        </li>
+        <li><span class="parameter">y</span>
+            <span class="types"><span class="type">number</span></span>
+         区域边框左上角y坐标值
+        </li>
+        <li><span class="parameter">dx</span>
+            <span class="types"><span class="type">number</span></span>
+         区域宽度
+        </li>
+        <li><span class="parameter">dy</span>
+            <span class="types"><span class="type">number</span></span>
+         区域高度
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">snapshotScreen(<span class="number">100</span>,<span class="number">100</span>,<span class="number">200</span>,<span class="number">200</span>,TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "snapshotWholeScreen"></a>
+    <strong>snapshotWholeScreen (path, tag)</strong>
+    </dt>
+    <dd>
+    截屏整个屏幕并自定义显示标签
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径
+        </li>
+        <li><span class="parameter">tag</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         自定义标签显示内容,省略则不显示标签
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <li><pre class="example">snapshotWholeScreen(TimeMarker(CaseN))</pre></li>
+        <li><pre class="example">snapshotWholeScreen(TimeMarker(CaseN),<span class="string">'tag_name'</span>)</pre></li>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "setClipboardText"></a>
+    <strong>setClipboardText (content)</strong>
+    </dt>
+    <dd>
+    将信息复制进剪切板中,执行后必须预留时间
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">content</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         要复制到剪切板中的信息
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">setClipboardText(<span class="string">'test for kat'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "getClipboardText"></a>
+    <strong>getClipboardText ()</strong>
+    </dt>
+    <dd>
+    得到剪切板内容
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+        剪切板内容
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> content = getClipboardText()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "menu"></a>
+    <strong>menu (touchTime)</strong>
+    </dt>
+    <dd>
+    菜单Hard Key:menu(少部分手机不适用,慎用)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">touchTime</span>
+            <span class="types"><span class="type">number</span></span>
+         点击持续时间,单位为ms
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">menu(<span class="number">500</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "home"></a>
+    <strong>home (touchTime)</strong>
+    </dt>
+    <dd>
+    主界面Hard Key:home(少部分手机不适用,慎用)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">touchTime</span>
+            <span class="types"><span class="type">number</span></span>
+         点击持续时间,单位为ms
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">home(<span class="number">500</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "back"></a>
+    <strong>back (touchTime)</strong>
+    </dt>
+    <dd>
+    返回Hard Key:back
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">touchTime</span>
+            <span class="types"><span class="type">number</span></span>
+         点击持续时间,单位为ms
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">back(<span class="number">500</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "addLuaPlan"></a>
+    <strong>addLuaPlan (luaPath)</strong>
+    </dt>
+    <dd>
+    向main.lua中添加lua执行模块
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">luaPath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         模块执行全路径
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">addLuaPlan(<span class="string">'/sdcard/kat/Init.lua'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "notifyMessage"></a>
+    <strong>notifyMessage (data, time)</strong>
+    </dt>
+    <dd>
+    弹出toast消息
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">data</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         准备弹出的消息
+        </li>
+        <li><span class="parameter">time</span>
+            <span class="types"><span class="type">int</span></span>
+         显示toast的属性,0表示短显示,1表示长显示
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">notifyMessage(<span class="string">'toast message in phone'</span>, <span class="number">0</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "notifyVoice"></a>
+    <strong>notifyVoice (path)</strong>
+    </dt>
+    <dd>
+    播放通知铃声
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         mp3文件全路径
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">notifyVoice(<span class="string">'/mnt/sdcard/TestTool/Alarm_Kapalai.mp3'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "restartApp"></a>
+    <strong>restartApp (PackageName)</strong>
+    </dt>
+    <dd>
+    启动应用程序,如果已启动,则kill掉后再重新启动,如果没有启动,则直接启动
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">PackageName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         测试包的名字
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">restartApp(<span class="string">'com.tencent.qqmusic'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "startApp"></a>
+    <strong>startApp (pkgName)</strong>
+    </dt>
+    <dd>
+    启动应用程序
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pkgName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         应用程序包名
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">startApp(<span class="string">'com.tencent.qqmusic'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "endApp"></a>
+    <strong>endApp (pkgName)</strong>
+    </dt>
+    <dd>
+    关闭应用程序
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pkgName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         应用程序包名
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">endApp(<span class="string">'com.tencent.qqmusic'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "backgroundApp"></a>
+    <strong>backgroundApp (pkgName)</strong>
+    </dt>
+    <dd>
+    将应用切换至后台
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pkgName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         应用程序包名
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">backgroundApp(<span class="string">'com.tencent.qqmusic'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "resumeApp"></a>
+    <strong>resumeApp (pkgName)</strong>
+    </dt>
+    <dd>
+    将处在后台的应用切换至前台
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pkgName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         应用程序包名
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">resumeApp(<span class="string">'com.tencent.qqmusic'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "installApp"></a>
+    <strong>installApp (path)</strong>
+    </dt>
+    <dd>
+    安装应用程序
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         apk的完整路径
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        安装成功返回true,失败返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> result = installApp(<span class="string">'/sdcard/kat/demo.apk'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "clearAppData"></a>
+    <strong>clearAppData (pkgname)</strong>
+    </dt>
+    <dd>
+    清除软件应用数据
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pkgname</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         软件包名
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">clearAppData(<span class="string">'com.tencent.mobileqq'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "uninstallApp"></a>
+    <strong>uninstallApp (pkgName)</strong>
+    </dt>
+    <dd>
+    卸载应用程序
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pkgName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         安装包名字
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+        卸载时间
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> uninstallTime = uninstallApp(<span class="string">'com.tencent.qqmusic'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "getAndroidSDK"></a>
+    <strong>getAndroidSDK ()</strong>
+    </dt>
+    <dd>
+    得到设备的SDK的APIlevel
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+        设备SDK的APIlevel
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> API_LEVEL = getAndroidSDK()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "getAndroidVersion"></a>
+    <strong>getAndroidVersion ()</strong>
+    </dt>
+    <dd>
+    得到设备的SDK版本号
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+        设备的SDK版本号
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> SDK_VERSION = getAndroidVersion()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "getDeviceName"></a>
+    <strong>getDeviceName ()</strong>
+    </dt>
+    <dd>
+    得到设备的名字
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+        设备的名字
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> DEVICE_NAME = getDeviceName()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "getAppName"></a>
+    <strong>getAppName (pkgName)</strong>
+    </dt>
+    <dd>
+    得到应用程序的名字
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pkgName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         应用程序包名
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+        应用程序名字
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> app_name = getAppName(<span class="string">'com.tencent.qqmusic'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "getMainActivity"></a>
+    <strong>getMainActivity (pkgName)</strong>
+    </dt>
+    <dd>
+    获得应用程序主activity名
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pkgName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         应用程序包名
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> appMainActivity = getMainActivity(<span class="string">'com.tencent.qqmusic'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "getApkPath"></a>
+    <strong>getApkPath (pkgName)</strong>
+    </dt>
+    <dd>
+    获得应用程序安装完成的app所在的具体位置
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pkgName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         应用程序包名
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> appPath = getApkPath(<span class="string">'com.tencent.qqmusic'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "getUidRxBytes"></a>
+    <strong>getUidRxBytes (pkgName)</strong>
+    </dt>
+    <dd>
+    获得应用当前时刻接受到的流量字节
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pkgName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         应用程序包名
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        当前时刻接受流量值,单位Bytes
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> Rx = getUidRxBytes(<span class="string">'com.qzone'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "getUidTxBytes"></a>
+    <strong>getUidTxBytes (pkgName)</strong>
+    </dt>
+    <dd>
+    获得应用当前时刻发送出的流量字节
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pkgName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         应用程序包名
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        当前时刻发送的流量值,单位Bytes
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> Tx = getUidTxBytes(<span class="string">'com.qzone'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "getTopProcessPkgName"></a>
+    <strong>getTopProcessPkgName ()</strong>
+    </dt>
+    <dd>
+    得到top进程包名
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+        top进程包名
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> top_packagename = getTopProcessPkgName()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "isForeground"></a>
+    <strong>isForeground (pkgname)</strong>
+    </dt>
+    <dd>
+    判断指定包是否前台可见
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pkgname</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         应用程序包名
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        前台可见返回true,否则返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> isForegrouded = isForeground(<span class="string">'com.tencent.qqmusic'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "initWebView"></a>
+    <strong>initWebView ()</strong>
+    </dt>
+    <dd>
+    初始化WebView页面,常用在页面中存在webview元素时
+
+
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">initWebView()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "getVersionNumber"></a>
+    <strong>getVersionNumber (pkgName)</strong>
+    </dt>
+    <dd>
+    获取app的版本号
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pkgName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         安装包名字
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+        app的版本号
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> myAppVersion = getVersionNumber(<span class="string">'com.tencent.qqmusic'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "shell"></a>
+    <strong>shell (command)</strong>
+    </dt>
+    <dd>
+    adb shell 命令通道
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">command</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         shell命令
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+        命令的返回内容
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> respond = shell(<span class="string">'getprop ro.build.fingerprint'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "getBRAND"></a>
+    <strong>getBRAND ()</strong>
+    </dt>
+    <dd>
+    获取手机品牌信息
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+        手机品牌信息
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> DEVICE_BRAND = getBRAND()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "setDefaultlauncher"></a>
+    <strong>setDefaultlauncher (pkgName)</strong>
+    </dt>
+    <dd>
+    拉起指定的桌面应用,出现多个桌面时,如何选择默认
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pkgName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         桌面应用包名
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">setDefaultlauncher(<span class="string">'com.tencent.qlauncher'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "logcat"></a>
+    <strong>logcat (level, tag, msg)</strong>
+    </dt>
+    <dd>
+    输出logcat信息
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">level</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         日志可选级别: 'i','e'
+        </li>
+        <li><span class="parameter">tag</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         日志标签名字
+        </li>
+        <li><span class="parameter">msg</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         日志信息
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">logcat(<span class="string">'i'</span>, <span class="string">'kat'</span>, <span class="string">'kat-log'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "isMobileConnect"></a>
+    <strong>isMobileConnect ()</strong>
+    </dt>
+    <dd>
+    检查当前是否连接到移动网络
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        连接移动网络则返回true,否则返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> isMobileConnected = isMobileConnect()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "isScreenOriatationPortrait"></a>
+    <strong>isScreenOriatationPortrait ()</strong>
+    </dt>
+    <dd>
+    检查屏幕方向
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        竖屏是0, 横屏是1
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> screen_direction = isScreenOriatationPortrait()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "split"></a>
+    <strong>split (szFullString, szSeparator)</strong>
+    </dt>
+    <dd>
+    分割字符串
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">szFullString</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         原始字符串
+        </li>
+        <li><span class="parameter">szSeparator</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         分隔符
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        分割后的字符串保存在一张表中
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> splited_string_table = split(<span class="string">'kat_is_not_bad'</span> , <span class="string">'_'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "sendSensorEvent"></a>
+    <strong>sendSensorEvent (type, action)</strong>
+    </dt>
+    <dd>
+    模拟传感器事件
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">type</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         代表想要模拟的sensor类型(如'ACCELEROMETER')
+        </li>
+        <li><span class="parameter">action</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         代表当前sensor功能的标识,(如 '摇')
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">sendSensorEvent(<span class="string">'ACCELEROMETER'</span>, <span class="string">'摇'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "startGpu"></a>
+    <strong>startGpu ()</strong>
+    </dt>
+    <dd>
+    4.2以上手机,打开设置中的GPU开关
+
+
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">startGpu()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "stopGpu"></a>
+    <strong>stopGpu ()</strong>
+    </dt>
+    <dd>
+    4.2以上手机,关闭设置中的GPU开关
+
+
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">startGpu()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "startMsaa"></a>
+    <strong>startMsaa ()</strong>
+    </dt>
+    <dd>
+    4.2以上手机,打开设置中的Msaa开关
+
+
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">startGpu()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "stopMsaa"></a>
+    <strong>stopMsaa ()</strong>
+    </dt>
+    <dd>
+    4.2以上手机,关闭设置中的Msaa开关
+
+
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">startGpu(</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "getWindowhash"></a>
+    <strong>getWindowhash ()</strong>
+    </dt>
+    <dd>
+    捕获当前窗口并转化为bitmapcode
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+        64位的字符串
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> bitmapcode = getWindowhash()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "compareSimilar"></a>
+    <strong>compareSimilar (bitmapcode)</strong>
+    </dt>
+    <dd>
+    比较页面相似度方法
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">bitmapcode</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         需要比较相似性的页面指纹
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">number</span></span>
+        值越小,相似度越高
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> value = compareSimilar(bitmapcode)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "startKatAccessbility"></a>
+    <strong>startKatAccessbility ()</strong>
+    </dt>
+    <dd>
+    打开辅助功能
+
+
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">startKatAccessbility()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "disableKeyguard"></a>
+    <strong>disableKeyguard ()</strong>
+    </dt>
+    <dd>
+    解锁
+
+
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">disableKeyguard()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "reenableKeyguard"></a>
+    <strong>reenableKeyguard ()</strong>
+    </dt>
+    <dd>
+    锁屏
+
+
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">reenableKeyguard()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "print"></a>
+    <strong>print (info)</strong>
+    </dt>
+    <dd>
+    输出自定义日志到log.txt
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">info</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         自定义信息日志
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="global">print</span>(<span class="string">'print log info in log.txt'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "writeFileToFolder"></a>
+    <strong>writeFileToFolder (FolderPath, FileName, content)</strong>
+    </dt>
+    <dd>
+    创建文件并保存
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">FolderPath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         目标文件夹全路径
+        </li>
+        <li><span class="parameter">FileName</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         目标文件名字
+        </li>
+        <li><span class="parameter">content</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         要保存的数据记录
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">writeFileToFolder(<span class="string">'/sdcard/kat/'</span>, <span class="string">'FileName.txt'</span>, <span class="string">'hello! kat'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "updateCaseFolder"></a>
+    <strong>updateCaseFolder (CaseN)</strong>
+    </dt>
+    <dd>
+    创建用例文件夹,如果文件夹已存在,则删除再创建,否则直接创建
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">CaseN</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         用例名字,如果名字不带数字,则没有平台图片对比
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">updateCaseFolder(<span class="string">'1'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "newFolder"></a>
+    <strong>newFolder (path)</strong>
+    </dt>
+    <dd>
+    创建目录
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         目录全路径
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">newFolder(<span class="string">'/sdcard/kat/Result/'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "newFile"></a>
+    <strong>newFile (path)</strong>
+    </dt>
+    <dd>
+    创建文件
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         文件全路径,文件夹必须预先存在
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">newFile(<span class="string">'/sdcard/kat/Result/newfile.txt'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "copyFileToFolder"></a>
+    <strong>copyFileToFolder (FilePath, FolderPath)</strong>
+    </dt>
+    <dd>
+    复制一份文件到指定文件夹,目标文件夹需要已存在
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">FilePath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         源文件全路径
+        </li>
+        <li><span class="parameter">FolderPath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         目标文件夹全路径
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">copyFileToFolder(<span class="string">'/sdcard/kat/Result/Case/testFile.png'</span>, <span class="string">'/sdcard/kat/'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "scanFolder"></a>
+    <strong>scanFolder (FolderPath)</strong>
+    </dt>
+    <dd>
+    调用媒体扫描扫描指定文件夹
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">FolderPath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         被扫描的文件夹的路径
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">scanFolder(<span class="string">'/sdcard/DICM/testPicPackage/'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "copyFolderToFolder"></a>
+    <strong>copyFolderToFolder (SourcePath, DestinationPath)</strong>
+    </dt>
+    <dd>
+    复制源文件夹内的资源到目标文件夹
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">SourcePath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         源文件夹的全路径
+        </li>
+        <li><span class="parameter">DestinationPath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         目标文件夹的全路径
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">copyFolderToFolder(<span class="string">'/sdcard/kat/Folder1/'</span>, <span class="string">'/sdcard/kat/Folder2/'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "zipFolder"></a>
+    <strong>zipFolder (srcFilePath, zipFilePath)</strong>
+    </dt>
+    <dd>
+    将指定文件夹打包成zip文件,打包完成后放到指定路径,方法中有30秒延时
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">srcFilePath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         文件夹全路径
+        </li>
+        <li><span class="parameter">zipFilePath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         压缩文件全路径
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">zipFolder(<span class="string">'/sdcard/kat/Result/'</span>, <span class="string">'sdcard/kat/Result.zip'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "delete"></a>
+    <strong>delete (Path)</strong>
+    </dt>
+    <dd>
+    删除文件或者文件夹
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">Path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         文件或者文件夹全路径
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">delete(<span class="string">'/sdcard/kat/Deleted_Folder/'</span>); delete(<span class="string">'/sdcard/kat/deleted_log.txt'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "fileIsExist"></a>
+    <strong>fileIsExist (filePath)</strong>
+    </dt>
+    <dd>
+    判断文件是否存在
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">filePath</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         文件全路径
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        存在返回true,不存在返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> isExisted = fileIsExist(<span class="string">'/sdcard/kat/Your_file_name.txt'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "leftMove"></a>
+    <strong>leftMove (sleepTime, moveTimes, path)</strong>
+    </dt>
+    <dd>
+    向左滑动,自定义滑动次数
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">sleepTime</span>
+            <span class="types"><span class="type">number</span></span>
+         滑动后等待时间
+        </li>
+        <li><span class="parameter">moveTimes</span>
+            <span class="types"><span class="type">number</span></span>
+         滑动次数
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不截屏
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">leftMove(<span class="number">2000</span>, <span class="number">4</span>, TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "rightMove"></a>
+    <strong>rightMove (sleepTime, moveTimes, path)</strong>
+    </dt>
+    <dd>
+    向右滑动,自定义滑动次数
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">sleepTime</span>
+            <span class="types"><span class="type">number</span></span>
+         滑动后等待时间
+        </li>
+        <li><span class="parameter">moveTimes</span>
+            <span class="types"><span class="type">number</span></span>
+         滑动次数
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不截屏
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">rightMove(<span class="number">2000</span>,<span class="number">4</span>,TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "upMove"></a>
+    <strong>upMove (sleepTime, moveTimes, path)</strong>
+    </dt>
+    <dd>
+    向上滑动,自定义滑动次数
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">sleepTime</span>
+            <span class="types"><span class="type">number</span></span>
+         滑动后等待时间
+        </li>
+        <li><span class="parameter">moveTimes</span>
+            <span class="types"><span class="type">number</span></span>
+         滑动次数
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不截屏
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">upMove(<span class="number">2000</span>,<span class="number">4</span>,TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "downMove"></a>
+    <strong>downMove (sleepTime, moveTimes, path)</strong>
+    </dt>
+    <dd>
+    向下滑动,自定义滑动次数
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">sleepTime</span>
+            <span class="types"><span class="type">number</span></span>
+         滑动后等待时间
+        </li>
+        <li><span class="parameter">moveTimes</span>
+            <span class="types"><span class="type">number</span></span>
+         滑动次数
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不截屏
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">downMove(<span class="number">2000</span>,<span class="number">4</span>,TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "move"></a>
+    <strong>move (x1, y1, x2, y2, path)</strong>
+    </dt>
+    <dd>
+    获取起始与终止坐标并滑动
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x1</span>
+            <span class="types"><span class="type">number</span></span>
+         起始x坐标值
+        </li>
+        <li><span class="parameter">y1</span>
+            <span class="types"><span class="type">number</span></span>
+         起始y坐标值
+        </li>
+        <li><span class="parameter">x2</span>
+            <span class="types"><span class="type">number</span></span>
+         终止x坐标值
+        </li>
+        <li><span class="parameter">y2</span>
+            <span class="types"><span class="type">number</span></span>
+         终止y坐标值
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不做截屏
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">move(<span class="number">100</span>,<span class="number">100</span>,<span class="number">200</span>,<span class="number">200</span>,TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "multipleMove"></a>
+    <strong>multipleMove (info, path)</strong>
+    </dt>
+    <dd>
+    多点滑动，比如手势密码类滑动操作
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">info</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         多点滑动信息,如'100,100:200:200,300:300',每个冒号代表一个点的坐标
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不做截屏
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">multipleMove(<span class="string">'50,50:100,100:400,400'</span>, TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "longTouchAndMove"></a>
+    <strong>longTouchAndMove (x1, y1, x2, y2, BeginTouchTime, path)</strong>
+    </dt>
+    <dd>
+    长按(x1,y1)一段时间,然后滑动到(x2,y2)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x1</span>
+            <span class="types"><span class="type">number</span></span>
+         起始点x坐标值
+        </li>
+        <li><span class="parameter">y1</span>
+            <span class="types"><span class="type">number</span></span>
+         起始点y坐标值
+        </li>
+        <li><span class="parameter">x2</span>
+            <span class="types"><span class="type">number</span></span>
+         终止点x坐标值
+        </li>
+        <li><span class="parameter">y2</span>
+            <span class="types"><span class="type">number</span></span>
+         终止点y坐标值
+        </li>
+        <li><span class="parameter">BeginTouchTime</span>
+            <span class="types"><span class="type">number</span></span>
+         长按持续时间
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径,如果为0或者省略,则不做截屏
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">longTouchAndMove(<span class="number">50</span>,<span class="number">50</span>,<span class="number">100</span>,<span class="number">100</span>,<span class="number">4000</span>,TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "moveByMode"></a>
+    <strong>moveByMode (x1, y1, x2, y2, mode)</strong>
+    </dt>
+    <dd>
+    自定义模式滑动
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">x1</span>
+            <span class="types"><span class="type">number</span></span>
+         起始点x坐标值
+        </li>
+        <li><span class="parameter">y1</span>
+            <span class="types"><span class="type">number</span></span>
+         起始点y坐标值
+        </li>
+        <li><span class="parameter">x2</span>
+            <span class="types"><span class="type">number</span></span>
+         终止点x坐标值
+        </li>
+        <li><span class="parameter">y2</span>
+            <span class="types"><span class="type">number</span></span>
+         终止点y坐标值
+        </li>
+        <li><span class="parameter">mode</span>
+            <span class="types"><span class="type">number</span></span>
+         滑动模式--111有按下有抬起,110没有抬起,011没有按下
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">moveByMode(<span class="number">50</span>,<span class="number">50</span>,<span class="number">100</span>,<span class="number">100</span>,<span class="number">110</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "fingerTouchMove"></a>
+    <strong>fingerTouchMove (xOneStart, yOneStart, xTwoStart, yTwoStart, xOneEnd, yOneEnd, xTwoEnd, yTwoEnd, record_resolution_x, record_resolution_y, path)</strong>
+    </dt>
+    <dd>
+    双指滑动
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">xOneStart</span>
+            <span class="types"><span class="type">number</span></span>
+         起始点(One)x坐标值
+        </li>
+        <li><span class="parameter">yOneStart</span>
+            <span class="types"><span class="type">number</span></span>
+         起始点(One)y坐标值
+        </li>
+        <li><span class="parameter">xTwoStart</span>
+            <span class="types"><span class="type">number</span></span>
+         终止点(Two)x坐标值
+        </li>
+        <li><span class="parameter">yTwoStart</span>
+            <span class="types"><span class="type">number</span></span>
+         终止点(Two)y坐标值
+        </li>
+        <li><span class="parameter">xOneEnd</span>
+            <span class="types"><span class="type">number</span></span>
+         终止点(One)x坐标值
+        </li>
+        <li><span class="parameter">yOneEnd</span>
+            <span class="types"><span class="type">number</span></span>
+         终止点(One)y坐标值
+        </li>
+        <li><span class="parameter">xTwoEnd</span>
+            <span class="types"><span class="type">number</span></span>
+         终止点(Two)x坐标值
+        </li>
+        <li><span class="parameter">yTwoEnd</span>
+            <span class="types"><span class="type">number</span></span>
+         终止点(Two)y坐标值
+        </li>
+        <li><span class="parameter">record_resolution_x</span>
+            <span class="types"><span class="type">number</span></span>
+         录制手机的x分辨率
+        </li>
+        <li><span class="parameter">record_resolution_y</span>
+            <span class="types"><span class="type">number</span></span>
+         录制手机的y分辨率
+        </li>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         截屏后图片保存路径
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">fingerTouchMove(<span class="number">40</span>, <span class="number">40</span>, <span class="number">120</span>, <span class="number">120</span>, <span class="number">80</span>, <span class="number">80</span>, <span class="number">200</span>, <span class="number">200</span>, <span class="number">1080</span>, <span class="number">1920</span>, TimeMarker(CaseN))</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "setWifiEnable"></a>
+    <strong>setWifiEnable (isEnable)</strong>
+    </dt>
+    <dd>
+    设置wifi开启或者关闭,5秒钟后返回boolean结果
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">isEnable</span>
+            <span class="types"><span class="type">bool</span></span>
+         如果为true,则开启wifi,如果为false,则关闭wifi
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        动作成功则返回true,否则返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> isSuccessed = setWifiEnable(<span class="keyword">true</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "forgetWifi"></a>
+    <strong>forgetWifi (wifiAP)</strong>
+    </dt>
+    <dd>
+    忘记指定的wifiAP
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">wifiAP</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         wifi接入点的名字
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">forgetWifi(<span class="string">'Tencent-FreeWiFi'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "connectWifi"></a>
+    <strong>connectWifi (wifiAP, PassWord)</strong>
+    </dt>
+    <dd>
+    连接指定的wifiAP
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">wifiAP</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         wifi接入点的名字
+        </li>
+        <li><span class="parameter">PassWord</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         wifi密码,没有密码使用''
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">connectWifi(<span class="string">'Tencent-FreeWiFi'</span>, <span class="string">'XunXian6'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "isWifiConnect"></a>
+    <strong>isWifiConnect ()</strong>
+    </dt>
+    <dd>
+    检查当前是否连接到wifi
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        连接wifi则返回true,否则返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> isWifiConnected = isWifiConnect()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "openBluetooth"></a>
+    <strong>openBluetooth ()</strong>
+    </dt>
+    <dd>
+    打开蓝牙开关
+
+
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">openBluetooth()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "closeBluetooth"></a>
+    <strong>closeBluetooth ()</strong>
+    </dt>
+    <dd>
+    关闭蓝牙开关
+
+
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">closeBluetooth()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "collapseStatusBar"></a>
+    <strong>collapseStatusBar ()</strong>
+    </dt>
+    <dd>
+    收起通知栏
+
+
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">collapseStatusBar()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "isNetworkEnable"></a>
+    <strong>isNetworkEnable (ip_adr)</strong>
+    </dt>
+    <dd>
+    检查当前ip地址是否畅通
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">ip_adr</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         需要检查的ip地址
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        畅通返回true,否则返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> isEnabled = isNetworkEnable(<span class="string">'202.96.64.68'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "setPickPicture"></a>
+    <strong>setPickPicture (path)</strong>
+    </dt>
+    <dd>
+    当被测应用需要启动系统图库读取图片之前,设置指定路径的图片作为返回值,需要在操作之前调用,配合com.kapalai.picture使用
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         指定测试图片的位置信息
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">setPickPicture(<span class="string">'sdcard/kat/test.jpg'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "getSmsCode"></a>
+    <strong>getSmsCode (num, timeout)</strong>
+    </dt>
+    <dd>
+    短信验证码
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">num</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         发送短信的号码
+        </li>
+        <li><span class="parameter">timeout</span>
+            <span class="types"><span class="type">number</span></span>
+         搜索号码超时时间
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+        畅通返回true,否则返回false
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="keyword">local</span> result, sms = getSmsCode(<span class="string">'13356652546'</span>, <span class="number">60</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "checkPoint"></a>
+    <strong>checkPoint (isTrue, content)</strong>
+    </dt>
+    <dd>
+    检查点语句
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">isTrue</span>
+            <span class="types"><span class="type">bool</span></span>
+         断言结果,并保存在'/sdcard/kat/Result/checkpoint/'目录下
+        </li>
+        <li><span class="parameter">content</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         第一个参数为false时要记录的备注信息
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">checkPoint(<span class="keyword">false</span>,<span class="string">'此时没有找到xxx控件元素'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "assert"></a>
+    <strong>assert (isTrue, content)</strong>
+    </dt>
+    <dd>
+    断言语句
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">isTrue</span>
+            <span class="types"><span class="type">bool</span></span>
+         断言结果,如果为false,则结束当前用例执行,并保存在'/sdcard/kat/Result/checkpoint/'目录下
+        </li>
+        <li><span class="parameter">content</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         第一个参数为false时要记录的日志信息
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example"><span class="global">assert</span>(<span class="keyword">false</span>,<span class="string">'此时没有找到xxx控件元素'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "assert_final"></a>
+    <strong>assert_final (isTrue, content)</strong>
+    </dt>
+    <dd>
+    断言语句
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">isTrue</span>
+            <span class="types"><span class="type">bool</span></span>
+         断言结果,如果为false,则结束所有用例执行,并保存在'/sdcard/kat/Result/checkpoint/'目录下
+        </li>
+        <li><span class="parameter">content</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         第一个参数为false时要记录的日志信息
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">assert_final(<span class="keyword">false</span>,<span class="string">'login failed'</span>)</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "check_point_pic"></a>
+    <strong>check_point_pic (describe)</strong>
+    </dt>
+    <dd>
+    图片断言,在检查点加入这条语句,实现图片断言
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">describe</span>
+        注意最好不要把checkpoint放到if语句中,或保证if和else里面都有相同的checkpoint
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">check_point_pic()</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "setPerformance"></a>
+    <strong>setPerformance (isOpen)</strong>
+    </dt>
+    <dd>
+    是否开启加载速度测试，注意随时开启关闭
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">isOpen</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "delPicForNotFindCrash"></a>
+    <strong>delPicForNotFindCrash ()</strong>
+    </dt>
+    <dd>
+    在没有发现crash的前提下,删除测试当前case的图片文件,适用于monkey测试时产生大量图片文件的情况
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getSystemTime"></a>
+    <strong>getSystemTime (format)</strong>
+    </dt>
+    <dd>
+    根据格式获取系统时间
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">format</span>
+
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">getSystemTime(<span class="string">'HH-mm:ss'</span>) 返回结果是这样的格式：<span class="number">19</span>-<span class="number">33</span>:<span class="number">12</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "tooManyfail"></a>
+    <strong>tooManyfail ()</strong>
+    </dt>
+    <dd>
+    是否出现连续回放失败超过最大次数
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getSimpleValidResultCount"></a>
+    <strong>getSimpleValidResultCount ()</strong>
+    </dt>
+    <dd>
+    深度遍历用,获取测试结果 遍历数量
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getSimpleExectime"></a>
+    <strong>getSimpleExectime ()</strong>
+    </dt>
+    <dd>
+    深度遍历用,获取测试结果 耗时 ms
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "getAutoTestVersion"></a>
+    <strong>getAutoTestVersion ()</strong>
+    </dt>
+    <dd>
+    深度遍历用,获取全路径遍历版本号
+
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setNormalLogin"></a>
+    <strong>setNormalLogin (id, sn, login_key_text, activity)</strong>
+    </dt>
+    <dd>
+    深度遍历用,设置自定义登陆
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+
+        </li>
+        <li><span class="parameter">sn</span>
+
+        </li>
+        <li><span class="parameter">login_key_text</span>
+
+        </li>
+        <li><span class="parameter">activity</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setQQLogin"></a>
+    <strong>setQQLogin (id, sn, login_key_text)</strong>
+    </dt>
+    <dd>
+    深度遍历用,设置 QQ 登陆
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+
+        </li>
+        <li><span class="parameter">sn</span>
+
+        </li>
+        <li><span class="parameter">login_key_text</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setWXLogin"></a>
+    <strong>setWXLogin (id, sn, login_key_text)</strong>
+    </dt>
+    <dd>
+    深度遍历用,设置 微信 登陆
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+
+        </li>
+        <li><span class="parameter">sn</span>
+
+        </li>
+        <li><span class="parameter">login_key_text</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "setWBLogin"></a>
+    <strong>setWBLogin (id, sn, login_key_text)</strong>
+    </dt>
+    <dd>
+    深度遍历用,设置 微博 登陆
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">id</span>
+
+        </li>
+        <li><span class="parameter">sn</span>
+
+        </li>
+        <li><span class="parameter">login_key_text</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "netRequest"></a>
+    <strong>netRequest (host, port, request)</strong>
+    </dt>
+    <dd>
+    发送网络请求，返回对应信息字符串
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">host</span>
+
+        </li>
+        <li><span class="parameter">port</span>
+
+        </li>
+        <li><span class="parameter">request</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "appTimeTest"></a>
+    <strong>appTimeTest (pkgName)</strong>
+    </dt>
+    <dd>
+    app的安装时间,启动时间,卸载时间
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">pkgName</span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "findTagFromFile"></a>
+    <strong>findTagFromFile (path, tag)</strong>
+    </dt>
+    <dd>
+    从文件中获取对应Tag整行的文件信息
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">path</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         对应的文件名
+        </li>
+        <li><span class="parameter">tag</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.2/manual.html#6.4">string</a></span>
+         需要查找的标志
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean,</span></span>
+        string/int 返回是否找到 & 后面是找到后的整行信息,可以再用split接口做进一步处理
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">findTagFromFile(<span class="string">'sdcard/test.txt'</span>, <span class="string">'startTime:'</span>)</pre>
+    </ul>
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.3</a></i>
+<i style="float:right;">Last updated 2016-07-19 19:59:13 </i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
