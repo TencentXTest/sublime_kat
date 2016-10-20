@@ -14,8 +14,9 @@ http://v.qq.com/x/page/l0337y41tvt.html
 
 安装
 ------------------
-1.先下载安装sublime text 2 [https://www.sublimetext.com/2/](https://www.sublimetext.com/2/)
-2.点击 "peferences" >"browser packages",进入到安装package的目录下，将本插件的kat文件夹copy到该目录
+1.先下载整个sublime_kat工程，保存到本地目录中。
+1.再下载安装sublime text 2 [https://www.sublimetext.com/2/](https://www.sublimetext.com/2/)
+2.点击 "peferences" >"browser packages",进入到安装package的目录下，将sublime_kat下面的kat文件夹copy到该目录
 
 ![image](https://github.com/TencentXtest/sublime_kat/raw/master/images/1.png)
 
@@ -28,7 +29,7 @@ http://v.qq.com/x/page/l0337y41tvt.html
 
 插入录制的脚本
 ------------------------------
-### 1.导入demo工程:demo工程在xtestserver安装目录下lua/demo里，选择demo工程，即可导入到编辑器
+### 1.先导入脚本工程:将sublime_kat文件夹下的lua_pro文件夹添加到sublime编辑器中即可
 
 ![image](https://github.com/TencentXtest/sublime_kat/raw/master/images/4.png)
 
