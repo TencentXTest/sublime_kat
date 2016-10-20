@@ -6,9 +6,8 @@ if platsys != 'windows':
 	platsys = 'mac'
 startindex = 0
 rootpack = sublime.packages_path()
-if(platsys== 'windows'):
+if(platsys == 'windows'):
 	targetPath = rootpack + delimiter + 'kat' + delimiter + platsys + delimiter
-
 else:
    targetPath = rootpack.replace(" ", "\ ") + delimiter + 'kat' + delimiter + platsys + delimiter
 if platsys == 'windows' and not os.path.exists(targetPath):
@@ -972,11 +971,7 @@ class NewFolderCommand(sublime_plugin.TextCommand):
 class UpdateKatPluginCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
 		self.urls = [
-					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/RunCommand.py",
-					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/AdbWinApi.dll",
-					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/AdbWinUsbApi.dll",
-					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/adb.exe",
-					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/windows/zipalign.exe"
+					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/RunCommand.py"
                      ]
 		for url in self.urls:
 			filename = url.split("/")[-1]
