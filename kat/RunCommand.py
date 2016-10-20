@@ -6,11 +6,15 @@ if platsys != 'windows':
 	platsys = 'mac'
 startindex = 0
 rootpack = sublime.packages_path()
-targetPath = rootpack.replace(" ", "\ ") + delimiter + 'kat' + delimiter + platsys + delimiter
+if(platsys== 'windows'):
+	targetPath = rootpack + delimiter + 'kat' + delimiter + platsys + delimiter
+
+else:
+   targetPath = rootpack.replace(" ", "\ ") + delimiter + 'kat' + delimiter + platsys + delimiter
 if platsys == 'windows' and not os.path.exists(targetPath):
 	os.mkdir(targetPath)
 if(platsys == "windows"):
-	adbpath = targetPath + "adb.exe"
+	adbpath = '"'+ targetPath + "adb.exe" +'"'
 else:
 	adbpath = targetPath + "adb"
 tmpFolder = 'KatTmpFolder'
