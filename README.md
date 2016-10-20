@@ -15,7 +15,7 @@ http://v.qq.com/x/page/l0337y41tvt.html
 安装
 ------------------
 1.先下载整个sublime_kat工程，保存到本地目录中。
-1.再下载安装sublime text 2 [https://www.sublimetext.com/2/](https://www.sublimetext.com/2/)
+2.再下载安装sublime text 2 [https://www.sublimetext.com/2/](https://www.sublimetext.com/2/)
 2.点击 "peferences" >"browser packages",进入到安装package的目录下，将sublime_kat下面的kat文件夹copy到该目录
 
 ![image](https://github.com/TencentXtest/sublime_kat/raw/master/images/1.png)
