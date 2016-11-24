@@ -1,6 +1,7 @@
 #coding:utf-8
 import sublime, sublime_plugin, os, subprocess, sys, time, threading, re, urllib
 delimiter = os.sep
+separator = '\r\r\n'
 platsys = sublime.platform()
 if platsys != 'windows':
 	platsys = 'mac'
@@ -9,7 +10,8 @@ rootpack = sublime.packages_path()
 if(platsys == 'windows'):
 	targetPath = rootpack + delimiter + 'kat' + delimiter + platsys + delimiter
 else:
-   targetPath = rootpack.replace(" ", "\ ") + delimiter + 'kat' + delimiter + platsys + delimiter
+	targetPath = rootpack.replace(" ", "\ ") + delimiter + 'kat' + delimiter + platsys + delimiter
+	separator = '\r\n'
 if platsys == 'windows' and not os.path.exists(targetPath):
 	os.mkdir(targetPath)
 if(platsys == "windows"):
@@ -77,7 +79,7 @@ class RunCommand(sublime_plugin.TextCommand):
 				# print "---------Log thread is over---------"
 				break
 			if not data_Log[1]:
-				count =  data_Log[0].count('\r\r\n')
+				count =  data_Log[0].count(separator)
 				# print data_Log
 				if lastTimeLogRow != count :
 					if lastTimeLogRow > count :
@@ -85,7 +87,7 @@ class RunCommand(sublime_plugin.TextCommand):
 					else:
 						for i in range(lastTimeLogRow, count):
 							if data_Log[0].find('No such file') == -1:
-								print '',data_Log[0].split('\r\r\n')[i]
+								print '',data_Log[0].split(separator)[i]
 						lastTimeLogRow = count
 				time.sleep(0.3)
 			else:
@@ -93,14 +95,14 @@ class RunCommand(sublime_plugin.TextCommand):
 				print data_Log[1]
 				break
 			# error.txt解析
-			error_count = error_data[0].count('\r\r\n')
+			error_count = error_data[0].count(separator)
 			if error_lastTimeLogRow != error_count:
 				if error_lastTimeLogRow > error_count:
 					break
 				else:
 					for i in range(error_lastTimeLogRow, error_count):
 						if error_data[0].find('No such file') == -1:
-							print '---Error---',error_data[0].split('\r\r\n')[i]
+							print '---Error---',error_data[0].split(separator)[i]
 					error_lastTimeLogRow = error_count
 
 class RunLabKatCommand(sublime_plugin.TextCommand):
@@ -165,7 +167,7 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 				# print "---------Log thread is over---------"
 				break
 			if not data_Log[1]:
-				count =  data_Log[0].count('\r\r\n')
+				count =  data_Log[0].count(separator)
 				# print data_Log
 				if lastTimeLogRow != count :
 					if lastTimeLogRow > count :
@@ -173,7 +175,7 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 					else:
 						for i in range(lastTimeLogRow, count):
 							if data_Log[0].find('No such file') == -1:
-								print '',data_Log[0].split('\r\r\n')[i]
+								print '',data_Log[0].split(separator)[i]
 						lastTimeLogRow = count
 				time.sleep(0.3)
 			else:
@@ -181,14 +183,14 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 				print data_Log[1]
 				break
 			# error.txt解析
-			error_count = error_data[0].count('\r\r\n')
+			error_count = error_data[0].count(separator)
 			if error_lastTimeLogRow != error_count:
 				if error_lastTimeLogRow > error_count:
 					break
 				else:
 					for i in range(error_lastTimeLogRow, error_count):
 						if error_data[0].find('No such file') == -1:
-							print '---Error---',error_data[0].split('\r\r\n')[i]
+							print '---Error---',error_data[0].split(separator)[i]
 					error_lastTimeLogRow = error_count
 
 class RunXtestCommand(sublime_plugin.TextCommand):
@@ -253,7 +255,7 @@ class RunXtestCommand(sublime_plugin.TextCommand):
 				# print "---------Log thread is over---------"
 				break
 			if not data_Log[1]:
-				count =  data_Log[0].count('\r\r\n')
+				count =  data_Log[0].count(separator)
 				# print data_Log
 				if lastTimeLogRow != count :
 					if lastTimeLogRow > count :
@@ -261,7 +263,7 @@ class RunXtestCommand(sublime_plugin.TextCommand):
 					else:
 						for i in range(lastTimeLogRow, count):
 							if data_Log[0].find('No such file') == -1:
-								print '',data_Log[0].split('\r\r\n')[i]
+								print '',data_Log[0].split(separator)[i]
 						lastTimeLogRow = count
 				time.sleep(0.3)
 			else:
@@ -269,14 +271,14 @@ class RunXtestCommand(sublime_plugin.TextCommand):
 				print data_Log[1]
 				break
 			# error.txt解析
-			error_count = error_data[0].count('\r\r\n')
+			error_count = error_data[0].count(separator)
 			if error_lastTimeLogRow != error_count:
 				if error_lastTimeLogRow > error_count:
 					break
 				else:
 					for i in range(error_lastTimeLogRow, error_count):
 						if error_data[0].find('No such file') == -1:
-							print '---Error---',error_data[0].split('\r\r\n')[i]
+							print '---Error---',error_data[0].split(separator)[i]
 					error_lastTimeLogRow = error_count
 
 class StopCommand(sublime_plugin.TextCommand):
@@ -500,7 +502,7 @@ class CatKatInfoCommand(sublime_plugin.TextCommand):
 		elif infooutput.find("No such file") != -1:
 			sublime.error_message(infooutput)
 		else:
-			infooutput = infooutput.split('\r\r\n')
+			infooutput = infooutput.split(separator)
 			fl = file(srcFolder + delimiter +'CatKatInfo.txt', 'w')
 			for i in xrange(0, len(infooutput)):
 				fl.write(infooutput[i])
@@ -588,7 +590,7 @@ class CatLsCommand(sublime_plugin.TextCommand):
 			elif infooutput.find("No such file") != -1:
 				sublime.error_message(infooutput)
 			else:
-				infooutput = infooutput.split('\r\r\n')
+				infooutput = infooutput.split(separator)
 				fl = file(srcFolder + delimiter +'CatlsInfo.txt', 'w')
 				for i in xrange(0, len(infooutput)):
 					fl.write(infooutput[i])
@@ -680,7 +682,7 @@ class PsCommand(sublime_plugin.TextCommand):
 		elif infooutput.find("No such file") != -1:
 			sublime.error_message(infooutput)
 		else:
-			infooutput = infooutput.split('\r\r\n')
+			infooutput = infooutput.split(separator)
 			fl = file(srcFolder + delimiter +'PS.txt', 'w')
 			for i in xrange(0, len(infooutput)):
 				fl.write(infooutput[i])
@@ -771,8 +773,8 @@ class RecordCommand(sublime_plugin.TextCommand):
 				e = x
 		for x in xrange(0, len(data_Log[0].split('\n'))):
 			if s<x<e :
-				self.insert_contents(edit, data_Log[0].split('\r\n')[x].decode("utf-8"))
-				# print data_Log[0].split('\r\r\n')[x]
+				self.insert_contents(edit, data_Log[0].split(separator)[x].decode("utf-8"))
+				# print data_Log[0].split(separator)[x]
 		# t = threading.Thread(target=self.isChanged, args=(edit,))
 		# t.setDaemon(True)
 		# t.start()
@@ -794,7 +796,7 @@ class RecordCommand(sublime_plugin.TextCommand):
 				print "---------Record thread is over---------"
 				break
 			if not data_Log[1]:
-				count =  data_Log[0].count('\r\r\n')
+				count =  data_Log[0].count(separator)
 				# print data_Log
 				if lastTimeLogRow != count :
 					if lastTimeLogRow > count :
@@ -804,9 +806,9 @@ class RecordCommand(sublime_plugin.TextCommand):
 					else:
 						for i in range(lastTimeLogRow, count):
 							if data_Log[0].find('No such file') == -1:
-								print '',data_Log[0].split('\r\r\n')[i]
+								print '',data_Log[0].split(separator)[i]
 
-								# self.insert_contents(edit, data_Log[0].split('\r\r\n')[i])
+								# self.insert_contents(edit, data_Log[0].split(separator)[i])
 						# sublime.set_timeout(self.view.insert(edit, 3156, '11111111111111'), 2000)
 						lastTimeLogRow = count
 				time.sleep(0.5)
