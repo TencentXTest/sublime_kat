@@ -1,6 +1,6 @@
  --[[--
  Kapalai黑盒自动化核心类库 
- Core模块中的API与业务无关,只作为核心类库扩展使用 (Version:3.3.9.5)
+ Core模块中的API与业务无关,只作为核心类库扩展使用 (Version:3.3.9.11)
  @module Core
  @author Creeper
  @license ---
@@ -36,6 +36,7 @@ isAccessbility = true  --是否启动一场弹窗清理功能
 isClearAppData = false  --回放前是否需要清除被测应用数据
 stepId = nil  --全局,回放到第几步,每次调用doRun方法时将被初始化
 continuePlaybackFailTimes = nil --回放时连续失败次数,每次调用doRun方法时将被初始化
+palybackFailMaxTimes = nil 	--回放时总失败次数,每次调用doRun方法时将被初始化
 picCheckPointCounter = nil  --图片checkpoint检查点步骤计数器
 actionCounter = nil  --自动checkpoint时的计数器
 isLaboratoryMonkey = false  --当前是否在实验室执行monkey测试,默认为false,若在实验室执行monkey需要变为true
@@ -45,8 +46,9 @@ isStepFail = false  --当前步骤是否失败,默认为false,在具体的录制
 isAutoCheckPoint = false  --是否自动截取check_point_pic
 action = 'nil'
 AUTO_CP_FREQUENCY = 3  --自动截取check_point_pic的截图频率
-MAX_FAIL_NUM = 3  --每个Case脚本允许回放出错的最大次数
-PLAY_BACK_FAIL_TIP = 'Continuous failure times reach maximum, please check!'
+COUNTINUE_FAIL_NUM = 3  --每个Case允许回放连续出错的次数
+MAX_FAIL_NUM = 5  --每个Case允许回放出错的最大次数
+PLAY_BACK_FAIL_TIP = 'Fail times reach maximum, please check!'
 VIDEO_INFO_PATH = '/sdcard/kat/Result/VideoInfo.txt'  --回放过程中标记步骤点的信息内容,视频录制开启后使用,可以在parameter中重写
 STEP_ERROR = 'Playback failed: not find control!'
 CURRENT_TOOLS = 'kat'
@@ -54,6 +56,12 @@ ACTION_INFO_PATH = '/sdcard/kat/Result/Action.txt'
 CHECK_POINT_INFO_PATH = '/sdcard/kat/Result/cp_pic_info.txt'
 CRASH_DATA_PATH = '/sdcard/kat/Result/allCrashData.txt'
 TEST_RUNNING_RESULT_PATH = '/sdcard/kat/Result/testRunningResult.txt'
+
+CHECK_POINT_SEPARATOR = "|"
+CHECK_POINT_SUM = 0
+CHECK_POINT_FAIL = 0
+CHECK_POINT_PASS = 0
+
 
 --[[--
 HANDLER for Exception responding to ANR or Crash.
@@ -93,7 +101,7 @@ function handler(tag, detail)
 		if _fileIsExist(ACTION_INFO_PATH) and not isTraversal then
 			_check_point_pic()
 		end
-		Android:delete(ACTION_INFO_PATH)
+		os.remove(ACTION_INFO_PATH)
 	end
 	local file = io.open(CRASH_DATA_PATH,'r')
 	local crashData = file:read("*all")
@@ -1021,7 +1029,7 @@ function startAutoTest(pkgname, depth, scanTime, isScreenshot)
 	Android:startAutoTest(pkgname)
 	isTraversal = false
 	info = 'startAutoTest: '..tostring(pkgname)..', '..tostring(depth)..', '..tostring(scanTime)..', '..tostring(isScreenshot)..'\n'
-	Android:delete(ACTION_INFO_PATH)
+	os.remove(ACTION_INFO_PATH)
 	if Debug then log(info) end
 end
 
@@ -1720,7 +1728,11 @@ function clearAppData(pkgname)
 		Android:notifyMessage('Clear app data!')
 		endApp(pkgname)
 		_sleep(700)
-		Android:runShCommand('pm clear '..pkgname)
+		if Android:getAndroidSDK() > 19 then
+			Android:runShCommand('/data/local/tmp/utest_shell -c "pm clear '..pkgname..'"')
+		else
+			Android:runShCommand('pm clear '..pkgname)
+		end
 		_sleep(700)
 	end
 	info = 'clearAppData '..tostring(result)..': '..pkgname..'\n' 
@@ -2629,12 +2641,15 @@ end
  -- @string content 第一个参数为false时要记录的备注信息
  -- @usage checkPoint(false,'此时没有找到xxx控件元素')
 function checkPoint(isTrue,content)
+	local mtype = "fw_cp"
 	local function_info = ''
 	local result = isTrue
-	local info = 'fw_cp_pass'
+	local info = 'pass'
 	if not isTrue then
 		_snapshotWholeScreen(TimeMarker(Case_Name), 'fw_cp_fail')
-		info = 'fw_cp_false: '..content
+		info = 'fail'..CHECK_POINT_SEPARATOR..mtype..CHECK_POINT_SEPARATOR..tostring(content)
+	else
+		info = 'pass'..CHECK_POINT_SEPARATOR..mtype..CHECK_POINT_SEPARATOR..tostring(content)
 	end
 	--add into t_info, t_result
 	t_info[#t_info + 1] = info
@@ -2648,12 +2663,13 @@ end
  -- @string content 第一个参数为false时要记录的日志信息
  -- @usage assert(false,'此时没有找到xxx控件元素')
 function assert(isTrue,content)
+	local mtype = 'fw_as'
 	local function_info = ''
 	local result = isTrue
-	local info = 'fw_as_pass'
+	local info = 'pass'
 	if not isTrue then
 		_snapshotWholeScreen(TimeMarker(Case_Name), 'fw_as_fail')
-		local info = 'fw_as_false: '..content
+		info = 'fail'..CHECK_POINT_SEPARATOR..mtype..CHECK_POINT_SEPARATOR..tostring(content)
 		t_info[#t_info + 1] = info
 		t_result[#t_result + 1] = result 
 		collectResult()
@@ -2662,6 +2678,7 @@ function assert(isTrue,content)
 		log('WIFI '..tostring(Android:isWifiConnect())..' | NET '..tostring(Android:isNetworkEnable('180.149.132.47'))..'\n')
 		luaError()
 	else
+		info = 'pass'..CHECK_POINT_SEPARATOR..mtype..CHECK_POINT_SEPARATOR..tostring(content)
 		t_info[#t_info + 1] = info
 		t_result[#t_result + 1] = result 
 		function_info = 'assert: '..tostring(isTrue)..', '..content..'\n'
@@ -2674,12 +2691,13 @@ end
  -- @string content 第一个参数为false时要记录的日志信息
  -- @usage assert_final(false,'login failed')
 function assert_final(isTrue,content)
+	local mtype = 'fw_asf'
 	local function_info = ''
 	local result = isTrue
-	local info = 'fw_asf_pass'
+	local info = 'pass'
 	if not isTrue then
 		_snapshotWholeScreen(TimeMarker(Case_Name), 'fw_asf_fail')
-		local info = 'fw_asf_false: '..content
+		info = 'fail'..CHECK_POINT_SEPARATOR..mtype..CHECK_POINT_SEPARATOR..tostring(content)
 		t_info[#t_info + 1] = info
 		t_result[#t_result + 1] = result 
 		collectResult()
@@ -2691,6 +2709,7 @@ function assert_final(isTrue,content)
 		log('WIFI '..tostring(Android:isWifiConnect())..' | NET '..tostring(Android:isNetworkEnable('180.149.132.47'))..'\n')
 		luaError()
 	else
+		info = 'pass'..CHECK_POINT_SEPARATOR..mtype..CHECK_POINT_SEPARATOR..tostring(content)
 		t_info[#t_info + 1] = info
 		t_result[#t_result + 1] = result 
 		function_info = 'assert_final: '..tostring(isTrue)..', '..content..'\n'
@@ -2715,7 +2734,7 @@ function check_point_pic(describe)
 	readCPInfo(systemTimemap..'_cp-'..picCheckPointCounter..'.jpg', describe)
 	_snapshotWholeScreen(cp_pic_case_path..systemTimemap..'_cp-'..picCheckPointCounter..'.jpg')
 	_sleep(2000)
-	Android:delete(ACTION_INFO_PATH)
+	os.remove(ACTION_INFO_PATH)
 	info = 'step '..stepId..' > check_point_pic('..cp_pic_case_path..systemTimemap..'_cp-'..picCheckPointCounter..'.jpg)\n'
 	picCheckPointCounter = picCheckPointCounter + 1
 	if Debug then log(info) end
@@ -2732,8 +2751,16 @@ function _check_point_pic(describe)
 	readCPInfo(systemTimemap..'_cp-'..picCheckPointCounter..'.jpg', describe)
 	_snapshotWholeScreen(cp_pic_path)
 	_sleep(2000)
-	Android:delete(ACTION_INFO_PATH)
+	os.remove(ACTION_INFO_PATH)
 	picCheckPointCounter = picCheckPointCounter + 1
+end
+
+	--- 人机交互自动化测试断言，发起后会弹窗并阻塞，直到人工确认后才向下执行
+	-- @string title 人机交互专项测试标题
+	-- @string content 人机交互专项测试描述
+	-- @usage interactive('听音识曲', '人工确认听歌操作流程')
+function interactive(title, content)
+	Android:interactive(title, content)
 end
 
 function autoCP(text, x, y, dx, dy, wPercent, hPercent)
@@ -2903,6 +2930,24 @@ end
 
 function TearDownTestSuite()
 	Case_Name = 'TearDown'
+	stepId = 1
+	actionCounter = 1 
+	picCheckPointCounter = 1
+	-- write checkpoints' statistic data into Result.txt file
+	if _fileIsExist(TotalResultLogPath) then
+		for line in io.lines(TotalResultLogPath) do
+			CHECK_POINT_SUM = CHECK_POINT_SUM + 1
+			if string.find(line, 'fail') then
+				CHECK_POINT_FAIL = CHECK_POINT_FAIL + 1
+			elseif string.find(line, 'pass') then
+				CHECK_POINT_PASS = CHECK_POINT_PASS + 1
+			end
+		end
+		local totalresult = io.open(TotalResultLogPath,'a')
+		totalresult:write(tostring(CHECK_POINT_SUM)..CHECK_POINT_SEPARATOR..tostring(CHECK_POINT_FAIL)..CHECK_POINT_SEPARATOR..tostring(CHECK_POINT_PASS)..'\n')
+		totalresult:close()
+	end
+
 	--Record teardown_over log, first check filePath is existed
 	if not _fileIsExist(LogPath) then
 		_logcat('i', '---kat---', "Maybe Init.lua isn't executed")
@@ -2967,8 +3012,9 @@ function collectResult()
 		local uncheckpath = checkpoint_path..'uncheck.txt'
 		Android:newFile(uncheckpath)
 		local file_uncheck = io.open(TotalResultLogPath,'a')
-		local ResultText_uncheck = Case_Name..'-uncheck\n'
-		file_uncheck:write(ResultText_uncheck)
+		-- local message = ""
+		-- local ResultText_uncheck = Case_Name..CHECK_POINT_SEPARATOR..'uncheck'..CHECK_POINT_SEPARATOR..message..'\n'
+		file_uncheck:write('')
 		file_uncheck:close()
 		return
 	end
@@ -2982,26 +3028,34 @@ function collectResult()
 			local passfile = io.open(passpath,'a')
 			for i, v in pairs(t_info) do
 				passfile:write(v..'\n')
-				_sleep(1000)
+				_sleep(500)
 			end
 			passfile:close()
 			_sleep(1000)
 			local file_pass = io.open(TotalResultLogPath, 'a')
-			local ResultText_pass = Case_Name..'-pass\n'
-			file_pass:write(ResultText_pass)
+			-- local ResultText_pass = Case_Name..'-pass\n'
+			-- file_pass:write(ResultText_pass)
+			for i, v in pairs(t_info) do
+				file_pass:write(Case_Name..CHECK_POINT_SEPARATOR..v..'\n')
+				_sleep(500)
+			end
 			file_pass:close()
 		else
 			local failpath = checkpoint_path..'fail.txt'
 			local failfile = io.open(failpath,'a')
 			for i, v in pairs(t_info) do
 				failfile:write(v..'\n')
-				_sleep(1000)
+				_sleep(500)
 			end
 			failfile:close()
 			_sleep(3000)
 			local file_fail = io.open(TotalResultLogPath, 'a')
-			local ResultText_fail = Case_Name..'-fail\n'
-			file_fail:write(ResultText_fail)
+			-- local ResultText_fail = Case_Name..'-fail\n'
+			-- file_fail:write(ResultText_fail)
+			for i, v in pairs(t_info) do
+				file_fail:write(Case_Name..CHECK_POINT_SEPARATOR..v..'\n')
+				_sleep(500)
+			end
 			file_fail:close()
 		end
 	end
@@ -3010,6 +3064,7 @@ end
 function doRun()
 	stepId = 1
 	continuePlaybackFailTimes = 1 
+	palybackFailMaxTimes = 1
 	local info = debug.getinfo(caseFactory).source
 	local CaseName = getFileName(info)
 	InitTestCase(CaseName)
@@ -3042,7 +3097,7 @@ function doRun()
 		if _fileIsExist(ACTION_INFO_PATH) then
 			_check_point_pic('')
 		end
-		Android:delete(ACTION_INFO_PATH)
+		os.remove(ACTION_INFO_PATH)
 		if KAT_LUAEND then
 			error('KAT_LUAEND')
 		elseif TRACEBACK ~= '' then
@@ -3336,18 +3391,6 @@ function _fileIsExist(filePath)
 	end
 end
 
-function getIMEI()
-	local imei = _shell('dumpsys iphonesubinfo')
-	if imei ~= nil then
-		for w in string.gmatch(imei, '%d%d%d%d%d%d+') do
-			imei = w
-		end
-	else
-		imei = ''
-	end
-	return imei
-end
-
  --- 根据格式获取系统时间
  -- @format 'yyyy-MM-dd HH:mm:ss'
  -- @usage getSystemTime('HH-mm:ss') 返回结果是这样的格式：19-33:12
@@ -3360,8 +3403,8 @@ function tooManyfail(text)
 	_logcat('i', 'xtest', text)
 	if isStepFail then 
 		--当前步骤回放失败了
-		if continuePlaybackFailTimes >= MAX_FAIL_NUM then
-			--并且连续回放失败到最大次数,就停止运行当前case
+		if continuePlaybackFailTimes >= COUNTINUE_FAIL_NUM or palybackFailMaxTimes >= MAX_FAIL_NUM then
+			--并且连续回放失败到最大次数或总失败次数达到最大次数,就停止运行当前case
 			_notifyMessage(PLAY_BACK_FAIL_TIP, 1)
 			Android:delete(CasePath..Case_Name..'/OK.txt')
 			_writeFile(TEST_RUNNING_RESULT_PATH, 'controlerFail:Failure')
@@ -3371,6 +3414,7 @@ function tooManyfail(text)
 			--虽然失败了,但还没有出现连续失败到最大次数,计数器+1
 			continuePlaybackFailTimes = continuePlaybackFailTimes + 1
 		end
+		palybackFailMaxTimes = palybackFailMaxTimes + 1
 	else
 		--当前步骤回放正确了,就把连续回放失败计数器清零
 		continuePlaybackFailTimes = 1
@@ -3561,6 +3605,7 @@ function findTagFromFile(path, tag)
 				break
 			end
 		end
+		file:close()
 	end
 	return result, data
 end
@@ -3601,6 +3646,7 @@ function setLuaContext()
 	hashmap:put('haswatertext', ISPOINT)
 	hashmap:put('autoCPFrequency', tostring(AUTO_CP_FREQUENCY))
 	hashmap:put('needresign', Needresign)
+	hashmap:put('checkPoint', 'checkPoint')
 	Android:setLuaContext(hashmap)
 end
 
@@ -3677,12 +3723,14 @@ function devInfo()
 	local cpuInfo = Android:getCpuInfo()
 	local memInfo = Android:getTotalMemory()
 	local ApiVersion_testkat = 'nil'
+	local devIMEI = 'nil'
+	if Android:getIMEI() ~= nil then devIMEI = Android:getIMEI() end
 	if not Android:isInstall('com.kunpeng.kat.test') then
 		ApiVersion_testkat = 'com.kunpeng.kat.test not found !!'
 	else
 		ApiVersion_testkat = Android:getVersionNumber('com.kunpeng.kat.test')
 	end
-	log(Device..' | '..x..'x'..y..' | Android '..Android:getAndroidVersion()..' | API_LEVEL '..Android:getAndroidSDK()..' | IMEI '..getIMEI()..'\n')
+	log(Device..' | '..x..'x'..y..' | Android '..Android:getAndroidVersion()..' | API_LEVEL '..Android:getAndroidSDK()..' | IMEI '..devIMEI..'\n')
 	log('Kat '..ApiVersion..'\n')
 	log('KatTest '..ApiVersion_testkat..'\n')
 	local file = io.open('/sdcard/kat/Result/deviceinfo', 'a')
