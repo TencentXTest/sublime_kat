@@ -1,8 +1,8 @@
  --[[--
- Kapalai黑盒自动化核心类库 
- Core模块中的API与业务无关,只作为核心类库扩展使用 (Version:3.3.9.11)
+ XTest自动化核心类库 
+ Core模块中的API与业务无关,只作为核心类库扩展使用 (Version:3.3.9.18)
  @module Core
- @author Creeper
+ @author Lilith
  @license ---
  @copyright ---
 ]]
@@ -44,6 +44,7 @@ testEndIsCleanPic = false  --由于monkey测试有可能产生巨量图片,所�
 isPlayToast = true  --回放时是否显示点击步骤toast,默认为显示,实验室为了提高回放效率,可以去掉,可以在parameter中重写
 isStepFail = false  --当前步骤是否失败,默认为false,在具体的录制的每步中进行修改,该步骤执行完毕重新标记为false
 isAutoCheckPoint = false  --是否自动截取check_point_pic
+isGetStartTime = false  --是否计算启动时间
 action = 'nil'
 AUTO_CP_FREQUENCY = 3  --自动截取check_point_pic的截图频率
 COUNTINUE_FAIL_NUM = 3  --每个Case允许回放连续出错的次数
@@ -62,11 +63,6 @@ CHECK_POINT_SUM = 0
 CHECK_POINT_FAIL = 0
 CHECK_POINT_PASS = 0
 
-
---[[--
-HANDLER for Exception responding to ANR or Crash.
-MONKEY needs override it.
-]]
 function handler(tag, detail)
 	log('┌────────────────────┐'..'\n')
 	log('| crash_handler'..'\n')
@@ -86,8 +82,9 @@ function handler(tag, detail)
 		snap_tag = 'fw_anr'
 	end
 	_sleep(3000) --有可能crash弹窗还没及时出现,这里休眠几秒,若还没出现就不等了
-	t_info[#t_info + 1] = 'fw_cp_false: '..snap_tag
-	t_result[#t_result + 1] = false
+	--取消checkPoint结果收集，在发生crash时候不记录断言
+	-- t_info[#t_info + 1] = 'fw_cp_false: '..snap_tag
+	-- t_result[#t_result + 1] = false
 	collectResult()
 	local PicName = getSystemTime('yyyyMMdd-HHmmss')..'_'..error_type..'.jpg'
 	if isLaboratoryMonkey and isMonkey then  --由于实验室把路径修改了,这里还需要做一下处理
@@ -128,15 +125,16 @@ end
 require('/sdcard/kat/Parameter')
 if PackageName == nil then error('fw_error please update your PackageName in Parameter.lua') end
 if PackageType == nil then error('fw_error please update your PackageType in Parameter.lua') end
--------------------------------base---------------------------------------------
 
 --- 得到控件的X,Y坐标值
+ -- @within 1-General
  -- @number id 元素id
  -- @string key 元素key值
  -- @string ctext 元素文本
  -- @string classpath 元素页面布局
+ -- @string activity 录制现场的activity名
  -- @treturn {boolean,number,number} 如果成功得到坐标则返回true,以及元素的x,y坐标值；否则返回false
- -- @usage local result,x,y = getControl_XY(-1,'','qqchat','%com.tencent.mobileqq.widget.QQTabHost#0')
+ -- @usage local result,x,y = getControl_XY(-1,'name','qqchat','%com.tencent.mobileqq.widget.QQTabHost#0', 'com.tencent.mobileqq.activity.SplashActivity')
 function getControl_XY(id, key, ctext, classpath, activity)
 	local classpath = pathTranslate(classpath)
 	local info = ''
@@ -150,39 +148,16 @@ function getControl_XY(id, key, ctext, classpath, activity)
 	if Debug then log(info) end
 	return result, X, Y
 end
-
---  --- 点击操作
---  -- @number id 元素id
---  -- @string key 元素key值
---  -- @string ctext 元素文本
---  -- @string classpath 元素页面布局
---  -- @number clicktime 点击后的预留时间,单位为ms
---  -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
---  -- @treturn boolean 点击成功返回true,失败返回false
---  -- @usage click(-1,'','qqchat','%com.tencent.mobileqq.widget.QQTabHost#0',2000,TimeMarker(CaseN))
--- function click(id, key, ctext, classpath, clicktime, path, activity)
--- 	local classpath = pathTranslate(classpath)
--- 	local info = ''
--- 	if activity == nil then activity = '' end
--- 	local result = false
--- 	local mypath = path
--- 	if path == 0 or path == nil then mypath = '' end
--- 	local status = Android:click(id, key, ctext, classpath, 0, mypath, activity)
--- 	sleep(clicktime)
--- 	if status > 0 then result = true end
--- 	info = 'click '..tostring(result)..': '..tostring(id)..', '..key..', '..ctext..', '..classpath..', '..activity..'\n'
--- 	if Debug then log(info) end
--- 	return result
--- end
-
  --- 可选事件类型的点击操作
+ -- @within 2-Gesture
  -- @number id 元素id
  -- @string key 元素key值
  -- @string ctext 元素文本
  -- @string classpath 元素页面布局
  -- @number event 点击类型 0-click 1-down 2-up
  -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
- -- @usage clickByEvent(-1, '', 'qchat', '', 0, TimeMarker(CaseN))
+ -- @string activity 录制现场的activity名
+ -- @usage clickByEvent(-1, 'id', 'qchat',  '%com.tencent.mobileqq.widget.QQTabHost#0', 0, TimeMarker(CaseN), 'com.tencent.mobileqq.activity.SplashActivity')
 function clickByEvent(id, key, ctext, classpath, event, path, activity)
 	local classpath = pathTranslate(classpath)
 	local info = ''
@@ -195,13 +170,15 @@ function clickByEvent(id, key, ctext, classpath, event, path, activity)
 end
 
  --- 基础性质的点击操作,常用在对性能要求高的场景中
+ -- @within 2-Gesture
  -- @number id 元素id
  -- @string key 元素key值
  -- @string ctext 元素文本
  -- @string classpath 元素页面布局
  -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
+ -- @string activity 录制现场的activity名
  -- @treturn boolean 点击成功返回true,失败返回false
--- @usage basic_click(-1,'','qqchat','%com.tencent.mobileqq.widget.QQTabHost#0',TimeMarker(CaseN))
+ -- @usage basic_click(-1,'key','qqchat','%com.tencent.mobileqq.widget.QQTabHost#0',TimeMarker(CaseN), 'com.tencent.mobileqq.activity.SplashActivity')
 function basic_click(id, key, ctext, classpath, path, activity)
 	local info = ''
 	local result = false
@@ -215,6 +192,19 @@ function basic_click(id, key, ctext, classpath, path, activity)
 	return result
 end
 
+--- 等待控件并点击
+ -- @within 2-Gesture
+ -- @number id 元素id
+ -- @string key 元素key值
+ -- @string ctext 元素文本
+ -- @string classpath 元素页面布局
+ -- @number wPercent 被点击元素的矩形区域横坐标相对百分比
+ -- @number hPercent 被点击元素的矩形区域纵坐标相对百分比
+ -- @number Timeout 超时时间,单位s
+ -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
+ -- @string activity 录制现场的activity名
+ -- @treturn boolean 点击成功返回true,失败返回false
+ -- @usage tap(-1, 'name', '登录', '%com.tencent.mobileqq.widget.QQTabHost#0', 0.5, 0.5, 20, TimeMarker(CaseN), 'com.jm.android.jumei.SpecialTimeSaleActivity')
 function tap(id, key, ctext, classpath, wPercent, hPercent, Timeout, path, activity)
 	if isAutoTest then
 		Android:cacheTap(id, key, ctext, classpath, wPercent, hPercent, 0, '', activity)
@@ -223,16 +213,6 @@ function tap(id, key, ctext, classpath, wPercent, hPercent, Timeout, path, activ
 	end
 end
 
- --- 等待控件并点击
- -- @number id 元素id
- -- @string key 元素key值
- -- @string ctext 元素文本
- -- @string classpath 元素页面布局
- -- @number Timeout 超时时间,单位s
- -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
- -- @string activity 录制现场的activity名
- -- @treturn boolean 点击成功返回true,失败返回false
- -- @usage tap(-1, '', '登录', '', 0.5, 0.5, 20, TimeMarker(CaseN), 'com.jm.android.jumei.SpecialTimeSaleActivity')
 function tap_original(id, key, ctext, classpath, wPercent, hPercent, Timeout, path, activity)
 	local classpath = pathTranslate(classpath)
 	action = 'tap'
@@ -285,16 +265,6 @@ function tap_original(id, key, ctext, classpath, wPercent, hPercent, Timeout, pa
 	return result
 end
 
- --- 等待控件并点击
- -- @number id 元素id
- -- @string key 元素key值
- -- @string ctext 元素文本
- -- @string classpath 元素页面布局
- -- @string record_resolution_x, record_resolution_y 录制时候的坐标在屏幕中的比例
- -- @number Timeout 超时时间,单位s
- -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
- -- @treturn boolean 点击成功返回true,失败返回false
- -- @usage tap_fuzzy(-1, '', '登录', '', 0.5, 0.5, 0.2323, 0.8852, 20, TimeMarker(CaseN))
 function tap_fuzzy(id, key, ctext, classpath, wPercent, hPercent, record_resolution_x, record_resolution_y, Timeout, path)
 	local classpath = pathTranslate(classpath)
 	write_file_video(VIDEO_INFO_PATH, 'Step_'..stepId..':点击 false '..getSystemTimemap())
@@ -340,6 +310,19 @@ function tap_fuzzy(id, key, ctext, classpath, wPercent, hPercent, record_resolut
 	return temp_clicked
 end
 
+--- 长按操作
+-- @within 2-Gesture
+ -- @number id 元素id
+ -- @string key 元素key值
+ -- @string ctext 元素文本
+ -- @string classpath 元素页面布局
+ -- @number wPercent 被点击元素的矩形区域横坐标相对百分比
+ -- @number hPercent 被点击元素的矩形区域纵坐标相对百分比
+ -- @number TouchTime 长按时间,单位ms
+ -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
+ -- @string activity 录制现场的activity名
+ -- @treturn boolean 长按成功返回true,失败返回false
+ -- @usage longTouch(-1, 'is', 'qqchat', '%com.tencent.mobileqq.widget.QQTabHost#0', 0.5, 0.5, 4000, TimeMarker(CaseN),'com.jm.android.jumei.SpecialTimeSaleActivity')
 function longTouch(id, key, ctext, classpath, wPercent, hPercent, TouchTime, path, activity)
 	if isAutoTest then
 		Android:cacheLongTouch(id, key, ctext, classpath, wPercent, hPercent, TouchTime, '', activity)
@@ -348,15 +331,6 @@ function longTouch(id, key, ctext, classpath, wPercent, hPercent, TouchTime, pat
 	end
 end
 
- --- 长按操作
- -- @number id 元素id
- -- @string key 元素key值
- -- @string ctext 元素文本
- -- @string classpath 元素页面布局
- -- @number TouchTime 长按时间,单位ms
- -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
- -- @treturn boolean 长按成功返回true,失败返回false
- -- @usage longTouch(-1, '', 'qqchat', '', 0.5, 0.5, 4000, TimeMarker(CaseN))
 function longTouch_original(id, key, ctext, classpath, wPercent, hPercent, TouchTime, path, activity)
 	local classpath = pathTranslate(classpath)
 	action = 'longTouch'
@@ -408,7 +382,83 @@ function longTouch_original(id, key, ctext, classpath, wPercent, hPercent, Touch
 	getHookVersion()
 	return result
 end
+--- 按坐标滑动(有加速度滑动)
+ -- @within 2-Gesture
+ -- @number x1 滑动开始的横坐标
+ -- @number y1 滑动开始的纵坐标
+ -- @number x2 滑动结束的横坐标
+ -- @number y2 滑动结束的纵坐标
+ -- @number record_resolution_x 录制滑动时横坐标录制设备的分辨率信息
+ -- @number record_resolution_y 录制滑动时纵坐标录制设备的分辨率信息
+ -- @string path  截图路径
+ -- @usage fling(100, 200, 150, 300, 1080, 1920, TimeMarker(CaseN))
+function fling(x1, y1, x2, y2, record_resolution_x, record_resolution_y, path)
+	if isAutoTest then
+		local resolution_x, resolution_y = Android:getScreenResolution()
+		local X1 = (x1*resolution_x)/record_resolution_x
+		local Y1 = (y1*resolution_y)/record_resolution_y
+		local X2 = (x2*resolution_x)/record_resolution_x
+		local Y2 = (y2*resolution_y)/record_resolution_y
+		Android:cacheMove(X1, Y1, X2, Y2, 110)
+	else
+		fling_original(x1, y1, x2, y2, record_resolution_x, record_resolution_y, path)
+	end
+end
 
+function fling_original(x1, y1, x2, y2, record_resolution_x, record_resolution_y, path)
+	local action = 'fling'
+	write_file_video(VIDEO_INFO_PATH, 'Step_'..stepId..':'..action..' false '..getSystemTimemap()) 
+	local info = ''
+	if x1 > x2 and y1 > y2 then
+		info = 'fling to the top left'
+	elseif x1 > x2 and y1 < y2 then
+		info = 'fling to the bottom left'
+	elseif x1 > x2 and y1 == y2 then
+		info = 'fling to the left'
+	elseif x1 == x2 and y1 > y2 then
+		info = 'fling to the top'
+	elseif x1 == x2 and y1 < y2 then
+		info = 'fling to the bottom'
+	elseif x1 < x2 and y1 < y2 then
+		info = 'fling to the bottom right'
+	elseif x1 < x2 and y1 == y2 then
+		info = 'fling to the right'
+	elseif x1 < x2 and y1 > y2 then
+		info = 'fling to the top right'
+	end
+	if isPlayToast then
+		_notifyMessage('Step'..stepId..' : '..info)
+	end
+	local resolution_x, resolution_y = Android:getScreenResolution()
+	local X1 = (x1*resolution_x)/record_resolution_x
+	local Y1 = (y1*resolution_y)/record_resolution_y
+	local X2 = (x2*resolution_x)/record_resolution_x
+	local Y2 = (y2*resolution_y)/record_resolution_y
+	if path == nil or path == 0 then
+		Android:fling(X1, Y1, X2, Y2)
+		sleep(1500)
+	else
+		Android:fling(X1, Y1, X2, Y2, path)
+		sleep(1500)
+	end
+	autoCP('', 0, 0, 0, 0, 0, 0)
+	info = 'step '..stepId..' > fling: '..info..'\n'
+	if Debug then log(info) end
+	stepId = stepId + 1
+	write_file_video(VIDEO_INFO_PATH, ' true\n') 
+	getHookVersion()
+end
+
+ --- 按坐标滑动(无加速度)
+ -- @within 2-Gesture
+ -- @number x1 滑动开始的横坐标
+ -- @number y1 滑动开始的纵坐标
+ -- @number x2 滑动结束的横坐标
+ -- @number y2 滑动结束的纵坐标
+ -- @number record_resolution_x 录制滑动时横坐标录制设备的分辨率信息
+ -- @number record_resolution_y 录制滑动时纵坐标录制设备的分辨率信息
+ -- @string path  截图路径
+ -- @usage scroll(100, 200, 150, 300, 1080, 1920, TimeMarker(CaseN))
 function scroll(x1, y1, x2, y2, record_resolution_x, record_resolution_y, path)
 	if isAutoTest then
 		local resolution_x, resolution_y = Android:getScreenResolution()
@@ -422,11 +472,6 @@ function scroll(x1, y1, x2, y2, record_resolution_x, record_resolution_y, path)
 	end
 end
 
- --- 按坐标滑动
- -- @int x1, y1, x2, y2  滑动的开始结束坐标
- -- @int record_resolution_x, record_resolution_y  录制滑动时录制设备的分辨率信息
- -- @string path  截图路径
- -- @usage scroll(100, 200, 150, 300, 1080, 1920, TimeMarker(CaseN))
 function scroll_original(x1, y1, x2, y2, record_resolution_x, record_resolution_y, path)
 	local action = 'scroll'
 	write_file_video(VIDEO_INFO_PATH, 'Step_'..stepId..':'..action..' false '..getSystemTimemap()) 
@@ -475,6 +520,19 @@ function scroll_original(x1, y1, x2, y2, record_resolution_x, record_resolution_
 	getHookVersion()
 end
 
+ --- 双击操作
+ -- @within 2-Gesture
+ -- @number id 元素id
+ -- @string key 元素key值
+ -- @string ctext 元素文本
+ -- @string classpath 元素页面布局
+ -- @number wPercent 被点击元素的矩形区域横坐标相对百分比
+ -- @number hPercent 被点击元素的矩形区域纵坐标相对百分比
+ -- @string clicktime 点击等待的时间 ms
+ -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
+ -- @string activity 录制现场的activity名
+ -- @treturn boolean 双击成功返回true,失败返回false
+ -- @usage doubleClick(-1, 'key', 'qqchat', '%com.tencent.mobileqq.widget.QQTabHost#0', 0.5, 0.5,'6000', TimeMarker(CaseN), 'com.jm.android.jumei.SpecialTimeSaleActivity')
 function doubleClick(id, key, ctext, classpath, wPercent, hPercent, clicktime, path, activity)
 	if isAutoTest then
 		Android:cacheDoubleClick(id, key, ctext, classpath, wPercent, hPercent, '', activity)
@@ -482,15 +540,6 @@ function doubleClick(id, key, ctext, classpath, wPercent, hPercent, clicktime, p
 		return doubleClick_original(id, key, ctext, classpath, wPercent, hPercent, clicktime, path, activity)
 	end
 end
-
- --- 双击操作
- -- @number id 元素id
- -- @string key 元素key值
- -- @string ctext 元素文本
- -- @string classpath 元素页面布局
- -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
- -- @treturn boolean 长按成功返回true,失败返回false
- -- @usage doubleClick(-1, '', 'qqchat', '', 0.5, 0.5, clicktime, TimeMarker(CaseN))
 
 function doubleClick_original(id, key, ctext, classpath, wPercent, hPercent, clicktime, path, activity)
 	local classpath = pathTranslate(classpath)
@@ -545,12 +594,14 @@ function doubleClick_original(id, key, ctext, classpath, wPercent, hPercent, cli
 end
 
  --- 判断控件是否在当前页面
- -- @number id 元素id
- -- @string key 元素key值
- -- @string ctext 元素文本
- -- @string classpath 元素页面布局
- -- @treturn boolean 如果在当前页面返回true,否则返回false
- -- @usage local isIn = isCurrentPage(-1, 'icon', 'qqchat', '')
+ -- @within 1-General
+  -- @number id 元素id
+  -- @string key 元素key值
+  -- @string ctext 元素文本
+  -- @string classpath 元素页面布局
+  -- @string activity 录制现场的activity名
+  -- @treturn boolean 如果在当前页面返回true,否则返回false
+ -- @usage local isIn = isCurrentPage(-1, 'icon', 'qqchat','%com.tencent.mobileqq.widget.QQTabHost#0', 'com.jm.android.jumei.SpecialTimeSaleActivity')
 function isCurrentPage(id, key, ctext, classpath, activity)
 	local classpath = pathTranslate(classpath)
 	local resolution_x, resolution_y = Android:getScreenResolution() 
@@ -572,13 +623,14 @@ function isCurrentPage(id, key, ctext, classpath, activity)
 end
 
  --- 获取控件文本属性值
- -- @number id 元素id
- -- @string key 元素key值
- -- @string ctext 元素文本
- -- @string classpath 元素页面布局
- -- @treturn {boolean,string} 成功返回true,获取的控件文本属性值
- -- @treturn {boolean,string} 失败返回false,字符串'nil in getControlerText'
- -- @usage local result,content = getControlerText(-1,'title','','%com.tencent.mobileqq.widget.QQTabHost#0')
+ -- @within 1-General
+  -- @number id 元素id
+  -- @string key 元素key值
+  -- @string ctext 元素文本
+  -- @string classpath 元素页面布局
+  -- @string activity 录制现场的activity名
+  -- @treturn {boolean,string} 成功返回true,获取的控件文本属性值;失败返回false,字符串'nil in getControlerText'
+  -- @usage local result,content = getControlerText(-1,'title','','%com.tencent.mobileqq.widget.QQTabHost#0','com.jm.android.jumei.SpecialTimeSaleActivity')
 function getControlerText(id, key, ctext, classpath, activity)
 	local info = ''
 	local result = false
@@ -599,13 +651,15 @@ function getControlerText(id, key, ctext, classpath, activity)
 end
 
  --- 在指定的控件下查找字符串
+ -- @within 1-General
  -- @number id 元素id
  -- @string key 元素key值
  -- @string ctext 元素文本
  -- @string classpath 元素页面布局
  -- @string text 将要查找的字符串
- -- @treturn {boolean,x,y,dx,dy} 找到返回true,并追加控件坐标值,否则返回false
- -- @usage local isFound,x,y,dx,dy = findTextFromControler(-1,'','qchat','','text')
+ -- @string activity 录制现场的activity名
+ -- @treturn {boolean,number,number,number,number} 找到返回true,并追加控件坐标值,否则返回false
+ -- @usage local isFound,x,y,dx,dy = findTextFromControler(-1,'name','qchat', '%com.tencent.mobileqq.widget.QQTabHost#0','text', 'com.jm.android.jumei.SpecialTimeSaleActivity')
 function findTextFromControler(id, key, ctext, classpath, text, activity)
 	local info = ''
 	if activity == nil then activity = '' end
@@ -618,12 +672,14 @@ function findTextFromControler(id, key, ctext, classpath, text, activity)
 end
 
  --- 判断是否找到控件
- -- @number id 元素id
- -- @string key 元素key值
- -- @string ctext 元素文本
- -- @string classpath 元素页面布局
- -- @treturn boolean 找到控件返回true,否则返回false
- -- @usage local isFound = findControl(-1,'','qqchat','%com.tencent.mobileqq.widget.QQTabHost#0')
+  -- @within 1-General
+  -- @number id 元素id
+  -- @string key 元素key值
+  -- @string ctext 元素文本
+  -- @string classpath 元素页面布局
+  -- @string activity 录制现场的activity名
+  -- @treturn boolean 找到控件返回true,否则返回false
+  -- @usage local isFound = findControl(-1,'text','qqchat','%com.tencent.mobileqq.widget.QQTabHost#0', 'com.jm.android.jumei.SpecialTimeSaleActivity')
 function findControl(id, key, ctext, classpath, activity)
 	local info = ''
 	local classpath = pathTranslate(classpath)
@@ -638,13 +694,15 @@ function findControl(id, key, ctext, classpath, activity)
 	return result
 end
 
- --- 得到控件的坐标值
+  --- 得到控件的坐标值
+ -- @within 1-General
  -- @number id 元素id
  -- @string key 元素key值
  -- @string ctext 元素文本
  -- @string classpath 元素页面布局
+ -- @string activity 录制现场的activity名
  -- @treturn {boolean,number,number,number,number} 成功得到返回true,并追加控件的边界坐标值;否则返回false
- -- @usage local result,x,y,dx,dy = getControlerRect(-1,'','qqchat','%com.tencent.mobileqq.widget.QQTabHost#0')
+ -- @usage local result,x,y,dx,dy = getControlerRect(-1,'id','qqchat','%com.tencent.mobileqq.widget.QQTabHost#0', 'com.jm.android.jumei.SpecialTimeSaleActivity')
 function getControlerRect(id, key, ctext, classpath, activity)
 	local info = ''
 	local classpath = pathTranslate(classpath)
@@ -659,6 +717,18 @@ function getControlerRect(id, key, ctext, classpath, activity)
 	return result, x, y, dx, dy
 end
 
+
+--- 向控件输入文本信息
+ -- @within 1-General
+ -- @number id 元素id
+ -- @string key 元素key值
+ -- @string ctext 元素文本
+ -- @string classpath 元素页面布局
+ -- @string content 文本信息
+ -- @string activity 录制现场的activity名
+ -- @number mode 文本内容按字符输入--0  文本作为整体直接输入--1
+ -- @treturn  boolean 成功返回true；失败返回false
+ -- @usage setControlerText(-1,'id1','qchat', '%com.tencent.mobileqq.widget.QQTabHost#0','hello!kat', 'com.test.activity',0)
 function setControlerText(id, key, ctext, classpath, content, activity, mode)
 	if isAutoTest then
 		Android:cacheInput(id, key, ctext, classpath, tostring(content), activity)
@@ -667,13 +737,6 @@ function setControlerText(id, key, ctext, classpath, content, activity, mode)
 	end
 end
 
- --- 向控件输入文本信息
- -- @number id 元素id
- -- @string key 元素key值
- -- @string ctext 元素文本
- -- @string classpath 元素页面布局
- -- @string content 文本信息
- -- @usage setControlerText(-1,'','qchat','','hello!kat', 'com.test.activity')
 function setControlerText_original(id, key, ctext, classpath, content, activity, mode)
 	if mode == 1 then Android:setInputTextMode(mode) end
 	action = 'inputText'
@@ -732,13 +795,15 @@ function setControlerText_original(id, key, ctext, classpath, content, activity,
 end
 
  --- 滑动寻找控件
+ -- @within 2-Gesture
  -- @number id 元素id
  -- @string key 元素key值
  -- @string ctext 元素文本
  -- @string classpath 元素页面布局
  -- @number moveTimes 滑动次数
+ -- @string activity 录制现场的activity名
  -- @treturn boolean 找到控件返回true,否则返回false
- -- @usage local isFound = moveFindControler(-1, '', 'qchat', '', 4)
+ -- @usage local isFound = moveFindControler(-1, 'key', 'qchat',  '%com.tencent.mobileqq.widget.QQTabHost#0', 4, 'com.jm.android.jumei.SpecialTimeSaleActivity')
 function moveFindControler(id, key, ctext, classpath, moveTimes, activity) --滑动找控件
 	local classpath = pathTranslate(classpath)
 	action = 'moveFindControler'
@@ -782,6 +847,7 @@ function moveFindControler(id, key, ctext, classpath, moveTimes, activity) --滑
 end
 
  --- 等待控件出现
+ -- @within 1-General
  -- @number id 元素id
  -- @string key 元素key值
  -- @string ctext 元素文本
@@ -789,7 +855,7 @@ end
  -- @string activity 元素所在activity
  -- @number timeout 超时时间,单位s
  -- @treturn boolean 控件出现返回true,否则返回false
- -- @usage local isFound = waitForControler(-1, '', 'qchat', '', 'com.leo.test.mainActivity', 20)
+ -- @usage local isFound = waitForControler(-1, 'id', 'qchat',  '%com.tencent.mobileqq.widget.QQTabHost#0', 'com.leo.test.mainActivity', 20)
 function waitForControler(id, key, ctext, classpath, activity, timeout)
 	local classpath = pathTranslate(classpath)
 	local info = ''
@@ -810,6 +876,7 @@ function waitForControler(id, key, ctext, classpath, activity, timeout)
 end
 
  --- 匹配控件并滑动
+ -- @within 2-Gesture
  -- @number id_1 元素1 id
  -- @string key_1 元素1 key值
  -- @string ctext_1 元素1 文本
@@ -819,7 +886,7 @@ end
  -- @string ctext_2 元素2 文本
  -- @string classpath_2 元素2 页面布局
  -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
- -- @usage findControlerAndMove(-1,'','button_1','',-1,'','button_2','',TimeMarker(CaseN))
+ -- @usage findControlerAndMove(-1,'number1','button_1', '%com.tencent.mobileqq.widget.QQTabHost#0',-1,'number2','button_2', '%com.tencent.mobileqq.widget.QQTabHost#0',TimeMarker(CaseN))
 function findControlerAndMove(id_1, key_1, ctext_1, classpath_1,id_2, key_2, ctext_2, classpath_2, path)
 	local info = ''
 	local result1, x1, y1, dx1, dy1 = Android:getControlerRect(id_1, key_1, ctext_1, classpath_1, '')
@@ -830,11 +897,12 @@ function findControlerAndMove(id_1, key_1, ctext_1, classpath_1,id_2, key_2, cte
 end
 
  --- 通过文本属性点击控件
- -- @string ctext 元素文本
- -- @string path 截屏的图片保存路径
- -- @treturn boolean 点击成功返回true,否则返回false
- -- @usage findTextAndClick('qchat',TimeMarker(CaseN))
-function findTextAndClick(ctext, path) --文字类型控件,模糊查找,传一个标识文字
+  -- @within 2-Gesture
+  -- @string ctext 元素文本
+  -- @string path 截屏的图片保存路径
+  -- @treturn boolean 点击成功返回true,否则返回false
+  -- @usage findTextAndClick('qchat',TimeMarker(CaseN))
+function findTextAndClick(ctext, path) 
 	local info = ''
 	local findTextAndClick_result = false
 	if path == nil or path == 0 then
@@ -852,11 +920,13 @@ function findTextAndClick(ctext, path) --文字类型控件,模糊查找,传一�
 end
 
  --- 隐藏与控件绑定的软键盘
- -- @number id 元素id
- -- @string key 元素key值
- -- @string ctext 元素文本
- -- @string classpath 元素页面布局
- -- @usage hideSoftInputFromWindow(-1, '', 'qchat', '')
+  -- @within 1-General
+  -- @number id 元素id
+  -- @string key 元素key值
+  -- @string ctext 元素文本
+  -- @string classpath 元素页面布局
+  -- @string activity 录制现场的activity名
+  -- @usage hideSoftInputFromWindow(-1, 'num', 'qchat', '%com.tencent.mobileqq.widget.QQTabHost#0', 'com.jm.android.jumei.SpecialTimeSaleActivity')
 function hideSoftInputFromWindow(id, key, ctext, classpath, activity)
 	local info = ''
 	if activity == nil then activity = '' end
@@ -866,14 +936,16 @@ function hideSoftInputFromWindow(id, key, ctext, classpath, activity)
 end
 
  --- 得到类似CompoundButton的控件当前状态
- -- @number id 元素id
- -- @string key 元素key值
- -- @string ctext 元素文本
- -- @string classpath 元素页面布局
- -- @string fieldname 控件状态字的名称
- -- @number superindex 索引值
- -- @string type 控件状态字类型
- -- @usage local status = getClassFieldValue(-1,'','button1','','fieldname',1,'boolean')
+  -- @within 1-General
+  -- @number id 元素id
+  -- @string key 元素key值
+  -- @string ctext 元素文本
+  -- @string classpath 元素页面布局
+  -- @string fieldname 控件状态字的名称
+  -- @number superindex 索引值
+  -- @string type 控件状态字类型
+  -- @treturn status 返回控件当前状态
+  -- @usage local status = getClassFieldValue(-1,'id','button1', '%com.tencent.mobileqq.widget.QQTabHost#0','fieldname',1,'boolean')
 function getClassFieldValue(id, key, ctext, classpath, fieldname, superindex, type)
 	local info = ''
 	local status = Android:getClassFieldValue(id, key, ctext, classpath, fieldname, superindex, type)
@@ -883,10 +955,11 @@ function getClassFieldValue(id, key, ctext, classpath, fieldname, superindex, ty
 end
 
  --- monkey测试专用
- -- @string pkgName 包名字
- -- @number runTime 测试时长,单位分钟
- -- @string logPath 日志存储位置
- -- @usage monkey('com.tencent.mobileqq', 60, '/sdcard/KapalaiAutoTest/QQlite/')
+  -- @within 3-Exploratory
+  -- @string pkgName 包名字
+  -- @number runTime 测试时长,单位分钟
+  -- @string logPath 日志存储位置
+  -- @usage monkey('com.tencent.mobileqq', 60, '/sdcard/KapalaiAutoTest/QQlite/')
 function monkey(pkgName, runTime, logPath)
 	log('into kat_monkey '..runTime..'\n')
 	_logcat('i', '---kat---', 'into kat_monkey')
@@ -900,6 +973,7 @@ function monkey(pkgName, runTime, logPath)
 end
 
  --- monkey测试专用
+ -- @within 3-Exploratory
  -- @string pkgName 包名字
  -- @number runTime 测试时长,单位分钟
  -- @string logPath 日志存储位置
@@ -917,14 +991,15 @@ function simpleMonkey(pkgName, runTime, logPath)
 end
 
  --- 加强型monkey测试
- -- @number click 单击动作权重
- -- @number doubleclick 双击动作权重
- -- @number input 文本输入动作权重
- -- @number scroll 滚动动作权重
- -- @number longtouch 长按动作权重
- -- @number fingertouch 双指滑动动作权重
- -- @number randomclick 随机点击动作权重
- -- @usage setMonkeyProbability(5, 4, 2, 2, 1, 1, 1)
+  -- @within 3-Exploratory
+  -- @number click 单击动作权重
+  -- @number doubleclick 双击动作权重
+  -- @number input 文本输入动作权重
+  -- @number scroll 滚动动作权重
+  -- @number longtouch 长按动作权重
+  -- @number fingertouch 双指滑动动作权重
+  -- @number randomclick 随机点击动作权重
+  -- @usage setMonkeyProbability(5, 4, 2, 2, 1, 1, 1)
 function setMonkeyProbability(click, doubleclick, input, scroll, longtouch, fingertouch, randomclick)
 	local info = ''
 	if string.find(Android:getApiVersion(), '3.5') or string.find(Android:getApiVersion(), '3.6') then
@@ -937,9 +1012,11 @@ function setMonkeyProbability(click, doubleclick, input, scroll, longtouch, fing
 end
 
  --- 局部全路径覆盖
+ -- @within 3-Exploratory
  -- @string pkgname 应用程序包名
+ -- @number runTime 测试时长,单位秒
  -- @treturn string 用:分割的字符串,前面代表是否在开始执行的界面(1为在初始页面,否则为不在初始页面),后面代表还剩多少控件没有遍历,1:23
- -- @usage startSimpleTest('com.tencent.qqmobile')
+ -- @usage  local result= startSimpleTest('com.tencent.qqmobile'，10*60)
 function startSimpleTest(pkgname, runTime)
 	log('into startSimpleTest'..'\n')
 	write_file_video(VIDEO_INFO_PATH, 'Step_'..stepId..':startSimpleTest '..getSystemTimemap())
@@ -961,50 +1038,50 @@ function startSimpleTest(pkgname, runTime)
 	return result
 end
 
- --- 清除局部全路径中忽略点击的控件
 function clearIgnoreControl()
 	Android:clearIgnoreControl()
 end
 
- ---清除所有cache的路径
 function cacheClear()
 	Android:cacheClear()
 end
 
- --- 局部全路径忽略点击的控件信息,可叠加
- -- @usage ignoreControl('btn_left', '返回')
+ 
 function ignoreControl(key, text, activity)
 	Android:setIgnoreControl(key, text, activity)
 end
 
- --- 局部全路径忽略BACK键
 function ignoreBack()
 	Android:setIgnoreBack(true)
 end
 
- --- 标示唯一页面
 function setMarkControl(id, key, text, activity)
 	Android:setMarkControl(id, key, text, activity)
 end
 
- --- 全路径执行时间
- -- @usage setScanTime(60)
+ --- 全路径执行前设置执行时长
+  -- @within 3-Exploratory
+  -- @string time 单位是秒
+  -- @usage setScanTime(60)
 function setScanTime(time)
 	Android:setScanTime(time)
 end
 
- --- 全路径是否截图,1为截图,0为不截图
- -- @usage setActionClip(1)
-function setActionClip(time)
-	Android:setActionClip(time)
+ --- 全路径执行前设置是否截图
+  -- @within 3-Exploratory
+  -- @number tag 1表示截图；0表示不截图 
+  -- @usage setActionClip(1)
+function setActionClip(tag)
+	Android:setActionClip(tag)
 end
 
  --- 新版本全路径遍历
- -- @string pkgname 应用程序包名
- -- @int depth 遍历执行最小层级 
- -- @int scanTime 设置强制结束时间(s)
- -- @boolean isScreenshot 遍历是否截图
- -- @usage startAutoTest('com.tencent.mm', 3, 60*30, true)
+  -- @within 3-Exploratory
+  -- @string pkgname 应用程序包名
+  -- @number depth 遍历深度
+  -- @number scanTime 设置执行时长(单位s)
+  -- @bool isScreenshot 遍历是否截图
+  -- @usage startAutoTest('com.tencent.mm', 3, 60*30, true)
 function startAutoTest(pkgname, depth, scanTime, isScreenshot)
 	log('into startAutoTest'..'\n')
 	hashmap:put('PackageName', PackageName)
@@ -1033,15 +1110,7 @@ function startAutoTest(pkgname, depth, scanTime, isScreenshot)
 	if Debug then log(info) end
 end
 
---------------------------------cocos2dx--------------------------------------------
 
- --- 判断是否找到控件
- -- @number id 元素id
- -- @string key 元素key值
- -- @string ctext 元素文本
- -- @string classpath 元素页面布局
- -- @treturn boolean 找到控件返回true,否则返回false
- -- @usage local isFound = cocos2dx_findControl(-3,'','game.png','')
 function cocos2dx_findControl(id, key, ctext, classpath)
 	local info = ''
 	local result = Android:cocos2dx_findControl(id, key, ctext,classpath) 
@@ -1050,13 +1119,7 @@ function cocos2dx_findControl(id, key, ctext, classpath)
 	return result
 end
 
- --- 得到控件元素坐标
- -- @number id 元素id
- -- @string key 元素key值
- -- @string ctext 元素文本
- -- @string classpath 元素页面布局
- -- @treturn {boolean,number,number,number,number} 找到返回true,并追加控件元素的坐标值,否则返回false
- -- @usage local result,x,y,dx,dy = cocos2dx_getControlerRect(-3,'','cocos2d-game','')
+
 function cocos2dx_getControlerRect(id,key,ctext,classpath)
 	local info = ''
 	local result, x,y,dx,dy = Android:cocos2dx_getControlerRect(id, key, ctext, classpath)
@@ -1069,13 +1132,6 @@ function cocos2dx_getControlerRect(id,key,ctext,classpath)
 	return result,x,y,dx,dy
 end
 
- --- 向控件输入文本,建议不要键入中文
- -- @number id 元素id
- -- @string key 元素key值
- -- @string ctext 元素文本
- -- @string classpath 元素页面布局
- -- @string content 文本信息,不能使用中文
- -- @usage cocos2dx_setControlerText(-3,'','cocos2d-game','','hello!cocos2dx-game')
 function cocos2dx_setControlerText(id, key, ctext, classpath, content)
 	local info = ''
 	Android:cocos2dx_SetControlerText(id, key, ctext, classpath, content)
@@ -1083,15 +1139,7 @@ function cocos2dx_setControlerText(id, key, ctext, classpath, content)
 	if Debug then log(info) end
 end
 
- --- 点击操作
- -- @number id 元素id
- -- @string key 元素key值
- -- @string ctext 元素文本
- -- @string classpath 元素页面布局
- -- @number clicktime 点击后的预留时间,单位ms
- -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
- -- @treturn boolean 点击成功返回true,失败返回false
- -- @usage cocos2dx_click(-3,'','qqgame','',2000,TimeMarker(CaseN))
+
 function cocos2dx_click(id, key, ctext, classpath, clicktime,path)
 	local info = ''
 	local temp_clicked = false
@@ -1111,15 +1159,7 @@ function cocos2dx_click(id, key, ctext, classpath, clicktime,path)
 	return temp_clicked
 end
 
- --- 可选事件类型的点击操作
- -- @number id 元素id
- -- @string key 元素key值
- -- @string ctext 元素文本
- -- @string classpath 元素页面布局
- -- @number event 点击类型 0-click 1-down 2-up
- -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
- -- @treturn boolean 点击成功返回true,失败返回false
- -- @usage cocos2dx_clickByEvent(-3,'','qqgame','',1,TimeMarker(CaseN))
+ 
 function cocos2dx_clickByEvent(id, key, ctext, classpath, event, path)
 	local info = ''
 	local result = false
@@ -1137,15 +1177,7 @@ function cocos2dx_clickByEvent(id, key, ctext, classpath, event, path)
 	return result 
 end
 
- --- 等待控件并点击
- -- @number id 元素id
- -- @string key 元素key值
- -- @string ctext 元素文本
- -- @string classpath 元素页面布局
- -- @number Timeout 超时时间,单位为ms
- -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
- -- @treturn boolean 点击成功返回true,失败返回false
- -- @usage cocos2dx_waitAndClick(-3,'','qqgame','',1000*60,TimeMarker(CaseN))
+ 
 function cocos2dx_waitAndClick(id, key, ctext, classpath, Timeout, path)
 	local info = ''
 	local temp_clicked = false
@@ -1170,14 +1202,7 @@ function cocos2dx_waitAndClick(id, key, ctext, classpath, Timeout, path)
 	return temp_clicked
 end
 
- --- 得到控件元素的容器对象
- -- @number id 元素id
- -- @string key 元素key值
- -- @string ctext 元素文本
- -- @string classpath 元素页面布局
- -- @treturn boolean 成功得到返回true,否则返回false
- -- @treturn userdata 控件元素的容器对象
- -- @usage local isFound,Cocos2dxContainer = cocos2dx_getControlerRect_AllChild(-3, '', 'kaishi.png', '27_0_0_0')
+ 
 function cocos2dx_getControlerRect_AllChild(id, key, ctext, classpath)
 	local info = ''
 	local isFind, Cocos2dxContainer = Android:cocos2dx_getControlerRect_AllChild(id, key, ctext, classpath)
@@ -1186,10 +1211,7 @@ function cocos2dx_getControlerRect_AllChild(id, key, ctext, classpath)
 	return isFind, Cocos2dxContainer
 end
 
- --- 得到容器对象的对应列表
- -- @param Cocos2dxContainer 控件元素的容器对象
- -- @treturn userdata 容器对象的对应列表
- -- @usage local ListOfContainer = cocos2dx_getListOfContainer(Cocos2dxContainer)
+
 function cocos2dx_getListOfContainer(Cocos2dxContainer)
 	local info = ''
 	local ListOfContainer = Cocos2dxContainer:getList()
@@ -1198,10 +1220,7 @@ function cocos2dx_getListOfContainer(Cocos2dxContainer)
 	return ListOfContainer
 end
 
- --- 获取容器列表长度
- -- @param ListOfCocos2dxContainer 容器列表
- -- @treturn number 容器列表的长度
- -- @usage local size = cocos2dx_sizeOfContainerList(ListOfCocos2dxContainer)
+ 
 function cocos2dx_sizeOfContainerList(ListOfCocos2dxContainer)
 	local info = ''
 	local size = ListOfCocos2dxContainer:size()
@@ -1210,11 +1229,7 @@ function cocos2dx_sizeOfContainerList(ListOfCocos2dxContainer)
 	return size
 end
 
- --- 通过索引得到列表某一项
- -- @param ListOfCocos2dxContainer 容器列表
- -- @number i 列表索引值
- -- @treturn userdata 容器列表子元素
- -- @usage local Cocos2dxElement = cocos2dx_getChildOfContainerList(ListOfCocos2dxContainer,4)
+ 
 function cocos2dx_getChildOfContainerList(ListOfCocos2dxContainer, i)
 	local info = ''
 	local Cocos2dxElement = ListOfCocos2dxContainer:get(i)
@@ -1223,10 +1238,7 @@ function cocos2dx_getChildOfContainerList(ListOfCocos2dxContainer, i)
 	return Cocos2dxElement
 end
 
- --- 得到列表子元素的文本值
- -- @param Cocos2dxElement 容器列表子元素
- -- @treturn string 容器列表子元素的文本值
- -- @usage local textOfChild = cocos2dx_getTextOfChild(Cocos2dxElement)
+
 function cocos2dx_getTextOfChild(Cocos2dxElement)
 	local info = ''
 	local textOfChild = Cocos2dxElement:getText()
@@ -1235,10 +1247,7 @@ function cocos2dx_getTextOfChild(Cocos2dxElement)
 	return textOfChild
 end
 
- --- 得到列表子元素的左上角x坐标值
- -- @param Cocos2dxElement 容器列表子元素
- -- @treturn number 容器列表子元素的左上角x坐标值
- -- @usage local x = cocos2dx_getXOfChild(Cocos2dxElement)
+ 
 function cocos2dx_getXOfChild(Cocos2dxElement)
 	local info = ''
 	local x = Cocos2dxElement:getX()
@@ -1247,10 +1256,7 @@ function cocos2dx_getXOfChild(Cocos2dxElement)
 	return x
 end
 
- --- 得到列表子元素的左上角y坐标值
- -- @param Cocos2dxElement 容器列表子元素
- -- @treturn number 容器列表子元素的左上角y坐标值
- -- @usage local y = cocos2dx_getYOfChild(Cocos2dxElement)
+ 
 function cocos2dx_getYOfChild(Cocos2dxElement)
 	local info = ''
 	local y = Cocos2dxElement:getY()
@@ -1259,10 +1265,7 @@ function cocos2dx_getYOfChild(Cocos2dxElement)
 	return y
 end
 
- --- 得到容器列表子元素的坐标宽度
- -- @param Cocos2dxElement 容器列表子元素
- -- @treturn number 容器列表子元素的坐标宽度
- -- @usage local dx = cocos2dx_getDxOfChild(Cocos2dxElement)
+
 function cocos2dx_getDxOfChild(Cocos2dxElement)
 	local info = ''
 	local dx = Cocos2dxElement:getDx()
@@ -1271,10 +1274,7 @@ function cocos2dx_getDxOfChild(Cocos2dxElement)
 	return dx
 end
 
- --- 得到容器列表子元素的坐标高度
- -- @param Cocos2dxElement 容器列表子元素
- -- @treturn number 容器列表子元素的坐标高度
- -- @usage local dy = cocos2dx_getDyOfChild(Cocos2dxElement)
+ 
 function cocos2dx_getDyOfChild(Cocos2dxElement)
 	local info = ''
 	local dy = Cocos2dxElement:getDy()
@@ -1283,10 +1283,7 @@ function cocos2dx_getDyOfChild(Cocos2dxElement)
 	return dy
 end
 
- --- 得到列表子元素的layout层级值
- -- @param Cocos2dxElement 容器列表子元素
- -- @treturn string 容器列表子元素的layout层级值
- -- @usage local path = cocos2dx_getPathOfChild(Cocos2dxElement)
+ 
 function cocos2dx_getPathOfChild(Cocos2dxElement)
 	local info = ''
 	local path = Cocos2dxElement:getPath()
@@ -1295,13 +1292,7 @@ function cocos2dx_getPathOfChild(Cocos2dxElement)
 	return path
 end
 
- --- 得到x,y坐标值
- -- @number id 元素id
- -- @string key 元素key值
- -- @string ctext 元素文本
- -- @string classpath 元素页面布局
- -- @treturn {result,number,number} 成功返回true,并追加控件元素x,y坐标值,否则返回false
- -- @usage local result,x,y = cocos2dx_getControl_XY(-3, '', 'kaishi.png', '27_0_0_0')
+ 
 function cocos2dx_getControl_XY(id, key, ctext, classpath)
 	local info = ''
 	local result, Temp_x, Temp_y, Temp_dx, Temp_dy = Android:cocos2dx_getControlerRect(id, key, ctext, classpath)
@@ -1322,15 +1313,7 @@ function cocos2dx_findControlerAndMove(id_1, key_1, ctext_1, classpath_1,id_2, k
 	move(x1 + dx1/2, y1 + dy1/2, x2 + dx2/2, y2 + dy2/2, path)
 end
 
- --- 长按操作
- -- @number id 元素id
- -- @string key 元素key值
- -- @string ctext 元素文本
- -- @string classpath 元素页面布局
- -- @number TouchTime 长按时间,单位ms
- -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
- -- @treturn boolean 长按成功返回true,失败返回false
- -- @usage cocos2dx_longTouch(-3, '', 'kaishi.png', '27_0_0_0',5000,TimeMarker(CaseN))
+ 
 function cocos2dx_longTouch(id, key, ctext, classpath, TouchTime, path) 
 	local info = ''
 	local temp_clicked = false
@@ -1352,11 +1335,7 @@ function cocos2dx_longTouch(id, key, ctext, classpath, TouchTime, path)
 	return temp_clicked
 end
 
- --- 通过文本属性得到相同文本控件的列表容器对象
- -- @string ctext 控件的文本属性值
- -- @treturn boolean 成功得到返回true,否则返回false
- -- @treturn userdata 容器对象
- -- @usage local isFind,Cocos2dxContainer = cocos2dx_getControlContext('game_button_text_content')
+ 
 function cocos2dx_getControlContext(ctext)
 	local info = ''
 	local isFind,Cocos2dxContainer = Android:cocos2dx_getControlContext(ctext)
@@ -1365,10 +1344,7 @@ function cocos2dx_getControlContext(ctext)
 	return isFind, Cocos2dxContainer
 end
 
- --- 获取当前界面所有控件元素
- -- @treturn boolean 成功得到返回true,否则返回false
- -- @treturn userdata 容器对象
- -- @usage local isFind,Cocos2dxContainer = cocos2dx_getAllControl()
+ 
 function cocos2dx_getAllControl()
 	local info = ''
 	local isFind, Cocos2dxContainer = Android:cocos2dx_getAllControl()
@@ -1377,12 +1353,7 @@ function cocos2dx_getAllControl()
 	return isFind, Cocos2dxContainer
 end
 
-----------------------------------general------------------------------------------
 
- --- 生成截屏后的图片路径
- -- @string CaseN 用例名字,如果名字不带数字,则不会在平台产生图片对比
- -- @treturn string 返回图片全路径
- -- @usage local path = TimeMarker('1')
 function TimeMarker(CaseN) --以当前时间命名的图片路径
 	local path
 	if string.find(CaseN, '%d') then
@@ -1394,13 +1365,14 @@ function TimeMarker(CaseN) --以当前时间命名的图片路径
 end
 
  --- 可选事件类型的点击操作
- -- @number x 元素x坐标值
- -- @number y 元素y坐标值
- -- @number record_resolution_x 录制手机的x轴分辨率
- -- @number record_resolution_y 录制手机的y轴分辨率
- -- @number event 点击类型 0-click 1-down 2-up
- -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
- -- @usage click_XYByEvent(100,200,1680,1920,0,TimeMarker(CaseN))
+  -- @within 2-Gesture
+  -- @number x 元素x坐标值
+  -- @number y 元素y坐标值
+  -- @number record_resolution_x 录制手机的x轴分辨率
+  -- @number record_resolution_y 录制手机的y轴分辨率
+  -- @number event 点击类型 0-click 1-down 2-up
+  -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
+  -- @usage click_XYByEvent(100,200,1680,1920,0,TimeMarker(CaseN))
 function click_XYByEvent(x, y, record_resolution_x, record_resolution_y, event, path)
 	local info = ''
 	local resolution_x, resolution_y = Android:getScreenResolution()
@@ -1416,11 +1388,12 @@ function click_XYByEvent(x, y, record_resolution_x, record_resolution_y, event, 
 end
  
  --- 按屏幕相对位置进行点击
- -- @number px 元素x坐标值所占屏幕位置的百分比
- -- @number py 元素y坐标值所占屏幕位置的百分比
- -- @number clicktime 点击后的预留时间,单位ms
- -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
- -- @usage clickpx(0.2, 0.3, clicktime, TimeMarker(CaseN))
+  -- @within 2-Gesture
+  -- @number px 元素x坐标值所占屏幕位置的百分比
+  -- @number py 元素y坐标值所占屏幕位置的百分比
+  -- @number clicktime 点击后的预留时间,单位ms
+  -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
+  -- @usage clickpx(0.2, 0.3, 6000, TimeMarker(CaseN))
 function clickpx(px, py, clicktime, path)
 	action = 'clickpx'
 	write_file_video(VIDEO_INFO_PATH, 'Step_'..stepId..':clickpx false '..getSystemTimemap()) 
@@ -1444,8 +1417,9 @@ function clickpx(px, py, clicktime, path)
 end
 
  --- 获取当前屏幕分辨率
- -- @treturn {number,number} 屏幕的x,y分辨率
- -- @usage local x,y = getScreenResolution()
+  -- @within 1-General
+  -- @treturn {number,number} 屏幕的x,y分辨率
+  -- @usage local x,y = getScreenResolution()
 function getScreenResolution()
 	local info = ''
 	local x,y = Android:getScreenResolution()
@@ -1455,6 +1429,7 @@ function getScreenResolution()
 end 
 
  --- 检查被测包是否已安装成功
+ -- @within 1-General
  -- @string PackageName 测试包的名字
  -- @treturn boolean 安装成功返回true,否则返回false
  -- @usage local isInstalled = isInstall('com.tencent.qqmusic')
@@ -1467,6 +1442,10 @@ function isInstall(PackageName)
 	return result
 end
 
+ --- 让程序睡眠 N毫秒
+ -- @within 1-General
+ -- @number n 单位ms
+ -- @usage sleep(4000)
 function sleep(n)
 	if isAutoTest then
 		_cacheSleep(n)
@@ -1475,9 +1454,6 @@ function sleep(n)
 	end
 end
 
- --- 让程序睡眠 N毫秒
- -- @number n 单位ms
- -- @usage sleep(4000)
 function sleep_original(n)
 	local info = ''
 	local sleepTime = n/1000
@@ -1496,12 +1472,13 @@ function sleep_original(n)
 end
 
  --- 截屏并做区域标记
- -- @number x 区域边框左上角x坐标值
- -- @number y 区域边框左上角y坐标值
- -- @number dx 区域宽度
- -- @number dy 区域高度
- -- @string path 截屏后图片保存路径
- -- @usage snapshotScreen(100,100,200,200,TimeMarker(CaseN))
+  -- @within 1-General
+  -- @number x 区域边框左上角x坐标值
+  -- @number y 区域边框左上角y坐标值
+  -- @number dx 区域宽度
+  -- @number dy 区域高度
+  -- @string path 截屏后图片保存路径
+  -- @usage snapshotScreen(100,100,200,200,TimeMarker(CaseN))
 function snapshotScreen(x, y, dx, dy, path)
 	local info = ''
 	Android:snapshotScreen(x, y, dx, dy, path)
@@ -1510,10 +1487,11 @@ function snapshotScreen(x, y, dx, dy, path)
 end
 
  --- 截屏整个屏幕并自定义显示标签
- -- @string path 截屏后图片保存路径
- -- @string tag 自定义标签显示内容,省略则不显示标签
- -- @usage snapshotWholeScreen(TimeMarker(CaseN))
- -- @usage snapshotWholeScreen(TimeMarker(CaseN),'tag_name')
+  -- @within 1-General
+  -- @string path 截屏后图片保存路径
+  -- @string tag 自定义标签显示内容,省略则不显示标签
+  -- @usage snapshotWholeScreen(TimeMarker(CaseN))
+  -- @usage snapshotWholeScreen(TimeMarker(CaseN),'tag_name')
 function snapshotWholeScreen(path, tag)
 	local info = ''
 	if tag == nil then
@@ -1527,8 +1505,9 @@ function snapshotWholeScreen(path, tag)
 end
 
  --- 将信息复制进剪切板中,执行后必须预留时间
- -- @string content 要复制到剪切板中的信息
- -- @usage setClipboardText('test for kat')
+  -- @within 1-General
+  -- @string content 要复制到剪切板中的信息
+  -- @usage setClipboardText('test for kat')
 function setClipboardText(content)
 	local info = ''
 	Android:setClipboarText(content)
@@ -1537,8 +1516,9 @@ function setClipboardText(content)
 end
 
  --- 得到剪切板内容
- -- @treturn string 剪切板内容
- -- @usage local content = getClipboardText()
+  -- @within 1-General
+  -- @treturn string 剪切板内容
+  -- @usage local content = getClipboardText()
 function getClipboardText()
 	local info = ''
 	local content = Android:getClipboarText()
@@ -1548,8 +1528,9 @@ function getClipboardText()
 end
 
  --- 菜单Hard Key:menu(少部分手机不适用,慎用)
- -- @number touchTime 点击持续时间,单位为ms
- -- @usage menu(500)
+  -- @within 2-Gesture
+  -- @number touchTime 点击持续时间,单位为ms
+  -- @usage menu(500)
 function menu(touchTime)
 	local info = ''
 	Android:menu(touchTime)
@@ -1558,8 +1539,9 @@ function menu(touchTime)
 end
 
  --- 主界面Hard Key:home(少部分手机不适用,慎用)
- -- @number touchTime 点击持续时间,单位为ms
- -- @usage home(500)
+  -- @within 2-Gesture
+  -- @number touchTime 点击持续时间,单位为ms
+  -- @usage home(500)
 function home(touchTime)
 	local info = ''
 	Android:home(touchTime)
@@ -1568,8 +1550,9 @@ function home(touchTime)
 end
 
  --- 返回Hard Key:back
- -- @number touchTime 点击持续时间,单位为ms
- -- @usage back(500)
+  -- @within 2-Gesture
+  -- @number touchTime 点击持续时间,单位为ms
+  -- @usage back(500)
 function back(touchTime)
 	write_file_video(VIDEO_INFO_PATH, 'Step_'..stepId..':back false '..getSystemTimemap())
 	action = 'back' 
@@ -1588,6 +1571,7 @@ function back(touchTime)
 end
 
 --- 向main.lua中添加lua执行模块
+ -- @within 1-General
  -- @string luaPath 模块执行全路径
  -- @usage addLuaPlan('/sdcard/kat/Init.lua')
 function addLuaPlan(luaPath)
@@ -1595,9 +1579,10 @@ function addLuaPlan(luaPath)
 end
 
  --- 弹出toast消息
- -- @string data 准备弹出的消息
- -- @int time 显示toast的属性,0表示短显示,1表示长显示
- -- @usage notifyMessage('toast message in phone', 0)
+  -- @within 1-General
+  -- @string data 准备弹出的消息
+  -- @number time 显示toast的属性,0表示短显示,1表示长显示
+  -- @usage notifyMessage('toast message in phone', 0)
 function notifyMessage(data, time)
 	local info = ''
 	local data = tostring(data)
@@ -1611,14 +1596,17 @@ function notifyMessage(data, time)
 end
 
  --- 播放通知铃声
- -- @string path mp3文件全路径
- -- @usage notifyVoice('/mnt/sdcard/TestTool/Alarm_Kapalai.mp3')
+  -- @within 1-General
+  -- @string path mp3文件全路径
+  -- @usage notifyVoice('/mnt/sdcard/TestTool/Alarm_Kapalai.mp3')
 function notifyVoice(path)
 	Android:notifyVoice(path)
 end
 	
 --- 启动应用程序,如果已启动,则kill掉后再重新启动,如果没有启动,则直接启动
- -- @string PackageName 测试包的名字
+ -- @within 1-General
+ -- @string pkgName 测试包的名字
+ -- @treturn boolean 成功启动返回true,失败返回false
  -- @usage restartApp('com.tencent.qqmusic')
 function restartApp(pkgName)
 	local info = ''
@@ -1646,8 +1634,9 @@ function restartApp(pkgName)
 end
 
  --- 启动应用程序
- -- @string pkgName 应用程序包名
- -- @usage startApp('com.tencent.qqmusic')
+  -- @within 1-General
+  -- @string pkgName 应用程序包名
+  -- @usage startApp('com.tencent.qqmusic')
 function startApp(pkgName)
 	local info = ''
 	Android:startApp(pkgName)
@@ -1659,7 +1648,8 @@ function startApp(pkgName)
 	if Debug then log(info) end
 end
 
- --- 关闭应用程序
+--- 关闭应用程序
+ -- @within 1-General
  -- @string pkgName 应用程序包名
  -- @usage endApp('com.tencent.qqmusic')
 function endApp(pkgName)
@@ -1674,8 +1664,9 @@ function endApp(pkgName)
 end
 
  --- 将应用切换至后台
- -- @string pkgName 应用程序包名
- -- @usage backgroundApp('com.tencent.qqmusic')
+  -- @within 1-General
+  -- @string pkgName 应用程序包名
+  -- @usage backgroundApp('com.tencent.qqmusic')
 function backgroundApp(pkgName)
 	local info = ''
 	Android:backgroundApp(pkgName)
@@ -1684,8 +1675,9 @@ function backgroundApp(pkgName)
 end
 
  --- 将处在后台的应用切换至前台
- -- @string pkgName 应用程序包名
- -- @usage resumeApp('com.tencent.qqmusic')
+  -- @within 1-General
+  -- @string pkgName 应用程序包名
+  -- @usage resumeApp('com.tencent.qqmusic')
 function resumeApp(pkgName)
 	local info = ''
 	Android:resumeApp(pkgName)
@@ -1694,9 +1686,10 @@ function resumeApp(pkgName)
 end
 
  --- 安装应用程序
- -- @string path apk的完整路径
- -- @treturn boolean 安装成功返回true,失败返回false
- -- @usage local result = installApp('/sdcard/kat/demo.apk')
+  -- @within 1-General
+  -- @string path apk的完整路径
+  -- @treturn {boolean, string} 安装成功返回true并且返回安装应用程序耗时,失败返回false
+  -- @usage local result,installTime = installApp('/sdcard/kat/demo.apk')
 function installApp(path)
 	local info = ''
 	local installTime = '-'
@@ -1719,8 +1712,9 @@ function installApp(path)
 end
 
  --- 清除软件应用数据
- -- @string pkgname 软件包名
- -- @usage clearAppData('com.tencent.mobileqq')
+  -- @within 1-General
+  -- @string pkgname 软件包名
+  -- @usage clearAppData('com.tencent.mobileqq')
 function clearAppData(pkgname)
 	local info = ''
 	local result = isInstall(pkgname)
@@ -1740,9 +1734,10 @@ function clearAppData(pkgname)
 end
 
  --- 卸载应用程序
- -- @string pkgName 安装包名字
- -- @treturn string 卸载时间
- -- @usage local uninstallTime = uninstallApp('com.tencent.qqmusic')
+  -- @within 1-General
+  -- @string pkgName 安装包名字
+  -- @treturn string 卸载时间
+  -- @usage local uninstallTime = uninstallApp('com.tencent.qqmusic')
 function uninstallApp(pkgName)
 	local info = ''
 	local uninstallTime = '-'
@@ -1759,8 +1754,9 @@ function uninstallApp(pkgName)
 end
 
  --- 得到设备的SDK的APIlevel
- -- @treturn string 设备SDK的APIlevel
- -- @usage local API_LEVEL = getAndroidSDK()
+  -- @within 1-General
+  -- @treturn string 设备SDK的APIlevel
+  -- @usage local API_LEVEL = getAndroidSDK()
 function getAndroidSDK()
 	local info = ''
 	local API_LEVEL = tostring(Android:getAndroidSDK())
@@ -1770,8 +1766,9 @@ function getAndroidSDK()
 end
 
  --- 得到设备的SDK版本号
- -- @treturn string 设备的SDK版本号
- -- @usage local SDK_VERSION = getAndroidVersion()
+  -- @within 1-General
+  -- @treturn string 设备的SDK版本号
+  -- @usage local SDK_VERSION = getAndroidVersion()
 function getAndroidVersion()
 	local info = ''
 	local SDK_VERSION = Android:getAndroidVersion()
@@ -1781,8 +1778,9 @@ function getAndroidVersion()
 end
 
  --- 得到设备的名字
- -- @treturn string 设备的名字
- -- @usage local DEVICE_NAME = getDeviceName()
+  -- @within 1-General
+  -- @treturn string 设备的名字
+  -- @usage local DEVICE_NAME = getDeviceName()
 function getDeviceName()
 	local info = ''
 	local DEVICE_NAME = Android:getDeviceName()
@@ -1792,9 +1790,10 @@ function getDeviceName()
 end
 
  --- 得到应用程序的名字
- -- @string pkgName 应用程序包名
- -- @treturn string 应用程序名字
- -- @usage local app_name = getAppName('com.tencent.qqmusic')
+  -- @within 1-General
+  -- @string pkgName 应用程序包名
+  -- @treturn string 应用程序名字
+  -- @usage local app_name = getAppName('com.tencent.qqmusic')
 function getAppName(pkgName)
 	local info = ''
 	local app_name = Android:getAppName(pkgName)
@@ -1804,8 +1803,10 @@ function getAppName(pkgName)
 end
 
  --- 获得应用程序主activity名
- -- @string pkgName 应用程序包名
- -- @usage local appMainActivity = getMainActivity('com.tencent.qqmusic')
+  -- @within 1-General
+  -- @string pkgName 应用程序包名
+  -- @treturn mainactivity 应用程序的主activity名
+  -- @usage local appMainActivity = getMainActivity('com.tencent.qqmusic')
 function getMainActivity(pkgName)
 	local mainActivity = ''
 	if Android:isInstall(pkgName) then
@@ -1817,8 +1818,10 @@ function getMainActivity(pkgName)
 end
 
  --- 获得应用程序安装完成的app所在的具体位置
- -- @string pkgName 应用程序包名
- -- @usage local appPath = getApkPath('com.tencent.qqmusic')
+  -- @within 1-General
+  -- @string pkgName 应用程序包名
+  -- @treturn string App安装的位置
+  -- @usage local appPath = getApkPath('com.tencent.qqmusic')
 function getApkPath(pkgName)
 	local apkPath = ''
 	if Android:isInstall(pkgName) then
@@ -1829,11 +1832,11 @@ function getApkPath(pkgName)
 	return apkPath
 end
 
-
 ---获得应用当前时刻接受到的流量字节
---@string pkgName 应用程序包名
---@treturn number 当前时刻接受流量值,单位Bytes
---@usage local Rx = getUidRxBytes('com.qzone')
+ -- @within 1-General
+ --@string pkgName 应用程序包名
+ --@treturn number 当前时刻接受流量值,单位Bytes
+ --@usage local Rx = getUidRxBytes('com.qzone')
 function getUidRxBytes(pkgName)
 	local info = ''
 	local Rx = Android:getUidRxBytes(pkgName)
@@ -1843,9 +1846,10 @@ function getUidRxBytes(pkgName)
 end
 
 ---获得应用当前时刻发送出的流量字节
---@string pkgName 应用程序包名
---@treturn number 当前时刻发送的流量值,单位Bytes
---@usage local Tx = getUidTxBytes('com.qzone')
+ -- @within 1-General
+ --@string pkgName 应用程序包名
+ --@treturn number 当前时刻发送的流量值,单位Bytes
+ --@usage local Tx = getUidTxBytes('com.qzone')
 function getUidTxBytes(pkgName)
 	local info = ''
 	local Tx = Android:getUidTxBytes(pkgName)
@@ -1855,8 +1859,9 @@ function getUidTxBytes(pkgName)
 end
 
 ---得到top进程包名
---@treturn string top进程包名
---@usage local top_packagename = getTopProcessPkgName()
+ -- @within 1-General
+ --@treturn string top进程包名
+ --@usage local top_packagename = getTopProcessPkgName()
 function getTopProcessPkgName()
 	local info = ''
 	local pkg = Android:getTopProcessPkgName()
@@ -1866,9 +1871,10 @@ function getTopProcessPkgName()
 end
 
 ---判断指定包是否前台可见
---@string pkgname 应用程序包名
---@treturn boolean 前台可见返回true,否则返回false
---@usage local isForegrouded = isForeground('com.tencent.qqmusic')
+ -- @within 1-General
+ --@string pkgname 应用程序包名
+ --@treturn boolean 前台可见返回true,否则返回false
+ --@usage local isForegrouded = isForeground('com.tencent.qqmusic')
 function isForeground(pkgname)
 	local info = ''
 	local result = false
@@ -1878,8 +1884,6 @@ function isForeground(pkgname)
 	return result
 end
 
- --- 初始化WebView页面,常用在页面中存在webview元素时
- -- @usage initWebView()
 function initWebView()
 	write_file_video(VIDEO_INFO_PATH, 'Step_'..stepId..':webviewInit false '..getSystemTimemap()) 
 	if isPlayToast then
@@ -1893,32 +1897,28 @@ function initWebView()
 	write_file_video(VIDEO_INFO_PATH, ' true\n') 
 end
 
---  --- 通过文本属性点击WebView控件
---  -- @string ctext 元素文本
---  -- @string path 截屏的图片保存路径
---  -- @treturn boolean 点击成功返回true,否则返回false
---  -- @usage local result = findTextAndClick_WebView('webview_1',TimeMarker(CaseN))
--- function findTextAndClick_WebView(ctext, path)
--- 	local info = ''
--- 	local findTextAndClick_WebView_result = false
--- 	if path == nil or path == 0 then
--- 		findTextAndClick_WebView_result = Android:click(-2, '', ctext, '', 0)
--- 	else
--- 		findTextAndClick_WebView_result = Android:click(-2, '', ctext, '', 0, path)
--- 	end
--- 	if findTextAndClick_WebView_result then
--- 		info = 'findTextAndClick_WebView true: '..ctext..', '..path..'\n'
--- 	else
--- 		info = 'findTextAndClick_WebView false: '..ctext..', '..path..'\n'
--- 	end
--- 	if Debug then log(info) end
--- 	return findTextAndClick_WebView_result
--- end
+function findTextAndClick_WebView(ctext, path)
+	local info = ''
+	local findTextAndClick_WebView_result = false
+	if path == nil or path == 0 then
+		findTextAndClick_WebView_result = Android:click(-2, '', ctext, '', 0)
+	else
+		findTextAndClick_WebView_result = Android:click(-2, '', ctext, '', 0, path)
+	end
+	if findTextAndClick_WebView_result then
+		info = 'findTextAndClick_WebView true: '..ctext..', '..path..'\n'
+	else
+		info = 'findTextAndClick_WebView false: '..ctext..', '..path..'\n'
+	end
+	if Debug then log(info) end
+	return findTextAndClick_WebView_result
+end
 
  --- 获取app的版本号
- -- @string pkgName 安装包名字
- -- @treturn string app的版本号
- -- @usage local myAppVersion = getVersionNumber('com.tencent.qqmusic')
+  -- @within 1-General
+  -- @string pkgName 安装包名字
+  -- @treturn string app的版本号
+  -- @usage local myAppVersion = getVersionNumber('com.tencent.qqmusic')
 function getVersionNumber(pkgName)
 	local info = ''
 	local myAppVersion = Android:getVersionNumber(pkgName)
@@ -1927,10 +1927,6 @@ function getVersionNumber(pkgName)
 	return myAppVersion
 end
 
- --- adb shell 命令通道
- -- @string command shell命令
- -- @treturn string 命令的返回内容
- -- @usage local respond = shell('getprop ro.build.fingerprint')
 function shell(command)
 	local info = ''
 	local respond = Android:runShCommand(command)
@@ -1940,8 +1936,9 @@ function shell(command)
 end
 
  --- 获取手机品牌信息
- -- @treturn string 手机品牌信息
- -- @usage local DEVICE_BRAND = getBRAND()
+  -- @within 1-General
+  -- @treturn string 手机品牌信息
+  -- @usage local DEVICE_BRAND = getBRAND()
 function getBRAND()
 	local info = ''
 	local DEVICE_BRAND = Android:getBRAND()
@@ -1951,8 +1948,9 @@ function getBRAND()
 end
 
  --- 拉起指定的桌面应用,出现多个桌面时,如何选择默认
- -- @string pkgName 桌面应用包名
- -- @usage setDefaultlauncher('com.tencent.qlauncher')
+  -- @within 1-General
+  -- @string pkgName 桌面应用包名
+  -- @usage setDefaultlauncher('com.tencent.qlauncher')
 function setDefaultlauncher(pkgName)
 	local info = ''
 	Android:setDefaultlauncher(pkgName)
@@ -1961,6 +1959,7 @@ function setDefaultlauncher(pkgName)
 end
 
 --- 输出logcat信息
+ -- @within 1-General
  -- @string level 日志可选级别: 'i','e'
  -- @string tag 日志标签名字
  -- @string msg 日志信息
@@ -1973,8 +1972,9 @@ function logcat(level, tag, msg)
 end
 
  --- 检查当前是否连接到移动网络
- -- @treturn boolean 连接移动网络则返回true,否则返回false
- -- @usage local isMobileConnected = isMobileConnect()
+  -- @within 4-Network
+  -- @treturn boolean 连接移动网络则返回true,否则返回false
+  -- @usage local isMobileConnected = isMobileConnect()
 function isMobileConnect()
 	local info = ''
 	local result = Android:isMobileConnect()
@@ -1984,8 +1984,9 @@ function isMobileConnect()
 end
 
  --- 检查屏幕方向
- -- @treturn number 竖屏是0, 横屏是1
- -- @usage local screen_direction = isScreenOriatationPortrait()
+  -- @within 1-General
+  -- @treturn number 竖屏是0, 横屏是1
+  -- @usage local screen_direction = isScreenOriatationPortrait()
 function isScreenOriatationPortrait()
 	local info = ''
 	local direction = Android:isScreenOriatationPortrait()
@@ -1995,11 +1996,12 @@ function isScreenOriatationPortrait()
 end
 
  --- 分割字符串
- -- @string szFullString 原始字符串
- -- @string szSeparator 分隔符
- -- @return 分割后的字符串保存在一张表中
- -- @usage local splited_string_table = split('kat_is_not_bad' , '_')
-function split(szFullString, szSeparator) --字符串分割函数,szFullString：被分割字符串,szSeparator：分隔符
+  -- @within 1-General
+  -- @string szFullString 原始字符串
+  -- @string szSeparator 分隔符
+  -- @return table 分割后的字符串保存在一张表中
+  -- @usage local splited_string_table = split('kat_is_not_bad' , '_')
+function split(szFullString, szSeparator) 
 	local info = ''
 	local nFindStartIndex = 1
 	local nSplitIndex = 1
@@ -2020,9 +2022,10 @@ function split(szFullString, szSeparator) --字符串分割函数,szFullString�
 end
 
  --- 模拟传感器事件
- -- @string type 代表想要模拟的sensor类型(如'ACCELEROMETER')
- -- @string action 代表当前sensor功能的标识,(如 '摇')
- -- @usage sendSensorEvent('ACCELEROMETER', '摇')
+  -- @within 1-General
+  -- @string type 代表想要模拟的sensor类型(如'ACCELEROMETER')
+  -- @string action 代表当前sensor功能的标识,(如 '摇')
+  -- @usage sendSensorEvent('ACCELEROMETER', '摇')
 function sendSensorEvent(type, action)
 	local info = ''
 	Android:sendSensorEvent(type, action)
@@ -2031,7 +2034,8 @@ function sendSensorEvent(type, action)
 end
 
  --- 4.2以上手机,打开设置中的GPU开关
- -- @usage startGpu()
+  -- @within 1-General
+  -- @usage startGpu()
 function startGpu()
 	local info = ''
 	Android:startGpu()
@@ -2040,7 +2044,8 @@ function startGpu()
 end
 
  --- 4.2以上手机,关闭设置中的GPU开关
- -- @usage startGpu()
+  -- @within 1-General
+  -- @usage stopGpu()
 function stopGpu()
 	local info = ''
 	Android:stopGpu()
@@ -2049,7 +2054,8 @@ function stopGpu()
 end
 
  --- 4.2以上手机,打开设置中的Msaa开关
- -- @usage startGpu()
+  -- @within 1-General
+  -- @usage startMsaa()
 function startMsaa()
 	local info = ''
 	Android:startMsaa()
@@ -2058,7 +2064,8 @@ function startMsaa()
 end
 
  --- 4.2以上手机,关闭设置中的Msaa开关
- -- @usage startGpu(
+  -- @within 1-General
+  -- @usage stopMsaa()
 function stopMsaa()
 	local info = ''
 	Android:stopMsaa()
@@ -2066,9 +2073,10 @@ function stopMsaa()
 	if Debug then log(info) end
 end
 
- ---  捕获当前窗口并转化为bitmapcode
- -- @treturn string 64位的字符串
- -- @usage local bitmapcode = getWindowhash()
+ --- 捕获当前窗口并转化为bitmapcode
+  -- @within 1-General
+  -- @treturn string 64位的字符串
+  -- @usage local bitmapcode = getWindowhash()
 function getWindowhash()
 	local info = ''
 	local bitmapcode = Android:getWindowhash()
@@ -2078,9 +2086,10 @@ function getWindowhash()
 end
 
  --- 比较页面相似度方法
- -- @string bitmapcode 需要比较相似性的页面指纹
- -- @treturn number 值越小,相似度越高
- -- @usage local value = compareSimilar(bitmapcode)
+  -- @within 1-General
+  -- @string bitmapcode 需要比较相似性的页面指纹
+  -- @treturn number 值越小,相似度越高
+  -- @usage local value = compareSimilar(getWindowhash())
 function compareSimilar(bitmapcode)
 	local info = ''
 	local value = Android:compareSimilar(bitmapcode)
@@ -2090,7 +2099,8 @@ function compareSimilar(bitmapcode)
 end
 
  --- 打开辅助功能
- -- @usage startKatAccessbility()
+  -- @within 1-General
+  -- @usage startKatAccessbility()
 function startKatAccessbility()
 	local info = ''
 	Android:startKatAccessbility()
@@ -2099,7 +2109,8 @@ function startKatAccessbility()
 end
 
  --- 解锁
- -- @usage disableKeyguard()
+  -- @within 1-General
+  -- @usage disableKeyguard()
 function disableKeyguard()
 	print('into disableKeyguard')
 	local info = ''
@@ -2113,7 +2124,8 @@ function disableKeyguard()
 end
 
  --- 锁屏
- -- @usage reenableKeyguard()
+  -- @within 1-General
+  -- @usage reenableKeyguard()
 function reenableKeyguard()
 	print('into reenableKeyguard')
 	local info = ''
@@ -2123,8 +2135,9 @@ function reenableKeyguard()
 end 
 
  --- 输出自定义日志到log.txt
- -- @string info 自定义信息日志
- -- @usage print('print log info in log.txt')
+  -- @within 1-General
+  -- @string info 自定义信息日志
+  -- @usage print('print log info in /sdcard/kat/Result/log.txt')
 function print(info)
 	if type(info) == 'table' then
 		info_n = #info
@@ -2149,14 +2162,13 @@ function print(info)
 		file:close()
 	end
 end
----------------------------------general_filesystem-------------------------------------------
-
 
  --- 创建文件并保存
- -- @string FolderPath 目标文件夹全路径
- -- @string FileName 目标文件名字
- -- @string content 要保存的数据记录
- -- @usage writeFileToFolder('/sdcard/kat/', 'FileName.txt', 'hello! kat')
+  -- @within 5-File
+  -- @string FolderPath 目标文件夹全路径
+  -- @string FileName 目标文件名字
+  -- @string content 要保存的数据记录
+  -- @usage writeFileToFolder('/sdcard/kat/', 'FileName.txt', 'hello! kat')
 function writeFileToFolder(FolderPath, FileName, content) 
 	local info = ''
 	if _fileIsExist(FolderPath) then
@@ -2171,9 +2183,6 @@ function writeFileToFolder(FolderPath, FileName, content)
 	if Debug then log(info) end
 end
 
- --- 创建用例文件夹,如果文件夹已存在,则删除再创建,否则直接创建
- -- @string CaseN 用例名字,如果名字不带数字,则没有平台图片对比
- -- @usage updateCaseFolder('1')
 function updateCaseFolder(CaseN) 
 	local info = ''
 	if string.find(CaseN, '%d') then
@@ -2195,8 +2204,9 @@ function updateCaseFolder(CaseN)
 end
 
  --- 创建目录
- -- @string path 目录全路径
- -- @usage newFolder('/sdcard/kat/Result/')
+  -- @within 5-File
+  -- @string path 目录全路径
+  -- @usage newFolder('/sdcard/kat/Result/')
 function newFolder(path)
 	local info 
 	Android:newFolder(path)
@@ -2205,8 +2215,9 @@ function newFolder(path)
 end
 
  --- 创建文件
- -- @string path 文件全路径,文件夹必须预先存在
- -- @usage newFile('/sdcard/kat/Result/newfile.txt')
+  -- @within 5-File
+  -- @string path 文件全路径,文件依赖路径必须预先存在
+  -- @usage newFile('/sdcard/kat/Result/newfile.txt')
 function newFile(path)
 	local info = ''
 	Android:newFile(path)
@@ -2215,9 +2226,10 @@ function newFile(path)
 end
 
  --- 复制一份文件到指定文件夹,目标文件夹需要已存在
- -- @string FilePath 源文件全路径
- -- @string FolderPath 目标文件夹全路径
- -- @usage copyFileToFolder('/sdcard/kat/Result/Case/testFile.png', '/sdcard/kat/')
+  -- @within 5-File
+  -- @string FilePath 源文件全路径
+  -- @string FolderPath 目标文件夹全路径
+  -- @usage copyFileToFolder('/sdcard/kat/Result/Case/testFile.png', '/sdcard/kat/')
 function copyFileToFolder(FilePath,FolderPath)
 	local info = ''
 	Android:copyFileToFolder(FilePath,FolderPath)
@@ -2225,9 +2237,10 @@ function copyFileToFolder(FilePath,FolderPath)
 	if Debug then log(info) end
 end
 
- --- 调用媒体扫描扫描指定文件夹
- -- @string FolderPath 被扫描的文件夹的路径
- -- @usage scanFolder('/sdcard/DICM/testPicPackage/')
+ --- 调用媒体扫描器扫描指定文件夹
+  -- @within 5-File
+  -- @string FolderPath 被扫描的文件夹的路径
+  -- @usage scanFolder('/sdcard/DICM/testPicPackage/')
 function scanFolder(FolderPath)
 	local info = ''
 	Android:scanFolder(FolderPath)
@@ -2236,9 +2249,10 @@ function scanFolder(FolderPath)
 end
 
  --- 复制源文件夹内的资源到目标文件夹
- -- @string SourcePath 源文件夹的全路径
- -- @string DestinationPath 目标文件夹的全路径
- -- @usage copyFolderToFolder('/sdcard/kat/Folder1/', '/sdcard/kat/Folder2/')
+  -- @within 5-File
+  -- @string SourcePath 源文件夹的全路径
+  -- @string DestinationPath 目标文件夹的全路径
+  -- @usage copyFolderToFolder('/sdcard/kat/Folder1/', '/sdcard/kat/Folder2/')
 function copyFolderToFolder(SourcePath,DestinationPath)
 	local info = ''
 	Android:copyFolderToFolder(SourcePath,DestinationPath)
@@ -2247,9 +2261,10 @@ function copyFolderToFolder(SourcePath,DestinationPath)
 end
 
  --- 将指定文件夹打包成zip文件,打包完成后放到指定路径,方法中有30秒延时
- -- @string srcFilePath 文件夹全路径
- -- @string zipFilePath 压缩文件全路径
- -- @usage zipFolder('/sdcard/kat/Result/', 'sdcard/kat/Result.zip')
+  -- @within 5-File
+  -- @string srcFilePath 文件夹全路径
+  -- @string zipFilePath 压缩文件全路径
+  -- @usage zipFolder('/sdcard/kat/Result/', 'sdcard/kat/Result.zip')
 function zipFolder(srcFilePath, zipFilePath)
 	local info = ''
 	Android:zipFolder(srcFilePath, zipFilePath)
@@ -2259,8 +2274,9 @@ function zipFolder(srcFilePath, zipFilePath)
 end
 
  --- 删除文件或者文件夹
- -- @string Path 文件或者文件夹全路径
- -- @usage delete('/sdcard/kat/Deleted_Folder/'); delete('/sdcard/kat/deleted_log.txt')
+  -- @within 5-File
+  -- @string Path 文件或者文件夹全路径
+  -- @usage delete('/sdcard/kat/Deleted_Folder/'); delete('/sdcard/kat/deleted_log.txt')
 function delete(Path)
 	local info = ''
 	Android:delete(Path)
@@ -2269,10 +2285,11 @@ function delete(Path)
 end
 
  --- 判断文件是否存在
- -- @string filePath 文件全路径
- -- @treturn boolean 存在返回true,不存在返回false
- -- @usage local isExisted = fileIsExist('/sdcard/kat/Your_file_name.txt')
-function fileIsExist(filePath) --判断文件是否存在
+  -- @within 5-File
+  -- @string filePath 文件全路径
+  -- @treturn boolean 存在返回true,不存在返回false
+  -- @usage local isExisted = fileIsExist('/sdcard/kat/Your_file_name.txt')
+function fileIsExist(filePath) 
 	local info = ''
 	local result = false
 	local file = io.open(filePath, 'rb')
@@ -2285,10 +2302,9 @@ function fileIsExist(filePath) --判断文件是否存在
 	return result
 end
 
---------------------------------general_move--------------------------------------------
-
 --- 向左滑动,自定义滑动次数
- -- @number sleepTime 滑动后等待时间
+ -- @within 2-Gesture
+ -- @number sleepTime 滑动后等待时间 单位是ms
  -- @number moveTimes 滑动次数
  -- @string path 截屏后图片保存路径,如果为0或者省略,则不截屏
  -- @usage leftMove(2000, 4, TimeMarker(CaseN))
@@ -2317,11 +2333,12 @@ function leftMove(sleepTime, moveTimes, path)
 end
 
  --- 向右滑动,自定义滑动次数
- -- @number sleepTime 滑动后等待时间
- -- @number moveTimes 滑动次数
- -- @string path 截屏后图片保存路径,如果为0或者省略,则不截屏
- -- @usage rightMove(2000,4,TimeMarker(CaseN))
-function rightMove(sleepTime, moveTimes, path) --向右滑
+  -- @within 2-Gesture
+  -- @number sleepTime 滑动后等待时间，单位是ms
+  -- @number moveTimes 滑动次数
+  -- @string path 截屏后图片保存路径,如果为0或者省略,则不截屏
+  -- @usage rightMove(2000,4,TimeMarker(CaseN))
+function rightMove(sleepTime, moveTimes, path) 
 	local resolution_x, resolution_y = Android:getScreenResolution()
 	action = 'rightMove'
 	local info = ''
@@ -2346,10 +2363,11 @@ function rightMove(sleepTime, moveTimes, path) --向右滑
 end
 
  --- 向上滑动,自定义滑动次数
- -- @number sleepTime 滑动后等待时间
- -- @number moveTimes 滑动次数
- -- @string path 截屏后图片保存路径,如果为0或者省略,则不截屏
- -- @usage upMove(2000,4,TimeMarker(CaseN))
+  -- @within 2-Gesture
+  -- @number sleepTime 滑动后等待时间，单位是ms
+  -- @number moveTimes 滑动次数
+  -- @string path 截屏后图片保存路径,如果为0或者省略,则不截屏
+  -- @usage upMove(2000,4,TimeMarker(CaseN))
 function upMove(sleepTime, moveTimes, path) --向上滑
 	local resolution_x, resolution_y = Android:getScreenResolution()
 	action = 'upMove'
@@ -2375,10 +2393,11 @@ function upMove(sleepTime, moveTimes, path) --向上滑
 end
 
  --- 向下滑动,自定义滑动次数
- -- @number sleepTime 滑动后等待时间
- -- @number moveTimes 滑动次数
- -- @string path 截屏后图片保存路径,如果为0或者省略,则不截屏
- -- @usage downMove(2000,4,TimeMarker(CaseN))
+  -- @within 2-Gesture
+  -- @number sleepTime 滑动后等待时间，单位ms
+  -- @number moveTimes 滑动次数
+  -- @string path 截屏后图片保存路径,如果为0或者省略,则不截屏
+  -- @usage downMove(2000,4,TimeMarker(CaseN))
 function downMove(sleepTime, moveTimes, path) --向下滑
 	local resolution_x, resolution_y = Android:getScreenResolution()
 	action = 'downMove'
@@ -2404,12 +2423,13 @@ function downMove(sleepTime, moveTimes, path) --向下滑
 end
 
  --- 获取起始与终止坐标并滑动
- -- @number x1 起始x坐标值
- -- @number y1 起始y坐标值
- -- @number x2 终止x坐标值
- -- @number y2 终止y坐标值
- -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
- -- @usage move(100,100,200,200,TimeMarker(CaseN))
+  -- @within 2-Gesture
+  -- @number x1 起始x坐标值
+  -- @number y1 起始y坐标值
+  -- @number x2 终止x坐标值
+  -- @number y2 终止y坐标值
+  -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
+  -- @usage move(100,100,200,200,TimeMarker(CaseN))
 function move(x1, y1, x2, y2, path) 
 	local info = ''
 	if path == nil or path == 0 then
@@ -2422,9 +2442,10 @@ function move(x1, y1, x2, y2, path)
 end
 
  --- 多点滑动，比如手势密码类滑动操作
- -- @string info 多点滑动信息,如'100,100:200:200,300:300',每个冒号代表一个点的坐标
- -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
- -- @usage multipleMove('50,50:100,100:400,400', TimeMarker(CaseN))
+  -- @within 2-Gesture
+  -- @string info 多点滑动信息,如'100,100:200:200,300:300',每个冒号代表一个点的坐标
+  -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
+  -- @usage multipleMove('50,50:100,100:400,400', TimeMarker(CaseN))
 function multipleMove(info, path)
 	if path == nil or path == 0 then 
 		Android:move(info, 0, path)
@@ -2434,13 +2455,14 @@ function multipleMove(info, path)
 end
 
  --- 长按(x1,y1)一段时间,然后滑动到(x2,y2)
- -- @number x1 起始点x坐标值
- -- @number y1 起始点y坐标值
- -- @number x2 终止点x坐标值
- -- @number y2 终止点y坐标值
- -- @number BeginTouchTime 长按持续时间
- -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
- -- @usage longTouchAndMove(50,50,100,100,4000,TimeMarker(CaseN))
+  -- @within 2-Gesture
+  -- @number x1 起始点x坐标值
+  -- @number y1 起始点y坐标值
+  -- @number x2 终止点x坐标值
+  -- @number y2 终止点y坐标值
+  -- @number BeginTouchTime 长按持续时间，单位是ms
+  -- @string path 截屏后图片保存路径,如果为0或者省略,则不做截屏
+  -- @usage longTouchAndMove(50,50,100,100,4000,TimeMarker(CaseN))
 function longTouchAndMove(x1, y1, x2, y2, BeginTouchTime, path)
 	local info = ''
 	if path == nil or path == 0 then
@@ -2453,12 +2475,13 @@ function longTouchAndMove(x1, y1, x2, y2, BeginTouchTime, path)
 end
 
  --- 自定义模式滑动
- -- @number x1 起始点x坐标值
- -- @number y1 起始点y坐标值
- -- @number x2 终止点x坐标值
- -- @number y2 终止点y坐标值
- -- @number mode 滑动模式--111有按下有抬起,110没有抬起,011没有按下
- -- @usage moveByMode(50,50,100,100,110)
+  -- @within 2-Gesture
+  -- @number x1 起始点x坐标值
+  -- @number y1 起始点y坐标值
+  -- @number x2 终止点x坐标值
+  -- @number y2 终止点y坐标值
+  -- @number mode 滑动模式--111有按下有抬起,110没有抬起,011没有按下
+  -- @usage moveByMode(50,50,100,100,110)
 function moveByMode(x1, y1, x2, y2, mode)
 	local info = ''
 	Android:move(x1, y1, x2, y2, mode)
@@ -2467,18 +2490,19 @@ function moveByMode(x1, y1, x2, y2, mode)
 end
 
  --- 双指滑动
- -- @number xOneStart 起始点(One)x坐标值
- -- @number yOneStart 起始点(One)y坐标值
- -- @number xTwoStart 终止点(Two)x坐标值
- -- @number yTwoStart 终止点(Two)y坐标值
- -- @number xOneEnd 终止点(One)x坐标值
- -- @number yOneEnd 终止点(One)y坐标值
- -- @number xTwoEnd 终止点(Two)x坐标值
- -- @number yTwoEnd 终止点(Two)y坐标值
- -- @number record_resolution_x 录制手机的x分辨率
- -- @number record_resolution_y 录制手机的y分辨率
- -- @string path 截屏后图片保存路径
- -- @usage fingerTouchMove(40, 40, 120, 120, 80, 80, 200, 200, 1080, 1920, TimeMarker(CaseN))
+  -- @within 2-Gesture
+  -- @number xOneStart 起始点(One)x坐标值
+  -- @number yOneStart 起始点(One)y坐标值
+  -- @number xTwoStart 起始点(Two)x坐标值
+  -- @number yTwoStart 起始点(Two)y坐标值
+  -- @number xOneEnd 终止点(One)x坐标值
+  -- @number yOneEnd 终止点(One)y坐标值
+  -- @number xTwoEnd 终止点(Two)x坐标值
+  -- @number yTwoEnd 终止点(Two)y坐标值
+  -- @number record_resolution_x 录制手机的x分辨率
+  -- @number record_resolution_y 录制手机的y分辨率
+  -- @string path 截屏后图片保存路径
+  -- @usage fingerTouchMove(40, 40, 120, 120, 80, 80, 200, 200, 1080, 1920, TimeMarker(CaseN))
 function fingerTouchMove(xOneStart, yOneStart, xTwoStart, yTwoStart, xOneEnd, yOneEnd, xTwoEnd, yTwoEnd, record_resolution_x, record_resolution_y, path)
 	action = 'fingerTouchMove'
 	write_file_video(VIDEO_INFO_PATH, 'Step_'..stepId..':fingerTouchMove false '..getSystemTimemap()) 
@@ -2503,13 +2527,6 @@ function fingerTouchMove(xOneStart, yOneStart, xTwoStart, yTwoStart, xOneEnd, yO
 	write_file_video(VIDEO_INFO_PATH, ' true\n')
 end
 
-
---------------------------------general_wifi--------------------------------------------
-
- --- 设置wifi开启或者关闭,5秒钟后返回boolean结果
- -- @bool isEnable 如果为true,则开启wifi,如果为false,则关闭wifi
- -- @treturn boolean 动作成功则返回true,否则返回false
- -- @usage local isSuccessed = setWifiEnable(true)
 function setWifiEnable(isEnable)
 	local info = ''
 	local isSuccessed = Android:setWifiEnable(isEnable)
@@ -2518,9 +2535,6 @@ function setWifiEnable(isEnable)
 	return isSuccessed
 end
 
- --- 忘记指定的wifiAP
- -- @string wifiAP wifi接入点的名字
- -- @usage forgetWifi('Tencent-FreeWiFi')
 function forgetWifi(wifiAP)
 	local info = ''
 	Android:forgetWifi(wifiAP)
@@ -2528,10 +2542,6 @@ function forgetWifi(wifiAP)
 	if Debug then log(info) end
 end
 
- --- 连接指定的wifiAP
- -- @string wifiAP wifi接入点的名字
- -- @string PassWord wifi密码,没有密码使用''
- -- @usage connectWifi('Tencent-FreeWiFi', 'XunXian6')
 function connectWifi(wifiAP, PassWord)
 	local info = ''
 	local isConnected = Android:connectWifi(wifiAP, PassWord)
@@ -2539,9 +2549,11 @@ function connectWifi(wifiAP, PassWord)
 	if Debug then log(info) end
 end
 
+
  --- 检查当前是否连接到wifi
- -- @treturn boolean 连接wifi则返回true,否则返回false
- -- @usage local isWifiConnected = isWifiConnect()
+  -- @within 4-Network
+  -- @treturn boolean 连接wifi则返回true,否则返回false
+  -- @usage local isWifiConnected = isWifiConnect()
 function isWifiConnect()
 	local info = ''
 	local isWifiConnected = Android:isWifiConnect()
@@ -2551,7 +2563,8 @@ function isWifiConnect()
 end
 
  --- 打开蓝牙开关
- -- @usage openBluetooth()
+  -- @within 4-Network
+  -- @usage openBluetooth()
 function openBluetooth()
 	local info = ''
 	Android:openBluetooth()
@@ -2560,7 +2573,8 @@ function openBluetooth()
 end
 
  --- 关闭蓝牙开关
- -- @usage closeBluetooth()
+  -- @within 4-Network
+  -- @usage closeBluetooth()
 function closeBluetooth()
 	local info = ''
 	Android:closeBluetooth()
@@ -2569,7 +2583,8 @@ function closeBluetooth()
 end
 
  --- 收起通知栏
- -- @usage collapseStatusBar()
+  -- @within 1-General
+  -- @usage collapseStatusBar()
 function collapseStatusBar()
 	local info = ''
 	Android:collapseStatusBar()
@@ -2578,9 +2593,10 @@ function collapseStatusBar()
 end
 
  --- 检查当前ip地址是否畅通
- -- @string ip_adr 需要检查的ip地址
- -- @treturn boolean 畅通返回true,否则返回false
- -- @usage local isEnabled = isNetworkEnable('202.96.64.68')
+  -- @within 4-Network
+  -- @string ip_adr 需要检查的ip地址
+  -- @treturn boolean 畅通返回true,否则返回false
+  -- @usage local isEnabled = isNetworkEnable('202.96.64.68')
 function isNetworkEnable(ip_adr)
 	local info = ''
 	local isEnabled = Android:isNetworkEnable(ip_adr)
@@ -2590,8 +2606,9 @@ function isNetworkEnable(ip_adr)
 end
 
  --- 当被测应用需要启动系统图库读取图片之前,设置指定路径的图片作为返回值,需要在操作之前调用,配合com.kapalai.picture使用
- -- @string path 指定测试图片的位置信息
- -- @usage setPickPicture('sdcard/kat/test.jpg')
+  -- @within 4-Network
+  -- @string path 指定测试图片的位置信息
+  -- @usage setPickPicture('sdcard/kat/test.jpg')
 function setPickPicture(path)
 	local info = ''
 	Android:setPickPicture(path)
@@ -2600,10 +2617,11 @@ function setPickPicture(path)
 end
 
  --- 短信验证码
- -- @string num 发送短信的号码
- -- @number timeout 搜索号码超时时间
- -- @treturn boolean 畅通返回true,否则返回false
- -- @usage local result, sms = getSmsCode('13356652546', 60)
+  -- @within 4-Network
+  -- @string num 发送短信的号码
+  -- @number timeout 搜索号码超时时间，单位s
+  -- @treturn {boolean，string} 畅通返回true并且返回短信验证码,否则返回false
+  -- @usage local result, smsInfo = getSmsCode('13356652546', 60)
 function getSmsCode(num, timeout)
 	local info = ''
 	local startTime = os.time()
@@ -2625,7 +2643,10 @@ function getSmsCode(num, timeout)
 end
 
 --- 设置手机系统语言
--- @usage 设置中文：setLanguage('zh','CN')  设置英文：setLanguage('en','US')
+ -- @within 1-General
+ -- @string language 设置语言 比如（'zh'或者'en')
+ -- @string country 设置国家 比如（'CN'或者'US'）
+ -- @usage setLanguage('zh', 'CN')
 function setLanguage(language, country)
 	local  localLanguage = Android:getLanguage()
 	if not (language == localLanguage) then
@@ -2634,12 +2655,11 @@ function setLanguage(language, country)
     end
 end
 
--------------------------------general_assert---------------------------------------------
- 
  --- 检查点语句
- -- @bool isTrue 断言结果,并保存在'/sdcard/kat/Result/checkpoint/'目录下
- -- @string content 第一个参数为false时要记录的备注信息
- -- @usage checkPoint(false,'此时没有找到xxx控件元素')
+  -- @within 6-Assertion
+  -- @bool isTrue 断言结果
+  -- @string content 请用户定义断言失败时的描述
+  -- @usage checkPoint(false,'此时没有找到xxx控件元素')
 function checkPoint(isTrue,content)
 	local mtype = "fw_cp"
 	local function_info = ''
@@ -2649,7 +2669,7 @@ function checkPoint(isTrue,content)
 		_snapshotWholeScreen(TimeMarker(Case_Name), 'fw_cp_fail')
 		info = 'fail'..CHECK_POINT_SEPARATOR..mtype..CHECK_POINT_SEPARATOR..tostring(content)
 	else
-		info = 'pass'..CHECK_POINT_SEPARATOR..mtype..CHECK_POINT_SEPARATOR..tostring(content)
+		info = 'pass'..CHECK_POINT_SEPARATOR..mtype..CHECK_POINT_SEPARATOR..tostring('Success')
 	end
 	--add into t_info, t_result
 	t_info[#t_info + 1] = info
@@ -2659,9 +2679,10 @@ function checkPoint(isTrue,content)
 end
 
  --- 断言语句
- -- @bool isTrue 断言结果,如果为false,则结束当前用例执行,并保存在'/sdcard/kat/Result/checkpoint/'目录下
- -- @string content 第一个参数为false时要记录的日志信息
- -- @usage assert(false,'此时没有找到xxx控件元素')
+  -- @within 6-Assertion
+  -- @bool isTrue 断言结果,如果为false,则结束当前用例执行
+  -- @string content 请用户定义断言失败时的描述
+  -- @usage assert(false,'此时没有找到xxx控件元素')
 function assert(isTrue,content)
 	local mtype = 'fw_as'
 	local function_info = ''
@@ -2678,18 +2699,19 @@ function assert(isTrue,content)
 		log('WIFI '..tostring(Android:isWifiConnect())..' | NET '..tostring(Android:isNetworkEnable('180.149.132.47'))..'\n')
 		luaError()
 	else
-		info = 'pass'..CHECK_POINT_SEPARATOR..mtype..CHECK_POINT_SEPARATOR..tostring(content)
+		info = 'pass'..CHECK_POINT_SEPARATOR..mtype..CHECK_POINT_SEPARATOR..tostring('Success')
 		t_info[#t_info + 1] = info
 		t_result[#t_result + 1] = result 
-		function_info = 'assert: '..tostring(isTrue)..', '..content..'\n'
+		function_info = 'assert: '..tostring(isTrue)..', '..'Success'..'\n'
 		if Debug then log(function_info) end
 	end
 end
 
  --- 断言语句
- -- @bool isTrue 断言结果,如果为false,则结束所有用例执行,并保存在'/sdcard/kat/Result/checkpoint/'目录下
- -- @string content 第一个参数为false时要记录的日志信息
- -- @usage assert_final(false,'login failed')
+  -- @within 6-Assertion
+  -- @bool isTrue 断言结果,如果为false,则结束所有用例执行
+  -- @string content 请用户定义断言失败时的描述
+  -- @usage assert_final(false,'login failed')
 function assert_final(isTrue,content)
 	local mtype = 'fw_asf'
 	local function_info = ''
@@ -2709,16 +2731,18 @@ function assert_final(isTrue,content)
 		log('WIFI '..tostring(Android:isWifiConnect())..' | NET '..tostring(Android:isNetworkEnable('180.149.132.47'))..'\n')
 		luaError()
 	else
-		info = 'pass'..CHECK_POINT_SEPARATOR..mtype..CHECK_POINT_SEPARATOR..tostring(content)
+		info = 'pass'..CHECK_POINT_SEPARATOR..mtype..CHECK_POINT_SEPARATOR..tostring('Success')
 		t_info[#t_info + 1] = info
 		t_result[#t_result + 1] = result 
-		function_info = 'assert_final: '..tostring(isTrue)..', '..content..'\n'
+		function_info = 'assert_final: '..tostring(isTrue)..', '..'Success'..'\n'
 		if Debug then log(function_info) end
 	end
 end
 
- --- 图片断言,在检查点加入这条语句,实现图片断言
- -- @usage check_point_pic()
+ --- 实现图片断言
+  -- @within 6-Assertion
+  -- @string describe 截图打印水印内容到图片上
+  -- @usage check_point_pic('水印内容')
 function check_point_pic(describe)
 	--注意最好不要把checkpoint放到if语句中,或保证if和else里面都有相同的checkpoint
 	if describe == nil then describe = '' end
@@ -2755,13 +2779,15 @@ function _check_point_pic(describe)
 	picCheckPointCounter = picCheckPointCounter + 1
 end
 
-	--- 人机交互自动化测试断言，发起后会弹窗并阻塞，直到人工确认后才向下执行
-	-- @string title 人机交互专项测试标题
-	-- @string content 人机交互专项测试描述
-	-- @usage interactive('听音识曲', '人工确认听歌操作流程')
+ --- 人机交互自动化测试断言，发起后会弹窗并阻塞，直到人工确认后才继续脚本自动化运行
+  -- @within 6-Assertion
+  -- @string title 人机交互专项测试标题
+  -- @string content 人机交互专项测试描述
+  -- @usage interactive('听音识曲', '人工确认听歌操作流程')
 function interactive(title, content)
 	Android:interactive(title, content)
 end
+
 
 function autoCP(text, x, y, dx, dy, wPercent, hPercent)
 	local info = ''
@@ -2798,6 +2824,7 @@ function autoCP(text, x, y, dx, dy, wPercent, hPercent)
 	actionCounter = actionCounter + 1
 end
 
+
 function readCPInfo(picPath, content)
 	_writeFile(CHECK_POINT_INFO_PATH, picPath..'@')
 	if _fileIsExist(ACTION_INFO_PATH) and content == '' then
@@ -2820,9 +2847,20 @@ function readCPInfo(picPath, content)
 	_writeFile(CHECK_POINT_INFO_PATH, content..'--截图\n')
 end
 
-----------------------------------------------------------------------------
+---深度遍历用,设置自定义登陆
+ -- @within 3-Exploratory
+ -- @string id 账号
+ -- @string sn 密码
+ -- @string login_key_text 登录按钮的 key 值 + "_" + 登录按钮的 text 值
+ -- @string activity 登录页面的activity,可以通过录制工具获得
+ -- @usage setNormalLogin('123','123456','key_登录', 'com.tencent.mobileqq.activity.SplashActivity')
+function setNormalLogin(id, sn, login_key_text, activity)
+	info = 'setNormalLogin > '..id..', '..sn..', '..login_key_text..', '..activity..'\n' 
+	Android:setNormalLogin(id, sn, login_key_text, activity)
+	if Debug then log(info) end
+end
 
-function topercent(f) --小数转百分比
+function topercent(f) 
 	f = f*100
 	local s = string.format('%.2f',f)
 	s = s..'%'
@@ -2838,7 +2876,7 @@ function setInjectProcessName(processName)
 	Android:setInjectProcessName(processName)
 end
 
-function removeSpace(data) --去除字符串中间的空格
+function removeSpace(data) 
 	local t = {}
 	for w in string.gmatch(data, '%S+') do
 		table.insert(t, w)
@@ -2846,7 +2884,7 @@ function removeSpace(data) --去除字符串中间的空格
 	return t
 end
 
-function isNum(Data) --判断是不是数字
+function isNum(Data) 
 	local len = string.len(Data)
 	local c
 	local x = -1
@@ -2865,12 +2903,11 @@ function _cacheSleep(time)
 	Android:cacheSleep(time)
 end
 
- ---是否开启加载速度测试，注意随时开启关闭
+ 
 function setPerformance(isOpen)
 	Android:setPerformance(isOpen)
 end
 
- ---在没有发现crash的前提下,删除测试当前case的图片文件,适用于monkey测试时产生大量图片文件的情况
 function delPicForNotFindCrash()
 	if fileIsExist(CasePath..Case_Name..'/OK.txt') then
 		print('not found crash, delete pic !')
@@ -2878,7 +2915,7 @@ function delPicForNotFindCrash()
 	end
 end
 
-function max(tab) --取table的最大值
+function max(tab) 
 	local max = tab[1]
 	for i,v in ipairs(tab) do
 		if tab[i] > max then
@@ -2888,7 +2925,7 @@ function max(tab) --取table的最大值
 	return max
 end
 
-function min(tab) --取table的最小值
+function min(tab) 
 	local min = tab[1]
 	for i,v in ipairs(tab) do
 		if tab[i] < min then
@@ -2898,7 +2935,7 @@ function min(tab) --取table的最小值
 	return min
 end
 
-function average(tab) --取table的平均值
+function average(tab) 
 	local count = 0
 	local sum = 0
 	local avg = nil
@@ -2915,7 +2952,7 @@ function InitTestSuite()
 	Android:notifyMessage('--- Test Start ---')
 	setLuaContext()
 	basicDataUpdate() --delete and new
-	gameLibCheck()
+	-- gameLibCheck()
 	devInfo() --show dev name、s2creen resolution、pkg name、ver info...
 	-- openAccessibilty()
 	-- permission() --check system permission popup
@@ -2960,7 +2997,7 @@ function TearDownTestSuite()
 	if (Performance and (PackageType == 'cocos2dx')) then cocos2dx_fps_stop() end
 	endApp(PackageName)
 	_shell('ime disable com.kunpeng.kapalai.kat/com.kunpeng.kat.core.ADBKeyBoard')
-	-- if CURRENT_TOOLS ~= 'kat' then appTimeTest(PackageName) end
+	if isGetStartTime then appTimeTest(PackageName) end
 	_snapshotWholeScreen(ResultPath..'fw_check.jpg', 'fw_check')
 	notifyMessage('--- Test End ---')
 	_logcat('i', '---kat---', Case_Name..'|TearDownTestSuite true: \n')
@@ -3391,14 +3428,12 @@ function _fileIsExist(filePath)
 	end
 end
 
- --- 根据格式获取系统时间
- -- @format 'yyyy-MM-dd HH:mm:ss'
- -- @usage getSystemTime('HH-mm:ss') 返回结果是这样的格式：19-33:12
+
 function getSystemTime(format)
 	return Android:getSystemTime(format)
 end
 
- --- 是否出现连续回放失败超过最大次数 
+
 function tooManyfail(text)
 	_logcat('i', 'xtest', text)
 	if isStepFail then 
@@ -3422,54 +3457,32 @@ function tooManyfail(text)
 	isStepFail = false
 end
 
- ---深度遍历用,获取测试结果 遍历数量
 function getSimpleValidResultCount()
 	local rstCount = Android:getSimpleValidResultCount()
 	print('rstCount:'..rstCount)
 	return rstCount
 end
 
- ---深度遍历用,获取测试结果 耗时 ms
 function getSimpleExectime()
 	local testTime = Android:getSimpleExectime()
 	print('testTime:'..testTime)
 	return testTime
 end
 
- ---深度遍历用,获取全路径遍历版本号
 function getAutoTestVersion()
 	local simpleVer = Android:getAutoTestVersion()
 	print('simpleVer:'..simpleVer)
 	return simpleVer
 end
 
- ---深度遍历用,设置自定义登陆
- -- @String id,sn: 账号密码
- -- @String login_key_text: 登录按钮的 key + text
- -- @String activity: 登录页面的activity,可以通过录制工具获得
-function setNormalLogin(id, sn, login_key_text, activity)
-	info = 'setNormalLogin > '..id..', '..sn..', '..login_key_text..', '..activity..'\n' 
-	Android:setNormalLogin(id, sn, login_key_text, activity)
-	if Debug then log(info) end
-end
-
- ---深度遍历用,设置 QQ 登陆
- -- @String id,sn: 账号密码
- -- @String login_key_text: 登录按钮的 key + text
 function setQQLogin(id, sn, login_key_text)
 	Android:setQQLogin(id, sn, login_key_text)
 end
 
- ---深度遍历用,设置 微信 登陆
- -- @String id,sn: 账号密码
- -- @String login_key_text: 登录按钮的 key + text
 function setWXLogin(id, sn, login_key_text)
 	Android:setWXLogin(id, sn, login_key_text)
 end
 
- ---深度遍历用,设置 微博 登陆
- -- @String id,sn: 账号密码
- -- @String login_key_text: 登录按钮的 key + text
 function setWBLogin(id, sn, login_key_text)
 	Android:setWBLogin(id, sn, login_key_text)
 end
@@ -3489,18 +3502,17 @@ end
 function getString(fullString, demoString)
 	print(fullString)
 	local i, j = string.find(fullString, demoString)
+	if i == nil then
+		return nil
+	end
 	return string.sub(fullString, i, j)
 end
 
- ---发送网络请求，返回对应信息字符串
- --@String host: 主机地址
- --@Number port: 端口号，默认80
- --@String request: 网络请求
+
 function netRequest(host, port, request)
 	return Android:netRequest(host, port, request)
 end
 
- ---app的安装时间,启动时间,卸载时间
 function appTimeTest(pkgName)
 	function writeInfo(t1, t2, t3)
 		newFile('/sdcard/kat/Result/taskinfo')
@@ -3561,7 +3573,7 @@ function appTimeTest(pkgName)
 	-- 	local appPath = getApkPath(pkgName)
 	-- 	Android:copyFileToFolder(appPath, '/sdcard/kat/Result/')
 	-- end
-	clearAppData(pkgName)
+	if isClearAppData then clearAppData(pkgName) end
 	_sleep(1500)
 	startupAppTime = getString(_shell('am start -W '..getMainActivity(pkgName)), 'TotalTime: %d+')
 	if startupAppTime == nil then
@@ -3585,14 +3597,11 @@ function appTimeTest(pkgName)
 	-- if isUninstalled then uninstallInfo = 'Success' end
 	writeInfo(installTime, startupAppTime, uninstallTime)
 	write(installInfo, uninstallInfo)
+	endApp(pkgName)
 	return installTime..':'..startupAppTime..':'..uninstallTime
 end
 
- --- 从文件中获取对应Tag整行的文件信息
- -- @string path 对应的文件名
- -- @string tag 需要查找的标志
- -- @treturn boolean, string/int 返回是否找到 & 后面是找到后的整行信息,可以再用split接口做进一步处理
- -- @usage findTagFromFile('sdcard/test.txt', 'startTime:')
+ 
 function findTagFromFile(path, tag)
 	local result = false
 	local data = ''
@@ -3615,8 +3624,7 @@ function checkAppIsInstall()
 		_snapshotWholeScreen(ResultPath..'install_fail.png', 'fw_error_install_fail')
 		_logcat('i', '---kat---', 'Package('..PackageName..") isn't installed")
 		_notifyMessage('Package('..PackageName..") isn't installed")
-		-- 断言结果若为false,则结束所有用例执行,并保存在'/sdcard/kat/Result/checkpoint/'目录下
-		assert_final(false, 'Package('..PackageName..") isn't installed")
+		luaStop('KAT_LUAEND')
 	end
 end
 
@@ -3683,8 +3691,7 @@ function pathTranslate(classpath) --新版本path check方案,若原始path是�
 	return path
 end
 
- --- 关闭当前所有输入法进程
- -- @usage closeIme()
+
 function closeIme()
 	local imeList = _shell('ime list -s')
 	for i,v in ipairs(_split(imeList, '%c')) do
