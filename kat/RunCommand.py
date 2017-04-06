@@ -138,8 +138,11 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 		# check adb is connection, if 'device not found', pop up error!
 		# self.view.run_command('stop_stop')
 		for i in range(0, len(pathlist)):
-			# print adbpath + " push " + pathlist[i] + " /sdcard/kat/"
-			result = subprocess.Popen(adbpath + " push " + pathlist[i] + " /sdcard/kat/", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+			if ' ' in pathlist[i]:
+				sublime.error_message(u'脚本工程路径名含有空格')
+				print pathlist[i]
+				return
+			result = subprocess.Popen(adbpath + " push " + '"' + pathlist[i] + '"' + " /sdcard/kat/", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 		print "<<< adb shell am instrument -e class com.kunpeng.kat.base.TestMainInstrumentation -w com.kunpeng.kapalai.kat/com.kunpeng.kat.base.KatInstrumentationTestRunner >>>"
 		isKatInstall = subprocess.Popen(adbpath + " shell am instrument -e class com.kunpeng.kat.base.TestMainInstrumentation -w com.kunpeng.kapalai.kat/com.kunpeng.kat.base.KatInstrumentationTestRunner", shell = True, stdout = subprocess.PIPE)
 		infooutput_kat, erroutput_kat = isKatInstall.communicate()
@@ -162,8 +165,7 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 			is_close_switch = temp_switch.communicate()
 			error_Log = subprocess.Popen(adbpath + ' shell cat /sdcard/kat/Result/error.txt', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 			error_data = error_Log.communicate()
-
-			if is_close_switch[0].find('No such file') == -1:
+			if is_close_switch[0].find('/sdcard/kat/Result/show_log_stop.txt: No such file') == -1:
 				# print "---------Log thread is over---------"
 				break
 			if not data_Log[1]:
@@ -184,12 +186,13 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 				break
 			# error.txt解析
 			error_count = error_data[0].count(separator)
+			# print error_count
 			if error_lastTimeLogRow != error_count:
 				if error_lastTimeLogRow > error_count:
 					break
 				else:
 					for i in range(error_lastTimeLogRow, error_count):
-						if error_data[0].find('No such file') == -1:
+						if error_data[0].find('/sdcard/kat/Result/error.txt: No such file or directory') == -1:
 							print '---Error---',error_data[0].split(separator)[i]
 					error_lastTimeLogRow = error_count
 
@@ -226,8 +229,16 @@ class RunXtestCommand(sublime_plugin.TextCommand):
 		# check adb is connection, if 'device not found', pop up error!
 		# self.view.run_command('stop_stop')
 		for i in range(0, len(pathlist)):
-			# print adbpath + " push " + pathlist[i] + " /sdcard/kat/"
-			result = subprocess.Popen(adbpath + " push " + pathlist[i] + " /sdcard/kat/", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+			for s in pathlist[i]:
+				if s >= u'\u4e00' and s<=u'\u9fa5':
+					sublime.error_message(u'脚本工程路径名含有中文')
+					print pathlist[i]
+					return
+			if ' ' in pathlist[i]:
+				sublime.error_message(u'脚本工程路径名含有空格')
+				print pathlist[i]
+				return
+			result = subprocess.Popen(adbpath + ' push ' + pathlist[i] + '1 /sdcard/kat/', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 		print "<<< adb shell am instrument -e class com.kunpeng.kat.base.TestMainInstrumentation -w com.tencent.utest.recorder/com.kunpeng.kat.base.KatInstrumentationTestRunner >>>"
 		isKatInstall = subprocess.Popen(adbpath + " shell am instrument -e class com.kunpeng.kat.base.TestMainInstrumentation -w com.tencent.utest.recorder/com.kunpeng.kat.base.KatInstrumentationTestRunner", shell = True, stdout = subprocess.PIPE)
 		infooutput_kat, erroutput_kat = isKatInstall.communicate()
@@ -250,7 +261,6 @@ class RunXtestCommand(sublime_plugin.TextCommand):
 			is_close_switch = temp_switch.communicate()
 			error_Log = subprocess.Popen(adbpath + ' shell cat /sdcard/kat/Result/error.txt', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 			error_data = error_Log.communicate()
-
 			if is_close_switch[0].find('No such file') == -1:
 				# print "---------Log thread is over---------"
 				break
@@ -981,3 +991,5 @@ class UpdateKatPluginCommand(sublime_plugin.TextCommand):
 				urllib.urlretrieve(url, os.path.join(sublime.packages_path() + delimiter + 'kat' + delimiter + 'windows', filename))
 			else:
 				urllib.urlretrieve(url, os.path.join(sublime.packages_path() + delimiter + 'kat', filename))
+
+		
