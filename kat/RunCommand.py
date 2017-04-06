@@ -1,4 +1,5 @@
 #coding:utf-8
+##ver:2.0
 import sublime, sublime_plugin, os, subprocess, sys, time, threading, re, urllib
 delimiter = os.sep
 separator = '\r\r\n'
