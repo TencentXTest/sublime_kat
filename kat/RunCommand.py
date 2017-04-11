@@ -1,6 +1,6 @@
 #coding:utf-8
 import sublime, sublime_plugin, os, subprocess, sys, time, threading, re, urllib
-RunCommand_ver = '2.1'
+RunCommand_ver = '2.2'
 delimiter = os.sep
 separator = '\r\r\n'
 platsys = sublime.platform()
@@ -114,6 +114,12 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 		print 'RunCommand_ver-->' + RunCommand_ver
 		print "================================run kat !! (run main.lua)================================"
 		# get target folder path
+		p = subprocess.Popen(adbpath + " push d:/a1l1.txt /sdcard/kat/", shell = True, stderr = subprocess.PIPE)
+		erroutput = p.communicate()
+		# if erroutput[1].split(':')[0] == 'error':
+		if 'error: no devices found' in erroutput[1]:
+			sublime.error_message(erroutput[1])
+			return
 		filePath = self.view.file_name().split(delimiter)
 		folderPath = ""
 		for i in range(startindex, len(filePath) - 1):
@@ -211,6 +217,12 @@ class RunXtestCommand(sublime_plugin.TextCommand):
 		print 'RunCommand_ver-->' + RunCommand_ver
 		print "================================run xtest !! (run main.lua)================================"
 		# get target folder path
+		p = subprocess.Popen(adbpath + " push d:/a1l1.txt /sdcard/kat/", shell = True, stderr = subprocess.PIPE)
+		erroutput = p.communicate()
+		# if erroutput[1].split(':')[0] == 'error':
+		if 'error: no devices found' in erroutput[1]:
+			sublime.error_message(erroutput[1])
+			return
 		filePath = self.view.file_name().split(delimiter)
 		folderPath = ""
 		for i in range(startindex, len(filePath) - 1):
@@ -324,7 +336,8 @@ class StopCommand(sublime_plugin.TextCommand):
 		# check adb is connection, if 'device not found', pop up error!
 		p = subprocess.Popen(adbpath + " push d:/a1l1.txt /sdcard/kat/", shell = True, stderr = subprocess.PIPE)
 		erroutput = p.communicate()
-		if erroutput[1].split(':')[0] == 'error':
+		# if erroutput[1].split(':')[0] == 'error':
+		if 'error: no devices found' in erroutput[1]:
 			sublime.error_message(erroutput[1])
 		else:
 			result = os.popen(adbpath + " push " + path + " /sdcard/kat/Result/")
@@ -425,6 +438,9 @@ class ResultCommand(sublime_plugin.TextCommand):
 		# check adb is connection, if 'device not found', pop up error!
 		p = subprocess.Popen(adbpath + " pull /sdcard/kat/Result/Result.txt " + srcFolder, shell = True, stderr = subprocess.PIPE)
 		erroutput = p.communicate()
+		if 'error: no devices found' in erroutput[1]:
+			sublime.error_message(erroutput[1])
+			return
 		# print erroutput
 		if erroutput[1].find("device") != -1:
 			sublime.error_message(erroutput[1])
@@ -563,7 +579,10 @@ class PullKatDataCommand(sublime_plugin.TextCommand):
 		try:
 			p = subprocess.Popen(adbpath + " pull /data/local/tmp/kat/" + text + " " + srcFolder, shell = True, stderr = subprocess.PIPE)
 			erroutput = p.communicate()
-			# print erroutput
+			if 'error: no devices found' in erroutput[1]:
+				sublime.error_message(erroutput[1])
+			return
+			print erroutput
 			if erroutput[1].find("device") != -1:
 				sublime.error_message(erroutput[1])
 			elif erroutput[1].find("does not exist") != -1:
@@ -781,6 +800,9 @@ class RecordCommand(sublime_plugin.TextCommand):
 		temp_Log = subprocess.Popen(adbpath + ' shell cat /sdcard/TestTool/.lua', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 		# print adbpath + ' shell cat /sdcard/TestTool/.lua'
 		data_Log = temp_Log.communicate()
+		if 'error: no devices found' in data_Log[1]:
+			sublime.error_message(data_Log[1])
+			return
 		if data_Log[0].find('No such file') != -1:
 			print '--->/sdcard/TestTool/.lua not found!!<---'
 			return
@@ -891,6 +913,9 @@ class GetPkgNameCommand(sublime_plugin.TextCommand):
 			print ''
 		temp_Log = subprocess.Popen(adbpath + ' shell cat /sdcard/TestTool/.lua', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 		data_Log = temp_Log.communicate()
+		if 'error: no devices found' in data_Log[1]:
+			sublime.error_message(data_Log[1])
+			return
 		self.insert_contents(edit, data_Log[0].split('"')[1].decode("utf-8"))
 		sublime.set_clipboard(data_Log[0].split('"')[1].decode("utf-8"))
 
@@ -938,6 +963,11 @@ class GetKatRunFileCommand(sublime_plugin.TextCommand):
 		# check adb is connection, if 'device not found', pop up error!
 		try:
 			print adbpath + " pull /sdcard/kat/Result/ " + srcFolder
+			p = subprocess.Popen(adbpath + " push d:/a1l1.txt /sdcard/kat/", shell = True, stderr = subprocess.PIPE)
+			erroutput = p.communicate()
+			if 'error: no devices found' in erroutput[1]:
+				sublime.error_message(erroutput[1])
+				return
 			os.system(adbpath + " pull /sdcard/kat/Result " + srcFolder)
 		except Exception:
 			sublime.error_message(u"当前命令为:\n" + adbpath + " pull /sdcard/kat/Result " + srcFolder + u"\n不能包含中文!!")
