@@ -5,7 +5,7 @@
 		"caption": "运行KAT"
 	}, {
 		"command": "stop",
-		"caption": "停止测试"
+		"caption": "停止KAT"
 	},
 	//  {
 	// 	"command": "run_record_kat",
@@ -45,11 +45,11 @@
 		"caption": "插入包名"
 	}, {
 		"command": "get_kat_run_file",
-		"caption": "拉取测试结果--kat目录文件"
+		"caption": "拉取测试结果"
 	}
-	,
-	{
-		"command": "open_shell",
-		"caption": "启动shell代理"
-	}
+	// ,
+	// {
+	// 	"command": "open_shell",
+	// 	"caption": "启动shell代理"
+	// }
 ]
