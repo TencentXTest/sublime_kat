@@ -1,5 +1,5 @@
 #coding:utf-8
-##ver:2.0
+##ver:2.1
 import sublime, sublime_plugin, os, subprocess, sys, time, threading, re, urllib
 delimiter = os.sep
 separator = '\r\r\n'
@@ -139,11 +139,16 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 		# check adb is connection, if 'device not found', pop up error!
 		# self.view.run_command('stop_stop')
 		for i in range(0, len(pathlist)):
+			for s in pathlist[i]:
+				if s >= u'\u4e00' and s<=u'\u9fa5':
+					sublime.error_message(u'脚本工程路径名含有中文')
+					print pathlist[i]
+					return
 			if ' ' in pathlist[i]:
 				sublime.error_message(u'脚本工程路径名含有空格')
 				print pathlist[i]
 				return
-			result = subprocess.Popen(adbpath + " push " + '"' + pathlist[i] + '"' + " /sdcard/kat/", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+			result = subprocess.Popen(adbpath + " push " + pathlist[i] + " /sdcard/kat/", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 		print "<<< adb shell am instrument -e class com.kunpeng.kat.base.TestMainInstrumentation -w com.kunpeng.kapalai.kat/com.kunpeng.kat.base.KatInstrumentationTestRunner >>>"
 		isKatInstall = subprocess.Popen(adbpath + " shell am instrument -e class com.kunpeng.kat.base.TestMainInstrumentation -w com.kunpeng.kapalai.kat/com.kunpeng.kat.base.KatInstrumentationTestRunner", shell = True, stdout = subprocess.PIPE)
 		infooutput_kat, erroutput_kat = isKatInstall.communicate()
@@ -239,7 +244,7 @@ class RunXtestCommand(sublime_plugin.TextCommand):
 				sublime.error_message(u'脚本工程路径名含有空格')
 				print pathlist[i]
 				return
-			result = subprocess.Popen(adbpath + ' push ' + pathlist[i] + '1 /sdcard/kat/', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+			result = subprocess.Popen(adbpath + ' push ' + pathlist[i] + ' /sdcard/kat/', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 		print "<<< adb shell am instrument -e class com.kunpeng.kat.base.TestMainInstrumentation -w com.tencent.utest.recorder/com.kunpeng.kat.base.KatInstrumentationTestRunner >>>"
 		isKatInstall = subprocess.Popen(adbpath + " shell am instrument -e class com.kunpeng.kat.base.TestMainInstrumentation -w com.tencent.utest.recorder/com.kunpeng.kat.base.KatInstrumentationTestRunner", shell = True, stdout = subprocess.PIPE)
 		infooutput_kat, erroutput_kat = isKatInstall.communicate()
