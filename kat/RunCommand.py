@@ -1023,7 +1023,7 @@ class NewFolderCommand(sublime_plugin.TextCommand):
 class UpdateKatPluginCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
 		self.urls = [
-					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/RunCommand.py"
+					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/RunCommand.py",
 					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/Context.sublime-menu"
                      ]
 		for url in self.urls:
