@@ -1,6 +1,6 @@
 #coding:utf-8
-##ver:2.1
 import sublime, sublime_plugin, os, subprocess, sys, time, threading, re, urllib
+RunCommand_ver = '2.1'
 delimiter = os.sep
 separator = '\r\r\n'
 platsys = sublime.platform()
@@ -24,6 +24,7 @@ tmpFolder = 'KatTmpFolder'
 class RunCommand(sublime_plugin.TextCommand):
 	# main
 	def run(self, edit):
+		print 'RunCommand_ver-->' + RunCommand_ver
 		print '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
 		print "================================run kat !! (run main.lua)================================"
 		# get target folder path
@@ -110,6 +111,7 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 	# main
 	def run(self, edit):
 		print '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+		print 'RunCommand_ver-->' + RunCommand_ver
 		print "================================run kat !! (run main.lua)================================"
 		# get target folder path
 		filePath = self.view.file_name().split(delimiter)
@@ -206,6 +208,7 @@ class RunXtestCommand(sublime_plugin.TextCommand):
 	# main
 	def run(self, edit):
 		print '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+		print 'RunCommand_ver-->' + RunCommand_ver
 		print "================================run xtest !! (run main.lua)================================"
 		# get target folder path
 		filePath = self.view.file_name().split(delimiter)
@@ -300,6 +303,7 @@ class RunXtestCommand(sublime_plugin.TextCommand):
 class StopCommand(sublime_plugin.TextCommand):
 
 	def run(self, edit):
+		print 'RunCommand_ver-->' + RunCommand_ver
 		print "================================kill kat!!================================"
 		# run adb Command
 		os.popen(adbpath + " shell service call activity 79 s16 com.kunpeng.kapalai.kat")
