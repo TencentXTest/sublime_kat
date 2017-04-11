@@ -1,6 +1,6 @@
 #coding:utf-8
 import sublime, sublime_plugin, os, subprocess, sys, time, threading, re, urllib
-RunCommand_ver = '2.2'
+RunCommand_ver = '2.3'
 delimiter = os.sep
 separator = '\r\r\n'
 platsys = sublime.platform()
@@ -1024,6 +1024,7 @@ class UpdateKatPluginCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
 		self.urls = [
 					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/RunCommand.py"
+					"https://raw.githubusercontent.com/TencentXTest/sublime_kat/master/kat/Context.sublime-menu"
                      ]
 		for url in self.urls:
 			filename = url.split("/")[-1]
