@@ -1,6 +1,6 @@
 #coding:utf-8
 import sublime, sublime_plugin, os, subprocess, sys, time, threading, re, urllib
-RunCommand_ver = '2.5'
+RunCommand_ver = '2.6'
 delimiter = os.sep
 separator = '\r+\n\t*'
 platsys = sublime.platform()
