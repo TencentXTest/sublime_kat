@@ -180,6 +180,9 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 			error_Log = subprocess.Popen(adbpath + ' shell cat /sdcard/kat/Result/error.txt', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 			error_data = error_Log.communicate()
 			# error.txt解析
+			e = re.compile(separator)
+			error_count = len(e.split(error_data[0])) - 1
+			# print error_count
 			if error_lastTimeLogRow != error_count:
 				if error_lastTimeLogRow > error_count:
 					break
@@ -311,7 +314,6 @@ class RunXtestCommand(sublime_plugin.TextCommand):
 				print "--------------------------------------"
 				print data_Log[1]
 				break
-			
 
 class StopCommand(sublime_plugin.TextCommand):
 
