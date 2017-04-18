@@ -1,6 +1,6 @@
 #coding:utf-8
 import sublime, sublime_plugin, os, subprocess, sys, time, threading, re, urllib
-RunCommand_ver = '2.4'
+RunCommand_ver = '2.5'
 delimiter = os.sep
 separator = '\r+\n\t*'
 platsys = sublime.platform()
@@ -179,6 +179,15 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 			is_close_switch = temp_switch.communicate()
 			error_Log = subprocess.Popen(adbpath + ' shell cat /sdcard/kat/Result/error.txt', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 			error_data = error_Log.communicate()
+			# error.txt解析
+			if error_lastTimeLogRow != error_count:
+				if error_lastTimeLogRow > error_count:
+					break
+				else:
+					for i in range(error_lastTimeLogRow, error_count):
+						if error_data[0].find('/sdcard/kat/Result/error.txt: No such file or directory') == -1:
+							print '---Error---', e.split(error_data[0])[i]
+						error_lastTimeLogRow = error_count
 			if is_close_switch[0].find('/sdcard/kat/Result/show_log_stop.txt: No such file') == -1:
 				# print "---------Log thread is over---------"
 				break
@@ -198,18 +207,6 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 				print "--------------------------------------"
 				print data_Log[1]
 				break
-			# error.txt解析
-			e = re.compile(separator)
-			error_count = len(e.split(error_data[0])) - 1
-			# print error_count
-			if error_lastTimeLogRow != error_count:
-				if error_lastTimeLogRow > error_count:
-					break
-				else:
-					for i in range(error_lastTimeLogRow, error_count):
-						if error_data[0].find('/sdcard/kat/Result/error.txt: No such file or directory') == -1:
-							print '---Error---', e.split(error_data[0])[i]
-					error_lastTimeLogRow = error_count
 
 class RunXtestCommand(sublime_plugin.TextCommand):
 	# main
@@ -283,7 +280,19 @@ class RunXtestCommand(sublime_plugin.TextCommand):
 			is_close_switch = temp_switch.communicate()
 			error_Log = subprocess.Popen(adbpath + ' shell cat /sdcard/kat/Result/error.txt', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 			error_data = error_Log.communicate()
-			if is_close_switch[0].find('No such file') == -1:
+			# error.txt解析
+			e = re.compile(separator)
+			error_count = len(e.split(error_data[0])) - 1
+			# print error_count
+			if error_lastTimeLogRow != error_count:
+				if error_lastTimeLogRow > error_count:
+					break
+				else:
+					for i in range(error_lastTimeLogRow, error_count):
+						if error_data[0].find('/sdcard/kat/Result/error.txt: No such file or directory') == -1:
+							print '---Error---', e.split(error_data[0])[i]
+						error_lastTimeLogRow = error_count
+			if is_close_switch[0].find('/sdcard/kat/Result/show_log_stop.txt: No such file') == -1:
 				# print "---------Log thread is over---------"
 				break
 			if not data_Log[1]:
@@ -302,17 +311,7 @@ class RunXtestCommand(sublime_plugin.TextCommand):
 				print "--------------------------------------"
 				print data_Log[1]
 				break
-			# error.txt解析
-			e = re.compile(separator)
-			error_count = len(e.split(error_data[0])) - 1
-			# print error_count
-			if error_lastTimeLogRow != error_count:
-				if error_lastTimeLogRow > error_count:
-					break
-				else:
-					for i in range(error_lastTimeLogRow, error_count):
-						if error_data[0].find('/sdcard/kat/Result/error.txt: No such file or directory') == -1:
-							print '---Error---', e.split(error_data[0])[i]
+			
 
 class StopCommand(sublime_plugin.TextCommand):
 
