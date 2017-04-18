@@ -1,8 +1,8 @@
 #coding:utf-8
 import sublime, sublime_plugin, os, subprocess, sys, time, threading, re, urllib
-RunCommand_ver = '2.3'
+RunCommand_ver = '2.4'
 delimiter = os.sep
-separator = '\r\r\n'
+separator = '\r+\n\t*'
 platsys = sublime.platform()
 if platsys != 'windows':
 	platsys = 'mac'
@@ -12,7 +12,6 @@ if(platsys == 'windows'):
 	targetPath = rootpack + delimiter + 'kat' + delimiter + platsys + delimiter
 else:
 	targetPath = rootpack.replace(" ", "\ ") + delimiter + 'kat' + delimiter + platsys + delimiter
-	separator = '\r\n'
 if platsys == 'windows' and not os.path.exists(targetPath):
 	os.mkdir(targetPath)
 if(platsys == "windows"):
@@ -21,91 +20,92 @@ else:
 	adbpath = targetPath + "adb"
 tmpFolder = 'KatTmpFolder'
 
-class RunCommand(sublime_plugin.TextCommand):
-	# main
-	def run(self, edit):
-		print 'RunCommand_ver-->' + RunCommand_ver
-		print '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
-		print "================================run kat !! (run main.lua)================================"
-		# get target folder path
-		filePath = self.view.file_name().split(delimiter)
-		folderPath = ""
-		for i in range(0, len(filePath) - 1):
-			folderPath = folderPath + filePath[i] + delimiter
-		# traversal of the suffix ".Lua" file name
-		fileList = []
-		for i in os.listdir(folderPath):
-			resultFilePath = folderPath + i
-			if i.endswith('.lua') or i.endswith('.so') or i.endswith('.txt') or i.endswith('.xls') or i.endswith('.jar') or i.endswith('.jpg') or i.endswith('.png') or i.endswith('.apk'):
-				fileList.append(resultFilePath)
-		# run adb Command
-		try:
-			self.pushFileToDevice(fileList)
-		except Exception, e:
-			print e
-			sublime.error_message(e)
-		t = threading.Thread(target=self.showlog)
-		t.setDaemon(True)
-		t.start()
-		# t.join()
+# class RunCommand(sublime_plugin.TextCommand):
+# 	# main
+# 	def run(self, edit):
+# 		print 'RunCommand_ver-->' + RunCommand_ver
+# 		print '\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'
+# 		print "================================run kat !! (run main.lua)================================"
+# 		# get target folder path
+# 		filePath = self.view.file_name().split(delimiter)
+# 		folderPath = ""
+# 		for i in range(0, len(filePath) - 1):
+# 			folderPath = folderPath + filePath[i] + delimiter
+# 		# traversal of the suffix ".Lua" file name
+# 		fileList = []
+# 		for i in os.listdir(folderPath):
+# 			resultFilePath = folderPath + i
+# 			if i.endswith('.lua') or i.endswith('.so') or i.endswith('.txt') or i.endswith('.xls') or i.endswith('.jar') or i.endswith('.jpg') or i.endswith('.png') or i.endswith('.apk'):
+# 				fileList.append(resultFilePath)
+# 		# run adb Command
+# 		try:
+# 			self.pushFileToDevice(fileList)
+# 		except Exception, e:
+# 			print e
+# 			sublime.error_message(e)
+# 		t = threading.Thread(target=self.showlog)
+# 		t.setDaemon(True)
+# 		t.start()
+# 		# t.join()
 		
-	def pushFileToDevice(self, pathlist):
-		# check adb is connection, if 'device not found', pop up error!
-		self.view.run_command('stop_stop')
-		for i in range(0, len(pathlist)):
-			result = subprocess.Popen(adbpath + " push " + pathlist[i] + " /sdcard/kat/", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-			# print result.communicate()
-		isKatInstall = subprocess.Popen(adbpath + " shell am start -n com.kunpeng.kapalai.kat/com.kunpeng.kapalai.kat.core.TesttoolActivity --es luapath  /sdcard/kat/Main.lua", shell = True, stdout = subprocess.PIPE)
-		infooutput_kat, erroutput_kat = isKatInstall.communicate()
-		# print infooutput_kat
-		if infooutput_kat.find("does not exist") != -1:
-			sublime.error_message("kat not found OR kat version is older!!")
-		else:
-			pass
+# 	def pushFileToDevice(self, pathlist):
+# 		# check adb is connection, if 'device not found', pop up error!
+# 		self.view.run_command('stop_stop')
+# 		for i in range(0, len(pathlist)):
+# 			result = subprocess.Popen(adbpath + " push " + pathlist[i] + " /sdcard/kat/", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+# 			# print result.communicate()
+# 		isKatInstall = subprocess.Popen(adbpath + " shell am start -n com.kunpeng.kapalai.kat/com.kunpeng.kapalai.kat.core.TesttoolActivity --es luapath  /sdcard/kat/Main.lua", shell = True, stdout = subprocess.PIPE)
+# 		infooutput_kat, erroutput_kat = isKatInstall.communicate()
+# 		# print infooutput_kat
+# 		if infooutput_kat.find("does not exist") != -1:
+# 			sublime.error_message("kat not found OR kat version is older!!")
+# 		else:
+# 			pass
 
-	def showlog(self):
-		time.sleep(8)
-		lastTimeLogRow = 0 
-		error_lastTimeLogRow = 0
-		begin_time = time.time()
-		end_time = begin_time + 3600
-		while time.time() < end_time:
-			temp_Log = subprocess.Popen(adbpath + ' shell cat /sdcard/kat/Result/Log.txt', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-			data_Log = temp_Log.communicate()
-			temp_switch = subprocess.Popen(adbpath + ' shell cat /sdcard/kat/Result/show_log_stop.txt', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-			is_close_switch = temp_switch.communicate()
-			error_Log = subprocess.Popen(adbpath + ' shell cat /sdcard/kat/Result/error.txt', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-			error_data = error_Log.communicate()
+# 	def showlog(self):
+# 		time.sleep(8)
+# 		lastTimeLogRow = 0 
+# 		error_lastTimeLogRow = 0
+# 		begin_time = time.time()
+# 		end_time = begin_time + 3600
+# 		while time.time() < end_time:
+# 			temp_Log = subprocess.Popen(adbpath + ' shell cat /sdcard/kat/Result/Log.txt', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+# 			data_Log = temp_Log.communicate()
+# 			temp_switch = subprocess.Popen(adbpath + ' shell cat /sdcard/kat/Result/show_log_stop.txt', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+# 			is_close_switch = temp_switch.communicate()
+# 			error_Log = subprocess.Popen(adbpath + ' shell cat /sdcard/kat/Result/error.txt', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+# 			error_data = error_Log.communicate()
 
-			if is_close_switch[0].find('No such file') == -1:
-				# print "---------Log thread is over---------"
-				break
-			if not data_Log[1]:
-				count =  data_Log[0].count(separator)
-				# print data_Log
-				if lastTimeLogRow != count :
-					if lastTimeLogRow > count :
-						break
-					else:
-						for i in range(lastTimeLogRow, count):
-							if data_Log[0].find('No such file') == -1:
-								print '',data_Log[0].split(separator)[i]
-						lastTimeLogRow = count
-				time.sleep(0.3)
-			else:
-				print "--------------------------------------"
-				print data_Log[1]
-				break
-			# error.txt解析
-			error_count = error_data[0].count(separator)
-			if error_lastTimeLogRow != error_count:
-				if error_lastTimeLogRow > error_count:
-					break
-				else:
-					for i in range(error_lastTimeLogRow, error_count):
-						if error_data[0].find('No such file') == -1:
-							print '---Error---',error_data[0].split(separator)[i]
-					error_lastTimeLogRow = error_count
+# 			if is_close_switch[0].find('No such file') == -1:
+# 				# print "---------Log thread is over---------"
+# 				break
+# 			if not data_Log[1]:
+# 				count =  data_Log[0].count(separator)
+# 				# print data_Log
+# 				if lastTimeLogRow != count :
+# 					if lastTimeLogRow > count :
+# 						break
+# 					else:
+# 						for i in range(lastTimeLogRow, count):
+# 							if data_Log[0].find('No such file') == -1:
+# 								print '',data_Log[0].split(separator)[i]
+# 						lastTimeLogRow = count
+# 				time.sleep(0.3)
+# 			else:
+# 				print "--------------------------------------"
+# 				print data_Log[1]
+# 				break
+# 			# error.txt解析
+# 			e = re.compile(separator)
+# 			error_count = len(e.split(error_data[0])) - 1
+# 			# print error_count
+# 			if error_lastTimeLogRow != error_count:
+# 				if error_lastTimeLogRow > error_count:
+# 					break
+# 				else:
+# 					for i in range(error_lastTimeLogRow, error_count):
+# 						if error_data[0].find('/sdcard/kat/Result/error.txt: No such file or directory') == -1:
+# 							print '---Error---', e.split(error_data[0])[i]
 
 class RunLabKatCommand(sublime_plugin.TextCommand):
 	# main
@@ -183,15 +183,15 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 				# print "---------Log thread is over---------"
 				break
 			if not data_Log[1]:
-				count =  data_Log[0].count(separator)
-				# print data_Log
+				p = re.compile(separator)
+				count =  len(p.split(data_Log[0])) - 1
 				if lastTimeLogRow != count :
 					if lastTimeLogRow > count :
 						break
 					else:
 						for i in range(lastTimeLogRow, count):
 							if data_Log[0].find('No such file') == -1:
-								print '',data_Log[0].split(separator)[i]
+								print '', p.split(data_Log[0])[i]
 						lastTimeLogRow = count
 				time.sleep(0.3)
 			else:
@@ -199,7 +199,8 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 				print data_Log[1]
 				break
 			# error.txt解析
-			error_count = error_data[0].count(separator)
+			e = re.compile(separator)
+			error_count = len(e.split(error_data[0])) - 1
 			# print error_count
 			if error_lastTimeLogRow != error_count:
 				if error_lastTimeLogRow > error_count:
@@ -207,7 +208,7 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 				else:
 					for i in range(error_lastTimeLogRow, error_count):
 						if error_data[0].find('/sdcard/kat/Result/error.txt: No such file or directory') == -1:
-							print '---Error---',error_data[0].split(separator)[i]
+							print '---Error---', e.split(error_data[0])[i]
 					error_lastTimeLogRow = error_count
 
 class RunXtestCommand(sublime_plugin.TextCommand):
@@ -286,15 +287,15 @@ class RunXtestCommand(sublime_plugin.TextCommand):
 				# print "---------Log thread is over---------"
 				break
 			if not data_Log[1]:
-				count =  data_Log[0].count(separator)
-				# print data_Log
+				p = re.compile(separator)
+				count =  len(p.split(data_Log[0])) - 1
 				if lastTimeLogRow != count :
 					if lastTimeLogRow > count :
 						break
 					else:
 						for i in range(lastTimeLogRow, count):
 							if data_Log[0].find('No such file') == -1:
-								print '',data_Log[0].split(separator)[i]
+								print '', p.split(data_Log[0])[i]
 						lastTimeLogRow = count
 				time.sleep(0.3)
 			else:
@@ -302,15 +303,16 @@ class RunXtestCommand(sublime_plugin.TextCommand):
 				print data_Log[1]
 				break
 			# error.txt解析
-			error_count = error_data[0].count(separator)
+			e = re.compile(separator)
+			error_count = len(e.split(error_data[0])) - 1
+			# print error_count
 			if error_lastTimeLogRow != error_count:
 				if error_lastTimeLogRow > error_count:
 					break
 				else:
 					for i in range(error_lastTimeLogRow, error_count):
-						if error_data[0].find('No such file') == -1:
-							print '---Error---',error_data[0].split(separator)[i]
-					error_lastTimeLogRow = error_count
+						if error_data[0].find('/sdcard/kat/Result/error.txt: No such file or directory') == -1:
+							print '---Error---', e.split(error_data[0])[i]
 
 class StopCommand(sublime_plugin.TextCommand):
 
@@ -714,17 +716,18 @@ class PsCommand(sublime_plugin.TextCommand):
 			self.pullFile(folderPath)
 		
 	def pullFile(self, srcFolder):		
-		p = subprocess.Popen(adbpath + " shell su -c 'ps'", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+		p = subprocess.Popen(adbpath + " shell ps", shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 		infooutput, erroutput = p.communicate()
 		if erroutput.find("device") != -1:
 			sublime.error_message(erroutput)
 		elif infooutput.find("No such file") != -1:
 			sublime.error_message(infooutput)
 		else:
-			infooutput = infooutput.split(separator)
+			p = re.compile(separator)
+			p.split(infooutput)
 			fl = file(srcFolder + delimiter +'PS.txt', 'w')
-			for i in xrange(0, len(infooutput)):
-				fl.write(infooutput[i])
+			for i in xrange(0, len(p.split(infooutput))):
+				fl.write(p.split(infooutput)[i])
 				fl.write("\n")
 			fl.close()
 
@@ -746,8 +749,8 @@ class StopAppCommand(sublime_plugin.TextCommand):
 	def run(self, edit, text):
 		print "==========kill app!!=========="
 		# run adb Command
-		print adbpath + " shell su -c 'service call activity 79 s16 " + text + "'"
-		os.popen(adbpath + " shell su -c 'service call activity 79 s16 " + text + "'")
+		print adbpath + " shell service call activity 79 s16 " + text
+		os.popen(adbpath + " shell service call activity 79 s16 " + text)
 
 
 # class InputLogCatCommand(sublime_plugin.WindowCommand):
@@ -800,6 +803,7 @@ class RecordCommand(sublime_plugin.TextCommand):
 		temp_Log = subprocess.Popen(adbpath + ' shell cat /sdcard/TestTool/.lua', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 		# print adbpath + ' shell cat /sdcard/TestTool/.lua'
 		data_Log = temp_Log.communicate()
+		# print data_Log
 		if 'error: no devices found' in data_Log[1]:
 			sublime.error_message(data_Log[1])
 			return
@@ -808,56 +812,58 @@ class RecordCommand(sublime_plugin.TextCommand):
 			return
 		s = 0
 		e = 0
-		for x in xrange(0, len(data_Log[0].split('\n'))):
-			if data_Log[0].split('\n')[x].find('restartApp(PackageName)') != -1:
+		p = re.compile(separator)
+		t = p.split(data_Log[0])
+		# print len(data_Log[0].split('\r\n'))
+		for x in xrange(0, len(t)):
+			if t[x].find('restartApp(PackageName)') != -1:
 				s = x
-			if data_Log[0].split('\n')[x].find('Android:notifyVoice("/mnt/sdcard/TestTool/Alarm_Kapalai.mp3")') != -1:
+			if t[x].find('Android:notifyVoice("/mnt/sdcard/TestTool/Alarm_Kapalai.mp3")') != -1:
 				e = x
-		for x in xrange(0, len(data_Log[0].split('\n'))):
+		for x in xrange(0, len(t)):
 			if s<x<e :
-				self.insert_contents(edit, data_Log[0].split(separator)[x].decode("utf-8"))
-				# print data_Log[0].split(separator)[x]
+				self.insert_contents(edit, t[x].decode("utf-8"))
 		# t = threading.Thread(target=self.isChanged, args=(edit,))
 		# t.setDaemon(True)
 		# t.start()
 
-	def isChanged(self, edit):
-		lastTimeLogRow = 0 
-		begin_time = time.time()
-		end_time = begin_time + 3600
-		# j = 0 
-		while time.time() < end_time:
-			# j = j + 1
-			# print 'j--->', j
-			temp_Log = subprocess.Popen(adbpath + ' shell su -c "cat /data/local/tmp/kat/out.txt"', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-			data_Log = temp_Log.communicate()
-			temp_switch = subprocess.Popen(adbpath + ' shell cat /sdcard/TestTool/record_stop.txt', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-			is_close_switch = temp_switch.communicate()
+	# def isChanged(self, edit):
+	# 	lastTimeLogRow = 0 
+	# 	begin_time = time.time()
+	# 	end_time = begin_time + 3600
+	# 	# j = 0 
+	# 	while time.time() < end_time:
+	# 		# j = j + 1
+	# 		# print 'j--->', j
+	# 		temp_Log = subprocess.Popen(adbpath + ' shell su -c "cat /data/local/tmp/kat/out.txt"', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+	# 		data_Log = temp_Log.communicate()
+	# 		temp_switch = subprocess.Popen(adbpath + ' shell cat /sdcard/TestTool/record_stop.txt', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+	# 		is_close_switch = temp_switch.communicate()
 
-			if is_close_switch[0].find('No such file') == -1:
-				print "---------Record thread is over---------"
-				break
-			if not data_Log[1]:
-				count =  data_Log[0].count(separator)
-				# print data_Log
-				if lastTimeLogRow != count :
-					if lastTimeLogRow > count :
-						print '-----------Code is cleaned!!-----------'
-						print "---------Record thread is over---------"
-						break
-					else:
-						for i in range(lastTimeLogRow, count):
-							if data_Log[0].find('No such file') == -1:
-								print '',data_Log[0].split(separator)[i]
+	# 		if is_close_switch[0].find('No such file') == -1:
+	# 			print "---------Record thread is over---------"
+	# 			break
+	# 		if not data_Log[1]:
+	# 			count =  data_Log[0].count(separator)
+	# 			# print data_Log
+	# 			if lastTimeLogRow != count :
+	# 				if lastTimeLogRow > count :
+	# 					print '-----------Code is cleaned!!-----------'
+	# 					print "---------Record thread is over---------"
+	# 					break
+	# 				else:
+	# 					for i in range(lastTimeLogRow, count):
+	# 						if data_Log[0].find('No such file') == -1:
+	# 							print '',data_Log[0].split(separator)[i]
 
-								# self.insert_contents(edit, data_Log[0].split(separator)[i])
-						# sublime.set_timeout(self.view.insert(edit, 3156, '11111111111111'), 2000)
-						lastTimeLogRow = count
-				time.sleep(0.5)
-			else:
-				print "--------------------------------------"
-				print data_Log[1]
-				break
+	# 							# self.insert_contents(edit, data_Log[0].split(separator)[i])
+	# 					# sublime.set_timeout(self.view.insert(edit, 3156, '11111111111111'), 2000)
+	# 					lastTimeLogRow = count
+	# 			time.sleep(0.5)
+	# 		else:
+	# 			print "--------------------------------------"
+	# 			print data_Log[1]
+	# 			break
 
 	def insert_contents(self, edit, contents):
 		for region in self.view.sel():
