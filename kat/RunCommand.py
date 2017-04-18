@@ -1,6 +1,6 @@
 #coding:utf-8
 import sublime, sublime_plugin, os, subprocess, sys, time, threading, re, urllib
-RunCommand_ver = '2.6'
+RunCommand_ver = '2.7'
 delimiter = os.sep
 separator = '\r+\n\t*'
 platsys = sublime.platform()
@@ -160,9 +160,10 @@ class RunLabKatCommand(sublime_plugin.TextCommand):
 		print "<<< adb shell am instrument -e class com.kunpeng.kat.base.TestMainInstrumentation -w com.kunpeng.kapalai.kat/com.kunpeng.kat.base.KatInstrumentationTestRunner >>>"
 		isKatInstall = subprocess.Popen(adbpath + " shell am instrument -e class com.kunpeng.kat.base.TestMainInstrumentation -w com.kunpeng.kapalai.kat/com.kunpeng.kat.base.KatInstrumentationTestRunner", shell = True, stdout = subprocess.PIPE)
 		infooutput_kat, erroutput_kat = isKatInstall.communicate()
+		print infooutput_kat
 		# print infooutput_kat
-		if infooutput_kat.find("does not exist") != -1:
-			sublime.error_message("kat not found OR kat version is older!!")
+		if 'android.util.AndroidException: INSTRUMENTATION_FAILED: com.kunpeng.kapalai.kat/com.kunpeng.kat.base.KatInstrumentationTestRunner' in infooutput_kat:
+			sublime.error_message("kat not found!!")
 		else:
 			pass
 
@@ -265,8 +266,8 @@ class RunXtestCommand(sublime_plugin.TextCommand):
 		isKatInstall = subprocess.Popen(adbpath + " shell am instrument -e class com.kunpeng.kat.base.TestMainInstrumentation -w com.tencent.utest.recorder/com.kunpeng.kat.base.KatInstrumentationTestRunner", shell = True, stdout = subprocess.PIPE)
 		infooutput_kat, erroutput_kat = isKatInstall.communicate()
 		# print infooutput_kat
-		if infooutput_kat.find("does not exist") != -1:
-			sublime.error_message("kat not found OR kat version is older!!")
+		if 'android.util.AndroidException: INSTRUMENTATION_FAILED: com.tencent.utest.recorder/com.kunpeng.kat.base.KatInstrumentationTestRunner' in infooutput_kat:
+			sublime.error_message("XTest not found!!")
 		else:
 			pass
 
