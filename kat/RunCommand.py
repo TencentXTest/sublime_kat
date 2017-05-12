@@ -1,6 +1,6 @@
 #coding:utf-8
 import sublime, sublime_plugin, os, subprocess, sys, time, threading, re, urllib
-RunCommand_ver = '2.7'
+RunCommand_ver = '2.8'
 delimiter = os.sep
 separator = '\r+\n\t*'
 platsys = sublime.platform()
@@ -1042,3 +1042,32 @@ class UpdateKatPluginCommand(sublime_plugin.TextCommand):
 				urllib.urlretrieve(url, os.path.join(sublime.packages_path() + delimiter + 'kat', filename))
 
 		
+class UninstallAppCommand(sublime_plugin.TextCommand):
+	def run(self, edit):
+		p = subprocess.Popen(adbpath + ' devices', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+		erroutput = p.communicate()
+		e = re.compile(separator)
+		for device in e.split(erroutput[0]):
+			if '\t' in device:
+				os.system(adbpath + ' -s ' + device.split('\t')[0] + ' uninstall com.tencent.utest.recorder')
+
+class UninstallAllAppCommand(sublime_plugin.TextCommand):
+	def run(self, edit):
+		p = subprocess.Popen(adbpath + ' devices', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+		erroutput = p.communicate()
+		e = re.compile(separator)
+		for device in e.split(erroutput[0]):
+			if '\t' in device:
+				p = subprocess.Popen(adbpath + ' -s ' + device.split('\t')[0] + ' shell pm list package -3', shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+				erroutput = p.communicate()
+				e = re.compile(separator)
+				# print e.split(erroutput[0])
+				for app in e.split(erroutput[0]):
+					if "com.tencent.utest.recorder" in app:
+						pass
+					elif "com.tencent.android.qqdownloader" in app:
+						pass
+					elif "" == app:
+						pass
+					else:
+						os.system(adbpath + ' -s ' + device.split('\t')[0] + ' uninstall ' + app.split(':')[1])
